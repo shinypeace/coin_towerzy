@@ -1,171 +1,1110 @@
-let board = [];
-let rows = 8;
-let columns = 8;
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Coin Tower: Master</title>
+    <!-- VK Bridge -->
+    <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Light Theme Default */
+            --bg-grad-1: #f5f7fa;
+            --bg-grad-2: #c3cfe2;
+            --ui-bg: #FFFFFF;
+            --text-main: #2D3436;
+            --text-sec: #636E72;
+            --card-bg: #FFFFFF;
+            --accent: #6C5CE7;
+            --accent-hover: #5649c0;
+            --shadow-color: rgba(0,0,0,0.1);
+            --slot-base: rgba(0,0,0,0.06);
+        }
 
-let minesCount = 10;
-let minesLocation = []; // "2-2", "3-4", "2-1"
+        /* Dark Theme Scope */
+        .dark-theme {
+            --bg-grad-1: #2d3436;
+            --bg-grad-2: #000000;
+            --ui-bg: #2d3436;
+            --text-main: #dfe6e9;
+            --text-sec: #b2bec3;
+            --card-bg: #353b48;
+            --accent: #a29bfe;
+            --accent-hover: #6c5ce7;
+            --shadow-color: rgba(0,0,0,0.4);
+            --slot-base: rgba(255,255,255,0.1);
+        }
 
-let tilesClicked = 0; //goal to click all tiles except the ones containing mines
-let flagEnabled = false;
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Nunito', sans-serif;
+        }
 
-let gameOver = false;
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1e272e;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
 
-window.onload = function () {
-  startGame();
+        #app-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 450px;
+            max-height: 900px;
+            background: linear-gradient(135deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%);
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s;
+        }
+
+        /* LAYERS */
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+            z-index: 1;
+            cursor: pointer;
+        }
+
+        #confetti-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        /* UI SCREENS */
+        .screen {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            z-index: 10;
+            padding: 20px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .screen.hidden { transform: translateX(100%); pointer-events: none; }
+        .screen.active { transform: translateX(0); }
+
+        #screen-levels { justify-content: flex-start; }
+        #screen-other-games { justify-content: flex-start; overflow-y: auto; }
+
+        /* HUD */
+        #hud {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 5;
+            pointer-events: none;
+        }
+        #hud button { pointer-events: auto; }
+
+        /* COMPONENTS */
+        .logo-box {
+            margin-bottom: 50px;
+            text-align: center;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .logo-main {
+            font-size: 56px;
+            font-weight: 900;
+            color: var(--text-main);
+            line-height: 0.9;
+            text-shadow: 2px 2px 0px rgba(128,128,128,0.2);
+        }
+        .logo-sub {
+            font-size: 20px;
+            color: var(--accent);
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        .btn-main {
+            background: var(--accent);
+            color: #fff;
+            width: 80%;
+            padding: 22px;
+            border-radius: 20px;
+            border: none;
+            font-size: 24px;
+            font-weight: 800;
+            box-shadow: 0 8px 0 var(--accent-hover), 0 20px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .btn-main:active { transform: translateY(8px); box-shadow: 0 0 0 var(--accent-hover); }
+
+        .btn-row { display: flex; gap: 15px; width: 80%; margin-bottom: 20px; }
+        
+        .btn-small {
+            flex: 1;
+            background: var(--card-bg);
+            color: var(--text-sec);
+            padding: 18px;
+            border-radius: 18px;
+            border: none;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 5px 0 var(--shadow-color);
+            cursor: pointer;
+        }
+        .btn-small:active { transform: translateY(5px); box-shadow: none; }
+
+        .btn-icon-round {
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: none;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 0 var(--shadow-color);
+            cursor: pointer;
+            color: var(--text-main);
+        }
+        .btn-icon-round:active { transform: translateY(4px); box-shadow: none; }
+
+        .btn-settings-main {
+            position: absolute;
+            top: 20px; right: 20px;
+            width: 44px; height: 44px;
+            border-radius: 14px;
+            background: transparent;
+            border: 2px solid var(--text-sec);
+            color: var(--text-sec);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+        .btn-settings-main:hover { opacity: 1; }
+
+        /* Level List */
+        .scroll-list {
+            width: 100%;
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+            padding-bottom: 40px;
+        }
+
+        .level-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px var(--shadow-color);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .level-card:active { transform: scale(0.97); }
+        .level-card h3 { margin: 0; color: var(--text-main); font-size: 18px; }
+        .level-card p { margin: 4px 0 0; color: var(--text-sec); font-size: 13px; }
+
+        /* Modals */
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .modal-overlay.visible { opacity: 1; pointer-events: auto; }
+
+        .modal {
+            background: var(--card-bg);
+            width: 85%;
+            padding: 25px;
+            border-radius: 28px;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            color: var(--text-main);
+        }
+        .modal-overlay.visible .modal { transform: scale(1); }
+        .modal h2 { margin: 0 0 15px; font-size: 28px; color: var(--text-main); }
+
+        /* Rules */
+        .rules-canvas-container {
+            width: 100%;
+            height: 120px;
+            background: var(--bg-grad-1);
+            border-radius: 16px;
+            margin-bottom: 20px;
+            border: 2px solid var(--slot-base);
+        }
+        .rule-text { text-align: left; font-size: 14px; color: var(--text-main); margin-bottom: 10px; line-height: 1.4; }
+        .rule-text b { color: var(--accent); }
+
+        /* Settings Toggles */
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--shadow-color);
+        }
+        .setting-row:last-child { border-bottom: none; }
+        .setting-label { font-size: 18px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+        
+        .toggle-switch {
+            position: relative;
+            width: 50px; height: 28px;
+            background: #ccc;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .toggle-switch.active { background: var(--accent); }
+        .toggle-knob {
+            position: absolute;
+            top: 2px; left: 2px;
+            width: 24px; height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .toggle-switch.active .toggle-knob { transform: translateX(22px); }
+
+        /* Other Games Grid */
+        #other-games-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            width: 100%;
+            padding: 10px 0;
+        }
+        .other-game-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .other-game-item:active { transform: scale(0.95); }
+        .game-icon {
+            width: 70px; height: 70px;
+            background: #ccc;
+            border-radius: 18px;
+            overflow: hidden;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .game-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .game-name { font-size: 11px; font-weight: 700; color: var(--text-main); text-align: center; line-height: 1.2; }
+
+        /* SVG Icons */
+        .icon { width: 24px; height: 24px; fill: currentColor; }
+        
+        .btn-back {
+            position: absolute;
+            top: 20px; left: 20px;
+            width: 40px; height: 40px;
+            border-radius: 12px;
+            background: var(--card-bg);
+            border: none;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-main);
+            box-shadow: 0 4px 0 var(--shadow-color);
+            cursor: pointer;
+            z-index: 20;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    <canvas id="gameCanvas"></canvas>
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- HUD -->
+    <div id="hud" style="display: none;">
+        <button class="btn-icon-round" onclick="game.pause()">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+        <div style="text-align: center;">
+            <div style="font-size: 11px; color: var(--text-sec); font-weight: 800; letter-spacing: 1px;">УРОВЕНЬ</div>
+            <div style="font-size: 22px; color: var(--text-main); font-weight: 900;" id="hud-lvl">1</div>
+        </div>
+        <button class="btn-icon-round" onclick="game.undo()">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+        </button>
+    </div>
+
+    <!-- MAIN MENU -->
+    <div id="screen-menu" class="screen active">
+        <button class="btn-settings-main" onclick="ui.showSettings()">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L3.16 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.04.64.09.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+        </button>
+        
+        <div class="logo-box">
+            <div class="logo-main">Coin<br>Tower</div>
+            <div class="logo-sub">Logic Sort</div>
+        </div>
+        
+        <button class="btn-main" onclick="ui.startFlow()">ИГРАТЬ</button>
+        
+        <div class="btn-row">
+            <button class="btn-small" onclick="ui.showRules()">ПРАВИЛА</button>
+            <!-- REPLACED STATS WITH OTHER GAMES -->
+            <button class="btn-small" onclick="ui.showOtherGames()">ДРУГИЕ ИГРЫ</button>
+        </div>
+    </div>
+
+    <!-- LEVEL SELECT -->
+    <div id="screen-levels" class="screen hidden">
+        <button class="btn-back" onclick="ui.showMenu()">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        <div style="height: 60px;"></div>
+        <h2 style="margin-left: 20px; margin-bottom: 20px; color: var(--text-main); font-weight: 900;">Уровни</h2>
+        <div class="scroll-list" id="levels-list"></div>
+    </div>
+
+    <!-- OTHER GAMES SCREEN -->
+    <div id="screen-other-games" class="screen hidden">
+        <button class="btn-back" onclick="ui.showMenu()">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        <div style="height: 60px;"></div>
+        <h2 style="margin-bottom: 20px; color: var(--text-main); font-weight: 900;">Другие игры</h2>
+        <div id="other-games-container"></div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div id="modal-settings" class="modal-overlay">
+        <div class="modal">
+            <h2>Настройки</h2>
+            <div class="setting-row">
+                <div class="setting-label">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+                    Темная тема
+                </div>
+                <div class="toggle-switch" id="toggle-theme" onclick="settings.toggleTheme()">
+                    <div class="toggle-knob"></div>
+                </div>
+            </div>
+            <div class="setting-row">
+                <div class="setting-label">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                    Звук
+                </div>
+                <div class="toggle-switch active" id="toggle-sound" onclick="settings.toggleSound()">
+                    <div class="toggle-knob"></div>
+                </div>
+            </div>
+            <button class="btn-small" style="width:100%; margin-top:20px; background: var(--accent); color:white;" onclick="ui.hideModals()">ГОТОВО</button>
+        </div>
+    </div>
+
+    <!-- RULES MODAL -->
+    <div id="modal-rules" class="modal-overlay">
+        <div class="modal">
+            <h2>Как играть</h2>
+            <div class="rules-canvas-container">
+                <canvas id="rules-canvas"></canvas>
+            </div>
+            <div class="rule-text">1. Нажми на стопку, чтобы <b>взять</b> монеты.</div>
+            <div class="rule-text">2. Нажми на другую, чтобы <b>положить</b>.</div>
+            <div class="rule-text">3. Класть можно только на <b>тот же цвет</b> или на пустое место.</div>
+            <div class="rule-text" style="margin-top:15px; padding-top:10px; border-top:1px solid var(--shadow-color);">
+                💡 Ошибся? Используй кнопку <b>Отмена хода</b> (стрелка назад).
+            </div>
+            <button class="btn-small" style="width:100%; margin-top:15px; background:var(--accent); color:white" onclick="ui.hideModals()">ПОНЯТНО</button>
+        </div>
+    </div>
+
+    <!-- PAUSE MODAL -->
+    <div id="modal-pause" class="modal-overlay">
+        <div class="modal">
+            <h2>Пауза</h2>
+            <button class="btn-main" style="width:100%; margin-bottom:15px" onclick="game.resume()">ПРОДОЛЖИТЬ</button>
+            <button class="btn-small" style="width:100%;" onclick="game.quitToMenu()">В ГЛАВНОЕ МЕНЮ</button>
+        </div>
+    </div>
+
+    <!-- VICTORY MODAL -->
+    <div id="modal-victory" class="modal-overlay">
+        <div class="modal">
+            <div style="font-size: 60px; margin-bottom: 10px; animation: popIn 0.5s;">🏆</div>
+            <h2>Победа!</h2>
+            <p>Уровень пройден</p>
+            <div style="background:var(--bg-grad-1); padding:15px; border-radius:15px; margin-bottom:20px; display:flex; justify-content:space-between; font-weight:bold; color:var(--text-sec)">
+                <span>Ходов:</span>
+                <span id="vic-moves" style="color:var(--text-main)">0</span>
+            </div>
+            <button class="btn-main" style="width:100%; margin-bottom:15px" onclick="game.restartLevel()">СЛЕДУЮЩИЙ</button>
+            <button class="btn-small" style="width:100%;" onclick="game.quitToMenu()">МЕНЮ</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+/**
+ * DATA & VK STORAGE MANAGER
+ */
+const dataManager = {
+    vkUserId: null,
+    data: {
+        progress: {},
+        settings: { sound: true, theme: 'light' },
+        currentSession: null // Stores the active generated level to create illusion of persistence
+    },
+
+    async init() {
+        // VK Init
+        try {
+            await vkBridge.send('VKWebAppInit');
+            const user = await vkBridge.send('VKWebAppGetUserInfo');
+            this.vkUserId = user.id;
+            
+            // Ads
+            vkBridge.send('VKWebAppShowBannerAd', { banner_location: 'bottom' }).catch(()=>{});
+        } catch (e) {
+            console.log('VK Init error (offline?)', e);
+        }
+
+        // Load
+        await this.load();
+        
+        // Apply Settings
+        settings.setTheme(this.data.settings.theme);
+        settings.sound = this.data.settings.sound;
+        settings.updateSoundUI();
+        audio.enabled = settings.sound;
+    },
+
+    async load() {
+        if (this.vkUserId) {
+            const key = `ct_data_${this.vkUserId}`;
+            try {
+                const res = await vkBridge.send('VKWebAppStorageGet', { keys: [key] });
+                if (res.keys[0]?.value) {
+                    const loaded = JSON.parse(res.keys[0].value);
+                    this.mergeData(loaded);
+                    return;
+                }
+            } catch(e){}
+        }
+        // Fallback local
+        const local = localStorage.getItem('ct_data_local');
+        if (local) this.mergeData(JSON.parse(local));
+    },
+
+    mergeData(loaded) {
+        if(loaded.progress) this.data.progress = {...this.data.progress, ...loaded.progress};
+        if(loaded.settings) this.data.settings = {...this.data.settings, ...loaded.settings};
+        if(loaded.currentSession) this.data.currentSession = loaded.currentSession;
+    },
+
+    async save() {
+        // Prepare current settings
+        this.data.settings.theme = settings.theme;
+        this.data.settings.sound = settings.sound;
+        
+        const str = JSON.stringify(this.data);
+        localStorage.setItem('ct_data_local', str);
+        
+        if (this.vkUserId) {
+            const key = `ct_data_${this.vkUserId}`;
+            vkBridge.send('VKWebAppStorageSet', { key: key, value: str }).catch(()=>{});
+        }
+    },
+
+    showInterstitial() {
+        vkBridge.send('VKWebAppShowInterstitialAd').catch(()=>{});
+    }
 };
 
-function setMines() {
-  // minesLocation.push("2-2");
-  // minesLocation.push("2-3");
-  // minesLocation.push("5-6");
-  // minesLocation.push("3-4");
-  // minesLocation.push("1-1");
+/** * SETTINGS MANAGER */
+const settings = {
+    sound: true,
+    theme: 'light',
 
-  let minesLeft = minesCount;
-  while (minesLeft > 0) {
-    let r = Math.floor(Math.random() * rows);
-    let c = Math.floor(Math.random() * columns);
-    let id = r.toString() + "-" + c.toString();
+    init() {
+        // Defer actual init to dataManager
+        this.updateSoundUI();
+    },
 
-    if (!minesLocation.includes(id)) {
-      minesLocation.push(id);
-      minesLeft -= 1;
+    toggleTheme() {
+        this.setTheme(this.theme === 'light' ? 'dark' : 'light');
+        dataManager.save();
+    },
+
+    setTheme(mode) {
+        this.theme = mode;
+        const app = document.getElementById('app-container');
+        const toggle = document.getElementById('toggle-theme');
+        
+        if (mode === 'dark') {
+            app.classList.add('dark-theme');
+            toggle.classList.add('active');
+        } else {
+            app.classList.remove('dark-theme');
+            toggle.classList.remove('active');
+        }
+        // Redraw canvases
+        if(typeof game !== 'undefined' && game) game.draw();
+        if(typeof rulesDemo !== 'undefined') rulesDemo.draw();
+    },
+
+    toggleSound() {
+        this.sound = !this.sound;
+        this.updateSoundUI();
+        audio.enabled = this.sound;
+        dataManager.save();
+    },
+
+    updateSoundUI() {
+        const el = document.getElementById('toggle-sound');
+        if(this.sound) el.classList.add('active');
+        else el.classList.remove('active');
     }
-  }
-}
+};
 
-function startGame() {
-  document.getElementById("mines-count").innerText = minesCount;
-  document.getElementById("flag-button").addEventListener("click", setFlag);
-  setMines();
+/**
+ * GAME CONFIG
+ */
+const LEVELS_CONFIG = [
+    { id: 0, name: "Уровень 1",   colors: 3, slots: 5,  size: 4 },
+    { id: 1, name: "Уровень 2",   colors: 4, slots: 6,  size: 4 },
+    { id: 2, name: "Уровень 3",   colors: 5, slots: 7,  size: 4 },
+    { id: 3, name: "Уровень 4",   colors: 6, slots: 8,  size: 4 },
+    { id: 4, name: "Уровень 5",   colors: 7, slots: 9,  size: 4 },
+    { id: 5, name: "Уровень 6",   colors: 8, slots: 10, size: 4 },
+    { id: 6, name: "Уровень 7",   colors: 9, slots: 11, size: 5 },
+    { id: 7, name: "Уровень 8",   colors: 10, slots: 12, size: 5 }
+];
 
-  //populate our board
-  for (let r = 0; r < rows; r++) {
-    let row = [];
-    for (let c = 0; c < columns; c++) {
-      //<div id="0-0"></div>
-      let tile = document.createElement("div");
-      tile.id = r.toString() + "-" + c.toString();
-      tile.addEventListener("click", clickTile);
-      document.getElementById("board").append(tile);
-      row.push(tile);
+const PALETTE = [
+    '#e74c3c', '#3498db', '#2ecc71', '#f1c40f', 
+    '#9b59b6', '#e67e22', '#1abc9c', '#34495e', 
+    '#ecf0f1', '#95a5a6', '#8e44ad', '#d35400'
+];
+
+/* --- AUDIO ENGINE --- */
+class AudioManager {
+    constructor() { this.ctx = null; this.enabled = true; }
+    init() {
+        if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (this.ctx.state === 'suspended') this.ctx.resume();
     }
-    board.push(row);
-  }
-
-  console.log(board);
-}
-
-function setFlag() {
-  if (flagEnabled) {
-    flagEnabled = false;
-    document.getElementById("flag-button").style.backgroundColor = "lightgray";
-  } else {
-    flagEnabled = true;
-    document.getElementById("flag-button").style.backgroundColor = "darkgray";
-  }
-}
-
-function clickTile() {
-  if (gameOver || this.classList.contains("tile-clicked")) {
-    return;
-  }
-
-  let tile = this;
-  if (flagEnabled) {
-    if (tile.innerText == "") {
-      tile.innerText = "🚩";
-    } else if (tile.innerText == "🚩") {
-      tile.innerText = "";
+    play(type) {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        switch(type) {
+            case 'pop': osc.frequency.value=500; osc.start(); osc.stop(now+0.1); break;
+            case 'land': osc.frequency.value=400; osc.start(); osc.stop(now+0.15); break;
+            case 'error': osc.type='sawtooth'; osc.frequency.value=100; osc.start(); osc.stop(now+0.2); break;
+            case 'win': [523,659,783,1046].forEach((f,i)=>{
+                const o=this.ctx.createOscillator();const g=this.ctx.createGain();
+                o.connect(g);g.connect(this.ctx.destination);o.frequency.value=f;
+                g.gain.setValueAtTime(0.05,now+i*0.05);g.gain.linearRampToValueAtTime(0,now+i*0.05+0.3);
+                o.start(now+i*0.05);o.stop(now+i*0.05+0.3);
+            }); break;
+        }
     }
-    return;
-  }
-
-  if (minesLocation.includes(tile.id)) {
-    // alert("GAME OVER");
-    gameOver = true;
-    revealMines();
-    return;
-  }
-
-  let coords = tile.id.split("-"); // "0-0" -> ["0", "0"]
-  let r = parseInt(coords[0]);
-  let c = parseInt(coords[1]);
-  checkMine(r, c);
 }
+const audio = new AudioManager();
 
-function revealMines() {
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < columns; c++) {
-      let tile = board[r][c];
-      if (minesLocation.includes(tile.id)) {
-        tile.innerText = "💣";
-        tile.style.backgroundColor = "red";
-      }
+/* --- RULES DEMO --- */
+const rulesDemo = {
+    canvas: null, ctx: null, running: false, t: 0,
+    start() {
+        this.canvas = document.getElementById('rules-canvas');
+        this.ctx = this.canvas.getContext('2d');
+        const r = this.canvas.parentElement.getBoundingClientRect();
+        this.canvas.width = r.width; this.canvas.height = r.height;
+        this.running = true; this.loop();
+    },
+    stop() { this.running = false; },
+    loop() {
+        if(!this.running) return;
+        this.t += 0.015; this.draw();
+        requestAnimationFrame(() => this.loop());
+    },
+    draw() {
+        if (!this.canvas) return;
+        const ctx = this.ctx; const w = this.canvas.width; const h = this.canvas.height;
+        ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--ui-bg');
+        ctx.clearRect(0,0,w,h);
+        
+        const gap = 80; const s1x = w/2 - gap/2; const s2x = w/2 + gap/2; const by = h - 30;
+        ctx.fillStyle = 'rgba(0,0,0,0.1)';
+        [s1x, s2x].forEach(x => { ctx.beginPath(); ctx.ellipse(x, by, 25, 8, 0, 0, Math.PI*2); ctx.fill(); });
+
+        const cycle = this.t % 4;
+        this.drawCoin(ctx, s1x, by, PALETTE[1]); this.drawCoin(ctx, s1x, by - 12, PALETTE[1]);
+        
+        let cx = s1x; let cy = by - 24;
+        if (cycle < 1) { cy = by - 24; }
+        else if (cycle < 2) {
+            const p = cycle - 1; const ease = p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
+            cx = s1x + (s2x - s1x) * ease; cy = (by - 24) - Math.sin(p * Math.PI) * 40;
+        } else if (cycle < 3) { cx = s2x; cy = by; }
+        else {
+             const p = cycle - 3; const ease = p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
+             cx = s2x + (s1x - s2x) * ease; cy = by - Math.sin(p * Math.PI) * 40; cy -= (24 * p); 
+        }
+        this.drawCoin(ctx, cx, cy, PALETTE[1]);
+    },
+    drawCoin(ctx, x, y, c) { drawDetailedCoin(ctx, x, y, 22, 10, c); }
+};
+
+/* --- UI MANAGER --- */
+const ui = {
+    screens: {
+        menu: document.getElementById('screen-menu'),
+        levels: document.getElementById('screen-levels'),
+        hud: document.getElementById('hud'),
+        other: document.getElementById('screen-other-games')
+    },
+    modals: {
+        rules: document.getElementById('modal-rules'),
+        pause: document.getElementById('modal-pause'),
+        victory: document.getElementById('modal-victory'),
+        settings: document.getElementById('modal-settings')
+    },
+    
+    switchScreen(name) {
+        Object.values(this.screens).forEach(s => { if(s) { s.classList.remove('active'); s.classList.add('hidden'); } });
+        if (name === 'game') this.screens.hud.style.display = 'flex';
+        else {
+            this.screens.hud.style.display = 'none';
+            this.screens[name].classList.remove('hidden');
+            this.screens[name].classList.add('active');
+        }
+        // Always show banner at bottom when switching screens
+        vkBridge.send('VKWebAppShowBannerAd', { banner_location: 'bottom' }).catch(()=>{});
+    },
+
+    showModals(name) { this.modals[name].classList.add('visible'); if(name === 'rules') rulesDemo.start(); },
+    hideModals() { Object.values(this.modals).forEach(m => m.classList.remove('visible')); rulesDemo.stop(); },
+    
+    showMenu() { this.switchScreen('menu'); },
+    showRules() { this.showModals('rules'); },
+    showSettings() { this.showModals('settings'); },
+
+    startFlow() { audio.init(); this.showLevels(); },
+    
+    showLevels() {
+        const list = document.getElementById('levels-list');
+        list.innerHTML = '';
+        LEVELS_CONFIG.forEach((lvl, idx) => {
+            const div = document.createElement('div');
+            div.className = `level-card`;
+            div.onclick = () => { game.startLevel(idx); };
+            div.innerHTML = `
+                <div><h3>${lvl.name}</h3><p>${lvl.colors} Цвета</p></div>
+                <div style="width:36px; height:36px; background:var(--bg-grad-1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text-sec);">
+                    <svg class="icon" style="width:18px; height:18px; margin-left:2px;" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+            `;
+            list.appendChild(div);
+        });
+        this.switchScreen('levels');
+    },
+
+    showOtherGames() {
+        const container = document.getElementById('other-games-container');
+        container.innerHTML = '';
+        const games = [
+            { name: 'Bubble Shooter', appId: 54051411, icon: 'icon1.png' }, 
+            { name: 'Тетрис', appId: 54051413, icon: 'icon2.png' },
+            { name: 'Tower Blocks', appId: 53962513, icon: 'icon3.png' }, 
+            { name: 'Блок Про', appId: 53936296, icon: 'icon4.png' },
+            { name: 'Филворды', appId: 53867134, icon: 'icon5.png' }, 
+            { name: 'Словли', appId: 53861990, icon: 'icon6.png' },
+            { name: 'Brick Balls', appId: 54023580, icon: 'icon7.png' }, 
+            { name: '2048', appId: 53965380, icon: 'icon8.png' },
+            { name: 'Math Matrix', appId: 53970659, icon: 'icon9.png' }
+        ];
+        
+        games.forEach(g => {
+            const item = document.createElement('div');
+            item.className = 'other-game-item';
+            item.onclick = () => { vkBridge.send('VKWebAppOpenApp', { app_id: g.appId }); };
+            // Fallback color if image missing
+            item.innerHTML = `
+                <div class="game-icon" style="background:#eee">
+                    <img src="${g.icon}" onerror="this.style.display='none'">
+                </div>
+                <div class="game-name">${g.name}</div>
+            `;
+            container.appendChild(item);
+        });
+        this.switchScreen('other');
     }
-  }
+};
+
+/* --- DRAW HELPER --- */
+function drawDetailedCoin(ctx, x, y, r, h, color) {
+    const shadowColor = shadeColor(color, -40);
+    const lightColor = shadeColor(color, 20);
+    const gradSide = ctx.createLinearGradient(x - r, y, x + r, y);
+    gradSide.addColorStop(0, shadowColor); gradSide.addColorStop(0.5, color); gradSide.addColorStop(1, shadowColor);
+    ctx.fillStyle = gradSide; ctx.beginPath(); ctx.ellipse(x, y, r, r*0.35, 0, 0, Math.PI); ctx.ellipse(x, y - h, r, r*0.35, 0, Math.PI, 0); ctx.fill(); ctx.fillRect(x - r, y - h, r*2, h);
+    ctx.beginPath(); ctx.ellipse(x, y, r, r*0.35, 0, 0, Math.PI); ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1.5; ctx.stroke();
+    const gradTop = ctx.createRadialGradient(x, y - h - r*0.1, 0, x, y-h, r); gradTop.addColorStop(0, lightColor); gradTop.addColorStop(1, color);
+    ctx.fillStyle = gradTop; ctx.beginPath(); ctx.ellipse(x, y - h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x, y - h, r*0.7, r*0.25, 0, 0, Math.PI*2); ctx.stroke();
+    ctx.strokeStyle = 'rgba(0,0,0,0.1)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x-r, y); ctx.lineTo(x-r, y-h); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x+r, y); ctx.lineTo(x+r, y-h); ctx.stroke(); ctx.beginPath(); ctx.ellipse(x, y - h, r, r*0.35, 0, 0, Math.PI*2); ctx.stroke();
+}
+function shadeColor(color, amount) {
+    return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
 }
 
-function checkMine(r, c) {
-  if (r < 0 || r >= rows || c < 0 || c >= columns) {
-    return;
-  }
-  if (board[r][c].classList.contains("tile-clicked")) {
-    return;
-  }
+/* --- GAME LOGIC --- */
+class Game {
+    constructor() {
+        this.canvas = document.getElementById('gameCanvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.width = 0; this.height = 0;
+        this.state = 'IDLE'; 
+        this.currentLevelIdx = 0;
+        this.stacks = [];
+        this.selectedStack = -1;
+        this.history = [];
+        this.moves = 0;
+        this.animations = [];
+        this.layout = { cols: 4, slots: [] }; 
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+        const handleStart = (e) => {
+            if (e.type === 'touchstart') e.preventDefault(); 
+            const x = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+            const y = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+            this.handleInput(x, y);
+        };
+        this.canvas.addEventListener('mousedown', handleStart);
+        this.canvas.addEventListener('touchstart', handleStart, {passive: false});
+        this.lastTime = 0;
+        requestAnimationFrame(t => this.loop(t));
+    }
 
-  board[r][c].classList.add("tile-clicked");
-  tilesClicked += 1;
+    saveWin(idx) {
+        const p = dataManager.data.progress;
+        p[idx] = (p[idx] || 0) + 1;
+        // CLEAR saved session on win so next time a new one is generated
+        dataManager.data.currentSession = null;
+        dataManager.save();
+    }
 
-  let minesFound = 0;
+    resize() {
+        const container = document.getElementById('app-container');
+        this.width = container.clientWidth; this.height = container.clientHeight;
+        this.canvas.width = this.width; this.canvas.height = this.height;
+        this.recalcLayout();
+    }
 
-  //top 3
-  minesFound += checkTile(r - 1, c - 1); //top left
-  minesFound += checkTile(r - 1, c); //top
-  minesFound += checkTile(r - 1, c + 1); //top right
+    recalcLayout() {
+        if (!this.stacks.length) return;
+        const count = this.stacks.length;
+        const cfg = LEVELS_CONFIG[this.currentLevelIdx];
+        let cols = 3; if (count > 6) cols = 4;
+        const padding = 20; const availableW = this.width - (padding * 2);
+        const maxRadiusW = (availableW / cols) / 2 - 8;
+        this.slotRadius = Math.min(maxRadiusW, 42); 
+        this.coinRadius = this.slotRadius - 4;
+        this.coinHeight = Math.min(14, this.slotRadius * 0.4); 
+        const rows = Math.ceil(count / cols);
+        const rowHeight = this.slotRadius * 2 + (cfg.size * this.coinHeight) + 40; 
+        const totalH = rows * rowHeight;
+        const startY = (this.height - totalH) / 2 + (rowHeight/2);
+        this.layout.slots = [];
+        for(let i=0; i<count; i++) {
+            const r = Math.floor(i / cols); const c = i % cols;
+            const itemsInThisRow = (r === rows - 1 && count % cols !== 0) ? count % cols : cols;
+            const rowWidth = itemsInThisRow * (this.slotRadius * 2 + 16);
+            const startX = (this.width - rowWidth) / 2 + this.slotRadius + 8;
+            this.layout.slots.push({ x: startX + c * (this.slotRadius * 2 + 16), y: startY + r * rowHeight });
+        }
+    }
 
-  //left and right
-  minesFound += checkTile(r, c - 1); //left
-  minesFound += checkTile(r, c + 1); //right
+    startLevel(idx) {
+        this.currentLevelIdx = idx;
+        const cfg = LEVELS_CONFIG[idx];
+        
+        // PERSISTENCE LOGIC
+        // Check if we have a saved session for this level
+        const savedSession = dataManager.data.currentSession;
+        if (savedSession && savedSession.levelIdx === idx) {
+            // Restore illusion of persistence
+            this.stacks = JSON.parse(JSON.stringify(savedSession.stacks));
+        } else {
+            // Generate New Level
+            let temp = [];
+            for(let i=0; i<cfg.slots; i++) {
+                if(i < cfg.colors) {
+                    let s = []; for(let k=0; k<cfg.size; k++) s.push(i); temp.push(s);
+                } else { temp.push([]); }
+            }
+            let moves = 0; let limit = 300 + (idx * 50); let safety = 0;
+            while (moves < limit && safety < 10000) {
+                safety++;
+                const from = Math.floor(Math.random() * cfg.slots);
+                const to = Math.floor(Math.random() * cfg.slots);
+                if(from === to || temp[from].length === 0) continue;
+                if(temp[to].length >= cfg.size) continue;
+                temp[to].push(temp[from].pop());
+                moves++;
+            }
+            this.stacks = temp;
+            
+            // SAVE THIS STATE so if they exit and re-enter, it's the same
+            dataManager.data.currentSession = {
+                levelIdx: idx,
+                stacks: JSON.parse(JSON.stringify(this.stacks))
+            };
+            dataManager.save();
+        }
 
-  //bottom 3
-  minesFound += checkTile(r + 1, c - 1); //bottom left
-  minesFound += checkTile(r + 1, c); //bottom
-  minesFound += checkTile(r + 1, c + 1); //bottom right
+        this.state = 'IDLE';
+        this.selectedStack = -1;
+        this.moves = 0;
+        this.history = [];
+        this.animations = [];
+        
+        this.resize();
+        document.getElementById('hud-lvl').innerText = idx + 1;
+        ui.switchScreen('game');
+    }
 
-  if (minesFound > 0) {
-    board[r][c].innerText = minesFound;
-    board[r][c].classList.add("x" + minesFound.toString());
-  } else {
-    board[r][c].innerText = "";
+    handleInput(x, y) {
+        if (this.state === 'ANIMATING' || this.state === 'PAUSED') return;
+        const rect = this.canvas.getBoundingClientRect();
+        const cx = x - rect.left; const cy = y - rect.top;
+        let hitIndex = -1;
+        const cfg = LEVELS_CONFIG[this.currentLevelIdx];
+        const stackMaxH = cfg.size * this.coinHeight + 50;
+        for(let i=0; i<this.layout.slots.length; i++) {
+            const pos = this.layout.slots[i];
+            if (Math.abs(cx - pos.x) < this.slotRadius + 5 && cy < pos.y + this.slotRadius && cy > pos.y - stackMaxH) {
+                hitIndex = i; break;
+            }
+        }
+        if (hitIndex === -1) { this.selectedStack = -1; return; }
+        if (this.selectedStack === -1) {
+            if (this.stacks[hitIndex].length > 0) {
+                this.selectedStack = hitIndex;
+                audio.play('pop');
+            }
+        } else {
+            if (this.selectedStack === hitIndex) { this.selectedStack = -1; audio.play('pop'); }
+            else { this.attemptMove(this.selectedStack, hitIndex); }
+        }
+    }
 
-    //top 3
-    checkMine(r - 1, c - 1); //top left
-    checkMine(r - 1, c); //top
-    checkMine(r - 1, c + 1); //top right
+    attemptMove(from, to) {
+        const src = this.stacks[from]; const tgt = this.stacks[to];
+        const cfg = LEVELS_CONFIG[this.currentLevelIdx];
+        if (tgt.length >= cfg.size) { audio.play('error'); this.selectedStack = -1; return; }
+        const color = src[src.length - 1];
+        if (tgt.length === 0 || tgt[tgt.length - 1] === color) {
+            let clusterSize = 0;
+            for(let i = src.length - 1; i >= 0; i--) { if (src[i] === color) clusterSize++; else break; }
+            const space = cfg.size - tgt.length;
+            const toMove = Math.min(clusterSize, space);
+            this.history.push(JSON.parse(JSON.stringify(this.stacks)));
+            if(this.history.length > 10) this.history.shift();
+            const movingCoins = [];
+            for(let k=0; k<toMove; k++) { this.stacks[from].pop(); movingCoins.push({ c: color }); }
+            const startPos = this.layout.slots[from]; const endPos = this.layout.slots[to];
+            const startH = (this.stacks[from].length) * this.coinHeight;
+            const endH = (this.stacks[to].length) * this.coinHeight;
+            this.animations.push({
+                type: 'move', coins: movingCoins,
+                sx: startPos.x, sy: startPos.y - startH,
+                ex: endPos.x, ey: endPos.y - endH,
+                targetIdx: to, t: 0, dur: 300
+            });
+            this.selectedStack = -1; this.moves++;
+            audio.play('land'); this.state = 'ANIMATING';
+        } else { audio.play('error'); this.selectedStack = -1; }
+    }
 
-    //left and right
-    checkMine(r, c - 1); //left
-    checkMine(r, c + 1); //right
+    checkWin() {
+        const cfg = LEVELS_CONFIG[this.currentLevelIdx];
+        let completed = 0; let empty = 0;
+        for(let s of this.stacks) {
+            if (s.length === 0) { empty++; continue; }
+            if (s.length === cfg.size) { const first = s[0]; if (s.every(c => c === first)) completed++; }
+        }
+        const activeStacks = this.stacks.length - empty;
+        if (completed === activeStacks && activeStacks > 0) {
+            setTimeout(() => {
+                audio.play('win');
+                fireConfetti();
+                this.saveWin(this.currentLevelIdx);
+                dataManager.showInterstitial(); // Ad on win
+                document.getElementById('vic-moves').innerText = this.moves;
+                ui.showModals('victory');
+            }, 300);
+        }
+    }
 
-    //bottom 3
-    checkMine(r + 1, c - 1); //bottom left
-    checkMine(r + 1, c); //bottom
-    checkMine(r + 1, c + 1); //bottom right
-  }
+    undo() {
+        if (this.state === 'ANIMATING' || this.history.length === 0) return;
+        this.stacks = this.history.pop();
+        this.selectedStack = -1;
+        audio.play('pop');
+    }
 
-  if (tilesClicked == rows * columns - minesCount) {
-    document.getElementById("mines-count").innerText = "Cleared";
-    gameOver = true;
-  }
+    pause() { this.state = 'PAUSED'; ui.showModals('pause'); }
+    resume() { this.state = 'IDLE'; ui.hideModals(); }
+    restartLevel() { ui.hideModals(); this.startLevel(this.currentLevelIdx); }
+    quitToMenu() { ui.hideModals(); ui.showMenu(); }
+
+    loop(t) {
+        const dt = t - this.lastTime; this.lastTime = t;
+        if (this.state === 'ANIMATING') {
+            let activeAnims = false;
+            for(let i = this.animations.length - 1; i >= 0; i--) {
+                this.animations[i].t += dt;
+                if (this.animations[i].t >= this.animations[i].dur) {
+                    const anim = this.animations[i];
+                    for(let c of anim.coins) this.stacks[anim.targetIdx].push(c.c);
+                    audio.play('land');
+                    this.checkWin();
+                    this.animations.splice(i, 1);
+                } else { activeAnims = true; }
+            }
+            if (!activeAnims && this.animations.length === 0) this.state = 'IDLE';
+        }
+        if (this.state !== 'PAUSED') this.draw();
+        requestAnimationFrame(tm => this.loop(tm));
+    }
+
+    draw() {
+        this.ctx.clearRect(0, 0, this.width, this.height);
+        if (!this.layout.slots.length) return;
+        for(let i=0; i<this.stacks.length; i++) {
+            const pos = this.layout.slots[i];
+            this.ctx.beginPath(); this.ctx.ellipse(pos.x, pos.y, this.slotRadius, this.slotRadius * 0.35, 0, 0, Math.PI*2);
+            this.ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--slot-base'); this.ctx.fill();
+            if (this.selectedStack === i) {
+                this.ctx.beginPath(); this.ctx.ellipse(pos.x, pos.y, this.slotRadius + 6, (this.slotRadius+6)*0.35, 0, 0, Math.PI*2);
+                this.ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--accent'); this.ctx.lineWidth = 4; this.ctx.stroke();
+            }
+        }
+        for(let i=0; i<this.stacks.length; i++) {
+            const pos = this.layout.slots[i]; const stack = this.stacks[i];
+            let liftIndex = 999;
+            if (this.selectedStack === i && stack.length > 0) {
+                const topColor = stack[stack.length-1];
+                for(let k=stack.length-1; k>=0; k--) { if (stack[k] === topColor) liftIndex = k; else break; }
+            }
+            for(let j=0; j<stack.length; j++) {
+                const colorHex = PALETTE[stack[j] % PALETTE.length];
+                let yOffset = j * this.coinHeight;
+                if (j >= liftIndex) yOffset += 20; 
+                drawDetailedCoin(this.ctx, pos.x, pos.y - yOffset, this.coinRadius, this.coinHeight, colorHex);
+            }
+        }
+        if (this.state === 'ANIMATING') {
+            for(let anim of this.animations) {
+                const progress = Math.min(1, anim.t / anim.dur);
+                const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+                const curX = anim.sx + (anim.ex - anim.sx) * ease;
+                const linearY = anim.sy + (anim.ey - anim.sy) * ease;
+                const highestPoint = Math.min(anim.sy, anim.ey);
+                const peakY = highestPoint - 40; 
+                const safePeak = Math.max(50, peakY);
+                const midLinear = (anim.sy + anim.ey) / 2;
+                const H = midLinear - safePeak;
+                const curY = linearY - 4 * H * ease * (1 - ease);
+                for(let k=0; k<anim.coins.length; k++) {
+                    const c = anim.coins[k];
+                    const stackOffset = k * this.coinHeight;
+                    const colorHex = PALETTE[c.c % PALETTE.length];
+                    drawDetailedCoin(this.ctx, curX, curY - stackOffset, this.coinRadius, this.coinHeight, colorHex);
+                }
+            }
+        }
+    }
 }
 
-function checkTile(r, c) {
-  if (r < 0 || r >= rows || c < 0 || c >= columns) {
-    return 0;
-  }
-  if (minesLocation.includes(r.toString() + "-" + c.toString())) {
-    return 1;
-  }
-  return 0;
+// Global Confetti
+const cCanvas = document.getElementById('confetti-canvas');
+const cCtx = cCanvas.getContext('2d');
+let confettis = [];
+function fireConfetti() {
+    cCanvas.width = document.getElementById('app-container').clientWidth;
+    cCanvas.height = document.getElementById('app-container').clientHeight;
+    confettis = [];
+    for(let i=0; i<80; i++) confettis.push({
+        x: cCanvas.width/2, y: cCanvas.height/2,
+        vx: (Math.random()-0.5)*15, vy: (Math.random()-2)*15,
+        c: PALETTE[Math.floor(Math.random()*PALETTE.length)],
+        r: Math.random()*8+4, drag: 0.95, g: 0.6
+    });
+    loopConfetti();
 }
+function loopConfetti() {
+    if(confettis.length === 0) { cCtx.clearRect(0,0,cCanvas.width,cCanvas.height); return; }
+    cCtx.clearRect(0,0,cCanvas.width,cCanvas.height);
+    for(let i=confettis.length-1; i>=0; i--) {
+        const p = confettis[i];
+        p.x += p.vx; p.y += p.vy; p.vx *= p.drag; p.vy *= p.drag; p.vy += p.g;
+        cCtx.fillStyle = p.c; cCtx.beginPath(); cCtx.arc(p.x, p.y, p.r, 0, Math.PI*2); cCtx.fill();
+        if(p.y > cCanvas.height) confettis.splice(i,1);
+    }
+    requestAnimationFrame(loopConfetti);
+}
+
+// Init
+const game = new Game();
+settings.init();
+dataManager.init(); // Starts VK integration
+
+</script>
+</body>
+</html>
