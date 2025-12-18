@@ -22,6 +22,7 @@
             --slot-base: rgba(0,0,0,0.06);
             --badge-bg: #FF7675;
             --badge-ad: #fdcb6e;
+            --lock-overlay: rgba(255,255,255,0.7);
         }
 
         /* Dark Theme */
@@ -36,6 +37,7 @@
             --accent-hover: #6c5ce7;
             --shadow-color: rgba(0,0,0,0.4);
             --slot-base: rgba(255,255,255,0.1);
+            --lock-overlay: rgba(0,0,0,0.6);
         }
 
         * {
@@ -116,10 +118,10 @@
             padding: 15px 20px;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start; /* Align top */
+            align-items: flex-start;
             z-index: 5;
             pointer-events: none;
-            height: 100px; /* Explicit height for layout calculation */
+            height: 100px;
         }
         #hud button { pointer-events: auto; }
 
@@ -255,10 +257,31 @@
             box-shadow: 0 4px 10px var(--shadow-color);
             cursor: pointer;
             transition: transform 0.1s;
+            position: relative;
+            overflow: hidden;
         }
         .level-card:active { transform: scale(0.97); }
         .level-card h3 { margin: 0; color: var(--text-main); font-size: 18px; }
         .level-card p { margin: 4px 0 0; color: var(--text-sec); font-size: 13px; font-weight: 700; }
+
+        .level-card.locked {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+        .level-card.locked::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--lock-overlay);
+            z-index: 1;
+        }
+        .level-card.locked .lock-icon-overlay {
+            position: absolute;
+            right: 20px;
+            font-size: 24px;
+            z-index: 2;
+            color: var(--text-sec);
+        }
 
         /* Modals */
         .modal-overlay {
@@ -460,6 +483,15 @@
                     <div class="toggle-knob"></div>
                 </div>
             </div>
+            <div class="setting-row">
+                <div class="setting-label">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92zM18 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM6 13c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm12 7.08c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>
+                    Вибрация
+                </div>
+                <div class="toggle-switch active" id="toggle-vibro" onclick="audio.click(); settings.toggleVibration()">
+                    <div class="toggle-knob"></div>
+                </div>
+            </div>
             <button class="btn-small" style="width:100%; margin-top:20px; background: var(--accent); color:white;" onclick="audio.click(); ui.hideModals()">ГОТОВО</button>
         </div>
     </div>
@@ -514,9 +546,10 @@
 const dataManager = {
     vkUserId: null,
     data: {
-        progress: {}, 
-        settings: { sound: true, theme: 'light' },
-        sessions: {} // Map { levelId: { stacks: [] } }
+        progress: {}, // { difficultyIdx: currentLevel }
+        settings: { sound: true, theme: 'light', vibration: true },
+        sessions: {}, // Map { levelId: { stacks: [] } }
+        levelsSinceAd: 0
     },
 
     async init() {
@@ -527,9 +560,12 @@ const dataManager = {
             vkBridge.send('VKWebAppShowBannerAd', { banner_location: 'bottom' }).catch(()=>{});
         } catch (e) { console.log('VK Init error', e); }
         await this.load();
+        
         settings.setTheme(this.data.settings.theme);
         settings.sound = this.data.settings.sound;
-        settings.updateSoundUI();
+        settings.vibration = this.data.settings.vibration !== undefined ? this.data.settings.vibration : true;
+        settings.updateUI();
+        
         audio.enabled = settings.sound;
     },
 
@@ -552,11 +588,13 @@ const dataManager = {
         if(loaded.progress) this.data.progress = {...this.data.progress, ...loaded.progress};
         if(loaded.settings) this.data.settings = {...this.data.settings, ...loaded.settings};
         if(loaded.sessions) this.data.sessions = {...this.data.sessions, ...loaded.sessions};
+        if(loaded.levelsSinceAd) this.data.levelsSinceAd = loaded.levelsSinceAd;
     },
 
     async save() {
         this.data.settings.theme = settings.theme;
         this.data.settings.sound = settings.sound;
+        this.data.settings.vibration = settings.vibration;
         const str = JSON.stringify(this.data);
         localStorage.setItem('ct_data_local', str);
         if (this.vkUserId) {
@@ -569,8 +607,8 @@ const dataManager = {
     incrementLevel(diffIdx) {
         if(!this.data.progress[diffIdx]) this.data.progress[diffIdx] = 1;
         this.data.progress[diffIdx]++;
-        // Clear session for this difficulty to regenerate
         if(this.data.sessions[diffIdx]) delete this.data.sessions[diffIdx];
+        this.data.levelsSinceAd++;
         this.save();
     },
 
@@ -579,12 +617,18 @@ const dataManager = {
         this.save();
     },
 
-    getSession(diffIdx) {
-        return this.data.sessions[diffIdx];
-    },
+    getSession(diffIdx) { return this.data.sessions[diffIdx]; },
 
-    showInterstitial() {
-        vkBridge.send('VKWebAppShowInterstitialAd').catch(()=>{});
+    checkAndShowInterstitial(diffIdx) {
+        let freq = 10;
+        if (diffIdx >= 2 && diffIdx <= 3) freq = 6;
+        if (diffIdx >= 4) freq = 3;
+
+        if (this.data.levelsSinceAd >= freq) {
+            vkBridge.send('VKWebAppShowInterstitialAd').catch(()=>{});
+            this.data.levelsSinceAd = 0;
+            this.save();
+        }
     },
 
     async showRewardAd() {
@@ -597,8 +641,8 @@ const dataManager = {
 
 /** SETTINGS */
 const settings = {
-    sound: true, theme: 'light',
-    init() { this.updateSoundUI(); },
+    sound: true, theme: 'light', vibration: true,
+    init() { this.updateUI(); },
     toggleTheme() { this.setTheme(this.theme === 'light' ? 'dark' : 'light'); dataManager.save(); },
     setTheme(mode) {
         this.theme = mode;
@@ -609,23 +653,24 @@ const settings = {
         if(typeof game !== 'undefined' && game) game.draw();
         if(typeof rulesDemo !== 'undefined') rulesDemo.draw();
     },
-    toggleSound() { this.sound = !this.sound; this.updateSoundUI(); audio.enabled = this.sound; dataManager.save(); },
-    updateSoundUI() {
-        const el = document.getElementById('toggle-sound');
-        if(this.sound) el.classList.add('active'); else el.classList.remove('active');
+    toggleSound() { this.sound = !this.sound; this.updateUI(); audio.enabled = this.sound; dataManager.save(); },
+    toggleVibration() { this.vibration = !this.vibration; this.updateUI(); dataManager.save(); },
+    updateUI() {
+        document.getElementById('toggle-sound').classList.toggle('active', this.sound);
+        document.getElementById('toggle-vibro').classList.toggle('active', this.vibration);
     }
 };
 
 /** CONFIG */
 const LEVELS_CONFIG = [
-    { id: 0, name: "Новичок",   colors: 3, slots: 5,  size: 4 },
-    { id: 1, name: "Ученик",    colors: 4, slots: 6,  size: 4 },
-    { id: 2, name: "Любитель",  colors: 5, slots: 7,  size: 4 },
-    { id: 3, name: "Спец",      colors: 6, slots: 8,  size: 4 },
-    { id: 4, name: "Эксперт",   colors: 7, slots: 9,  size: 4 },
-    { id: 5, name: "Мастер",    colors: 8, slots: 10, size: 4 },
-    { id: 6, name: "Легенда",   colors: 9, slots: 11, size: 5 },
-    { id: 7, name: "Гений",     colors: 10, slots: 12, size: 5 }
+    { id: 0, name: "Новичок",   colors: 3, slots: 5,  size: 4, reqWins: 0 },
+    { id: 1, name: "Ученик",    colors: 4, slots: 6,  size: 4, reqWins: 5 },
+    { id: 2, name: "Любитель",  colors: 5, slots: 7,  size: 4, reqWins: 5 },
+    { id: 3, name: "Спец",      colors: 6, slots: 8,  size: 4, reqWins: 5 },
+    { id: 4, name: "Эксперт",   colors: 7, slots: 9,  size: 4, reqWins: 5 },
+    { id: 5, name: "Мастер",    colors: 8, slots: 10, size: 4, reqWins: 5 },
+    { id: 6, name: "Легенда",   colors: 9, slots: 11, size: 5, reqWins: 5 },
+    { id: 7, name: "Гений",     colors: 10, slots: 12, size: 5, reqWins: 5 }
 ];
 
 const PALETTE = [
@@ -639,6 +684,7 @@ class AudioManager {
     constructor() { this.ctx = null; this.enabled = true; }
     init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); if (this.ctx.state === 'suspended') this.ctx.resume(); }
     haptic(type) {
+        if (!settings.vibration) return;
         if (window.vkBridge) {
             if(type==='error'||type==='success') vkBridge.send("VKWebAppTapticNotificationOccurred", {"type": type});
             else vkBridge.send("VKWebAppTapticImpactOccurred", {"style": type || "light"});
@@ -676,10 +722,43 @@ const ui = {
     showLevels() {
         const list = document.getElementById('levels-list'); list.innerHTML = '';
         LEVELS_CONFIG.forEach((lvl, idx) => {
-            const div = document.createElement('div'); div.className = `level-card`;
-            div.onclick = () => { audio.click(); game.startLevel(idx); };
+            const div = document.createElement('div');
+            
+            // Check Lock Status
+            let isLocked = false;
+            let winsPrev = 0;
+            if (idx > 0) {
+                const prevLvl = LEVELS_CONFIG[idx-1];
+                const currentLvlNumPrev = dataManager.getLevelNum(idx-1);
+                // Level num starts at 1. If user is at level 6, they have 5 wins.
+                winsPrev = currentLvlNumPrev - 1; 
+                if (winsPrev < prevLvl.reqWins) isLocked = true;
+            }
+
+            div.className = `level-card ${isLocked ? 'locked' : ''}`;
+            div.onclick = () => { if(!isLocked){ audio.click(); game.startLevel(idx); } };
+            
             const currentLvlNum = dataManager.getLevelNum(idx);
-            div.innerHTML = `<div><h3>${lvl.name}</h3><p>Уровень: ${currentLvlNum}</p></div><div style="width:36px; height:36px; background:var(--bg-grad-1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text-sec);"><svg class="icon" style="width:18px; height:18px; margin-left:2px;" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>`;
+            
+            let iconHtml = `<svg class="icon" style="width:18px; height:18px; margin-left:2px;" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+            let extraHtml = '';
+            
+            if (isLocked) {
+                const prevName = LEVELS_CONFIG[idx-1].name;
+                const prevReq = LEVELS_CONFIG[idx-1].reqWins;
+                extraHtml = `<div class="lock-icon-overlay">🔒</div>`;
+                // Show requirement text if locked
+                // We don't have space in the card easily, so tooltips or subtle text?
+                // Let's just rely on the lock icon for now to keep it clean.
+            }
+
+            div.innerHTML = `
+                <div><h3>${lvl.name}</h3><p>Уровень: ${currentLvlNum}</p></div>
+                <div style="width:36px; height:36px; background:var(--bg-grad-1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text-sec);">
+                    ${iconHtml}
+                </div>
+                ${extraHtml}
+            `;
             list.appendChild(div);
         });
         this.switchScreen('levels');
@@ -827,11 +906,12 @@ class Game {
             this.undosLeft--;
             ui.updateUndoBadge(this.undosLeft);
         } else {
-            // Show Rewarded Ad
+            // Show Rewarded Ad -> Get +1 Undo
             const success = await dataManager.showRewardAd();
             if (success) {
-                this.performUndo();
-                // We don't increment undosLeft, it stays 0 (AD mode)
+                this.undosLeft = 1;
+                ui.updateUndoBadge(this.undosLeft);
+                // User must click again to use it, standard pattern for rewarded buttons
             }
         }
     }
@@ -848,7 +928,7 @@ class Game {
         let c=0, e=0;
         for(let s of this.stacks){ if(s.length===0){e++;continue;} if(s.length===cfg.size && s.every(x=>x===s[0]))c++; }
         if(c === this.stacks.length-e && this.stacks.length-e > 0){
-            setTimeout(()=>{ audio.play('win'); fireConfetti(); dataManager.incrementLevel(this.currentLevelIdx); dataManager.showInterstitial(); document.getElementById('vic-moves').innerText=this.moves; ui.showModals('victory'); },300);
+            setTimeout(()=>{ audio.play('win'); fireConfetti(); dataManager.incrementLevel(this.currentLevelIdx); dataManager.checkAndShowInterstitial(this.currentLevelIdx); document.getElementById('vic-moves').innerText=this.moves; ui.showModals('victory'); },300);
         }
     }
 
