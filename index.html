@@ -19,7 +19,7 @@
             --accent: #6C5CE7;
             --accent-hover: #5649c0;
             --shadow-color: rgba(0,0,0,0.1);
-            --slot-base: rgba(0,0,0,0.06);
+            --slot-base: rgba(0,0,0,0.08); /* Darker for light theme visibility */
             --badge-bg: #FF7675;
             --badge-ad: #fdcb6e;
             --lock-overlay: rgba(255,255,255,0.85);
@@ -36,7 +36,7 @@
             --accent: #a29bfe;
             --accent-hover: #6c5ce7;
             --shadow-color: rgba(0,0,0,0.4);
-            --slot-base: rgba(255,255,255,0.1);
+            --slot-base: rgba(255,255,255,0.15); /* Significantly lighter for visibility */
             --lock-overlay: rgba(0,0,0,0.7);
         }
 
@@ -83,7 +83,6 @@
             transition: opacity 0.2s ease;
         }
         
-        /* Hide canvas visually when not in game to prevent bleed-through */
         canvas.hidden-visual {
             opacity: 0;
             pointer-events: none;
@@ -493,7 +492,7 @@
             </div>
             <div class="setting-row">
                 <div class="setting-label">
-                    <svg class="icon" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 14v4h-2v-4h2M7 14v4H5v-4h2m5-13c-4.97 0-9 4.03-9 9v2c0 .55.45 1 1 1h2v-6h-2v-2c0-3.87 3.13-7 7-7s7 3.13 7 7v2h-2v6h2c.55 0 1-.45 1-1v-2c0-4.97-4.03-9-9-9z"/></svg>
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M17 19H7V5h10v14zm0-18H7c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm-1 6h-2v2h2v-2zm-4 0H9v2h3v-2zM5 7h1v10H5V7zm14 0h-1v10h1V7z"/></svg>
                     Вибрация
                 </div>
                 <div class="toggle-switch active" id="toggle-vibro" onclick="audio.click(); settings.toggleVibration()">
@@ -717,13 +716,13 @@ const settings = {
 /** CONFIG */
 const LEVELS_CONFIG = [
     { id: 0, name: "Новичок",   colors: 3, slots: 5,  size: 4, reqWins: 0 },
-    { id: 1, name: "Ученик",    colors: 4, slots: 6,  size: 4, reqWins: 5 },
-    { id: 2, name: "Любитель",  colors: 5, slots: 7,  size: 4, reqWins: 5 },
-    { id: 3, name: "Спец",      colors: 6, slots: 8,  size: 4, reqWins: 5 },
-    { id: 4, name: "Эксперт",   colors: 7, slots: 9,  size: 4, reqWins: 5 },
-    { id: 5, name: "Мастер",    colors: 8, slots: 10, size: 4, reqWins: 5 },
-    { id: 6, name: "Легенда",   colors: 9, slots: 11, size: 5, reqWins: 5 },
-    { id: 7, name: "Гений",     colors: 10, slots: 12, size: 5, reqWins: 5 }
+    { id: 1, name: "Ученик",    colors: 4, slots: 6,  size: 4, reqWins: 10 },
+    { id: 2, name: "Любитель",  colors: 5, slots: 7,  size: 4, reqWins: 10 },
+    { id: 3, name: "Спец",      colors: 6, slots: 8,  size: 4, reqWins: 10 },
+    { id: 4, name: "Эксперт",   colors: 7, slots: 9,  size: 4, reqWins: 10 },
+    { id: 5, name: "Мастер",    colors: 8, slots: 10, size: 4, reqWins: 10 },
+    { id: 6, name: "Легенда",   colors: 9, slots: 11, size: 5, reqWins: 10 },
+    { id: 7, name: "Гений",     colors: 10, slots: 12, size: 5, reqWins: 10 }
 ];
 
 const PALETTE = [
@@ -827,18 +826,34 @@ class AudioManager {
                 gain.gain.exponentialRampToValueAtTime(0.01,now+0.15); 
                 osc.start(now); osc.stop(now+0.15); 
                 break;
-            case 'win': // Magical Chimes
+            case 'win': // Rich Major Arpeggio with harmonies
                 this.haptic('success'); 
-                const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98]; // C4 E4 G4 C5 E5 G5
-                notes.forEach((f,i)=>{ 
-                    const o=this.ctx.createOscillator();const g=this.ctx.createGain(); 
-                    o.type='sine'; o.frequency.value=f; 
-                    o.connect(g);g.connect(this.ctx.destination); 
-                    g.gain.setValueAtTime(0,now);
-                    g.gain.linearRampToValueAtTime(0.2,now+i*0.08+0.05); 
-                    g.gain.exponentialRampToValueAtTime(0.001,now+i*0.08+0.8); 
-                    o.start(now);o.stop(now+2); 
-                }); break;
+                const chord = [
+                    {f: 523.25, t: 0},    // C
+                    {f: 659.25, t: 0.1},  // E
+                    {f: 783.99, t: 0.2},  // G
+                    {f: 1046.50, t: 0.3}, // C
+                    {f: 523.25, t: 0.3},  // C (Lower octave harmony)
+                    {f: 1318.51, t: 0.4}, // E
+                    {f: 1567.98, t: 0.5}  // G
+                ];
+                chord.forEach(note => {
+                    const o = this.ctx.createOscillator();
+                    const g = this.ctx.createGain();
+                    o.type = 'triangle'; // Richer sound than sine
+                    o.frequency.value = note.f;
+                    o.connect(g);
+                    g.connect(this.ctx.destination);
+                    
+                    const t = now + note.t;
+                    g.gain.setValueAtTime(0, t);
+                    g.gain.linearRampToValueAtTime(0.15, t + 0.05);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.8);
+                    
+                    o.start(t);
+                    o.stop(t + 1);
+                });
+                break;
         }
     }
     
@@ -1018,14 +1033,46 @@ class Game {
         if (savedSession) {
             this.stacks = JSON.parse(JSON.stringify(savedSession.stacks));
         } else {
-            let temp = [];
-            for(let i=0; i<cfg.slots; i++) {
-                if(i<cfg.colors) { let s=[]; for(let k=0;k<cfg.size;k++)s.push(i); temp.push(s); }
-                else temp.push([]);
+            // ROBUST SHUFFLE ALGORITHM
+            // 1. Generate Solved State: Each color has 'size' coins
+            let allCoins = [];
+            for(let i=0; i<cfg.colors; i++) {
+                for(let k=0; k<cfg.size; k++) allCoins.push(i);
             }
-            let m=0, l=300+(idx*50), s=0;
-            while(m<l && s<10000){ s++; const f=Math.floor(Math.random()*cfg.slots), t=Math.floor(Math.random()*cfg.slots); if(f!==t && temp[f].length>0 && temp[t].length<cfg.size){ temp[t].push(temp[f].pop()); m++; } }
-            this.stacks = temp;
+            
+            // 2. Distribute coins to slots randomly, respecting capacity
+            // Create empty slots
+            let tempStacks = Array.from({length: cfg.slots}, () => []);
+            
+            // Shuffle all coins
+            for (let i = allCoins.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [allCoins[i], allCoins[j]] = [allCoins[j], allCoins[i]];
+            }
+            
+            // Fill slots
+            // We fill slots one by one until they are full (size)
+            let coinIdx = 0;
+            // Only fill (slots - empty) slots
+            const filledSlotsCount = cfg.slots - (cfg.slots - cfg.colors); // = colors count actually
+            // Wait, logic is: we have N colors * size coins.
+            // We have M slots with capacity 'size'.
+            // Total capacity = M * size. Total coins = N * size.
+            // Empty space = (M-N) * size.
+            // Just putting coins randomly into any slot that isn't full.
+            
+            while(coinIdx < allCoins.length) {
+                // Find a random slot that isn't full
+                let slotIdx = Math.floor(Math.random() * cfg.slots);
+                // Simple search for open slot if random hits full
+                while(tempStacks[slotIdx].length >= cfg.size) {
+                    slotIdx = (slotIdx + 1) % cfg.slots;
+                }
+                tempStacks[slotIdx].push(allCoins[coinIdx]);
+                coinIdx++;
+            }
+            
+            this.stacks = tempStacks;
             dataManager.saveSession(idx, this.stacks);
         }
         
