@@ -80,6 +80,12 @@
             touch-action: none;
             z-index: 1;
             cursor: pointer;
+            transition: opacity 0.3s ease; /* Smooth fade for visibility toggle */
+        }
+        
+        canvas.hidden-visual {
+            opacity: 0;
+            pointer-events: none;
         }
 
         #confetti-canvas {
@@ -402,6 +408,8 @@
 </head>
 <body>
 
+<audio id="bg-music" src="music.mp3" loop></audio>
+
 <div id="app-container">
     <canvas id="gameCanvas"></canvas>
     <canvas id="confetti-canvas"></canvas>
@@ -484,7 +492,7 @@
             </div>
             <div class="setting-row">
                 <div class="setting-label">
-                    <svg class="icon" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14zm-1-6h-2v2h2v-2zm-4 0H9v2h3v-2zM5 7h1v10H5V7zm14 0h-1v10h1V7z"/></svg>
                     Вибрация
                 </div>
                 <div class="toggle-switch active" id="toggle-vibro" onclick="audio.click(); settings.toggleVibration()">
@@ -535,10 +543,10 @@
                 <button class="btn-main" style="width:100%; margin-bottom:15px" onclick="audio.click(); game.restartLevel()">СЛЕДУЮЩИЙ</button>
             </div>
             
-            <!-- Unlock Content (Hidden by default) -->
+            <!-- Unlock Content -->
             <div id="vic-unlock-content" style="display:none;">
                 <p style="margin-bottom:20px; color:var(--accent); font-weight:bold;">Открыт новый уровень сложности!</p>
-                <h3 id="vic-unlock-name" style="margin-bottom:20px; color:var(--text-main);"></h3>
+                <h3 id="vic-unlock-name" style="margin-bottom:20px; color:var(--text-main); font-size: 24px;"></h3>
                 <button id="vic-btn-go-next" class="btn-main" style="width:100%; margin-bottom:15px; font-size:18px;">ПЕРЕЙТИ</button>
                 <button class="btn-small" style="width:100%; margin-bottom:15px; background:var(--bg-grad-2); color:white;" onclick="audio.click(); game.restartLevel()">ПРОДОЛЖИТЬ ЗДЕСЬ</button>
             </div>
@@ -556,7 +564,7 @@
 const dataManager = {
     vkUserId: null,
     data: {
-        progress: {}, // { difficultyIdx: currentLevel }
+        progress: {}, 
         settings: { sound: true, theme: 'light', vibration: true },
         sessions: {}, 
         levelsSinceAd: 0
@@ -568,6 +576,13 @@ const dataManager = {
             const user = await vkBridge.send('VKWebAppGetUserInfo');
             this.vkUserId = user.id;
             vkBridge.send('VKWebAppShowBannerAd', { banner_location: 'bottom' }).catch(()=>{});
+            
+            // Handle VK Pause/Resume
+            vkBridge.subscribe(e => {
+                if(e.detail.type === 'VKWebAppViewHide') audio.handleVisibility(false);
+                if(e.detail.type === 'VKWebAppViewRestore') audio.handleVisibility(true);
+            });
+
         } catch (e) { console.log('VK Init error', e); }
         await this.load();
         
@@ -576,7 +591,7 @@ const dataManager = {
         settings.vibration = this.data.settings.vibration !== undefined ? this.data.settings.vibration : true;
         settings.updateUI();
         
-        audio.enabled = settings.sound;
+        audio.initMusic(); // Start music loop handling
     },
 
     async load() {
@@ -616,7 +631,6 @@ const dataManager = {
 
     incrementLevel(diffIdx) {
         if(!this.data.progress[diffIdx]) this.data.progress[diffIdx] = 1;
-        
         const winsBefore = this.data.progress[diffIdx] - 1;
         this.data.progress[diffIdx]++;
         const winsAfter = this.data.progress[diffIdx] - 1;
@@ -625,14 +639,10 @@ const dataManager = {
         this.data.levelsSinceAd++;
         this.save();
 
-        // Check if just unlocked next level
         if (diffIdx < LEVELS_CONFIG.length - 1) {
-            const nextReq = LEVELS_CONFIG[diffIdx].reqWins; // Req for next diff is stored in current diff config? No, usually in next.
-            // Wait, my config structure: level 1 has reqWins 5. That means to unlock level 1, you need 5 wins on level 0.
-            // So we check LEVELS_CONFIG[diffIdx + 1].reqWins.
             const nextLvlConfig = LEVELS_CONFIG[diffIdx + 1];
             if (winsBefore < nextLvlConfig.reqWins && winsAfter >= nextLvlConfig.reqWins) {
-                return diffIdx + 1; // Return ID of unlocked level
+                return diffIdx + 1; // Unlocked level ID
             }
         }
         return false;
@@ -675,7 +685,7 @@ const settings = {
         if(typeof game !== 'undefined' && game) game.draw();
         if(typeof rulesDemo !== 'undefined') rulesDemo.draw();
     },
-    toggleSound() { this.sound = !this.sound; this.updateUI(); audio.enabled = this.sound; dataManager.save(); },
+    toggleSound() { this.sound = !this.sound; this.updateUI(); audio.toggleSound(this.sound); dataManager.save(); },
     toggleVibration() { this.vibration = !this.vibration; this.updateUI(); dataManager.save(); },
     updateUI() {
         document.getElementById('toggle-sound').classList.toggle('active', this.sound);
@@ -701,10 +711,45 @@ const PALETTE = [
     '#ecf0f1', '#95a5a6', '#8e44ad', '#d35400'
 ];
 
-/* --- AUDIO --- */
+/* --- AUDIO & MUSIC --- */
 class AudioManager {
-    constructor() { this.ctx = null; this.enabled = true; }
-    init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); if (this.ctx.state === 'suspended') this.ctx.resume(); }
+    constructor() { 
+        this.ctx = null; 
+        this.enabled = true; 
+        this.musicEl = document.getElementById('bg-music');
+        this.musicEl.volume = 0.3;
+        this.wasPlaying = false;
+    }
+    
+    init() { 
+        if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); 
+        if (this.ctx.state === 'suspended') this.ctx.resume(); 
+    }
+
+    initMusic() {
+        if(this.enabled) this.musicEl.play().catch(()=>{});
+    }
+
+    toggleSound(state) {
+        this.enabled = state;
+        if(state) this.musicEl.play().catch(()=>{});
+        else this.musicEl.pause();
+    }
+
+    handleVisibility(isVisible) {
+        if (!isVisible) {
+            if (!this.musicEl.paused) {
+                this.wasPlaying = true;
+                this.musicEl.pause();
+            }
+        } else {
+            if (this.wasPlaying && this.enabled) {
+                this.musicEl.play().catch(()=>{});
+                this.wasPlaying = false;
+            }
+        }
+    }
+
     haptic(type) {
         if (!settings.vibration) return;
         if (window.vkBridge) {
@@ -712,18 +757,33 @@ class AudioManager {
             else vkBridge.send("VKWebAppTapticImpactOccurred", {"style": type || "light"});
         } else if (navigator.vibrate) navigator.vibrate(type==='error'?[50,50,50]:15);
     }
+
     play(type) {
         if (!this.enabled || !this.ctx) return;
         const now = this.ctx.currentTime; const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
         osc.connect(gain); gain.connect(this.ctx.destination);
         switch(type) {
-            case 'pop': this.haptic('light'); osc.type='sine'; osc.frequency.setValueAtTime(300,now); osc.frequency.exponentialRampToValueAtTime(500,now+0.1); gain.gain.setValueAtTime(0.15,now); gain.gain.exponentialRampToValueAtTime(0.01,now+0.1); osc.start(now); osc.stop(now+0.1); break;
-            case 'land': this.haptic('medium'); osc.type='sine'; osc.frequency.setValueAtTime(400,now); osc.frequency.exponentialRampToValueAtTime(200,now+0.1); gain.gain.setValueAtTime(0.15,now); gain.gain.exponentialRampToValueAtTime(0.01,now+0.1); osc.start(now); osc.stop(now+0.1); break;
-            case 'error': this.haptic('error'); osc.type='sine'; osc.frequency.setValueAtTime(150,now); gain.gain.setValueAtTime(0.15,now); gain.gain.exponentialRampToValueAtTime(0.01,now+0.15); osc.start(now); osc.stop(now+0.15); break;
-            case 'win': this.haptic('success'); [523.25,659.25,783.99,1046.50].forEach((f,i)=>{ const o=this.ctx.createOscillator();const g=this.ctx.createGain(); o.type='sine';o.frequency.value=f; o.connect(g);g.connect(this.ctx.destination); g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(0.05,now+i*0.05+0.05); g.gain.exponentialRampToValueAtTime(0.001,now+i*0.05+0.5); o.start(now);o.stop(now+1); }); break;
+            case 'pop': // Soft bloop
+                this.haptic('light'); osc.type='sine'; osc.frequency.setValueAtTime(300,now); osc.frequency.exponentialRampToValueAtTime(500,now+0.1); gain.gain.setValueAtTime(0.15,now); gain.gain.exponentialRampToValueAtTime(0.01,now+0.1); osc.start(now); osc.stop(now+0.1); break;
+            case 'land': // Soft click
+                this.haptic('medium'); osc.type='sine'; osc.frequency.setValueAtTime(400,now); osc.frequency.exponentialRampToValueAtTime(200,now+0.1); gain.gain.setValueAtTime(0.15,now); gain.gain.exponentialRampToValueAtTime(0.01,now+0.1); osc.start(now); osc.stop(now+0.1); break;
+            case 'error': // Dull thud
+                this.haptic('error'); osc.type='triangle'; osc.frequency.setValueAtTime(150,now); gain.gain.setValueAtTime(0.1,now); gain.gain.exponentialRampToValueAtTime(0.01,now+0.15); osc.start(now); osc.stop(now+0.15); break;
+            case 'win': // Major Arpeggio
+                this.haptic('success'); 
+                const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98]; // C E G C E G
+                notes.forEach((f,i)=>{ 
+                    const o=this.ctx.createOscillator();const g=this.ctx.createGain(); 
+                    o.type='triangle'; o.frequency.value=f; 
+                    o.connect(g);g.connect(this.ctx.destination); 
+                    g.gain.setValueAtTime(0,now);
+                    g.gain.linearRampToValueAtTime(0.1,now+i*0.08+0.05); 
+                    g.gain.exponentialRampToValueAtTime(0.001,now+i*0.08+0.6); 
+                    o.start(now);o.stop(now+1.5); 
+                }); break;
         }
     }
-    click() { if (!this.enabled || !this.ctx) return; this.haptic('light'); const o=this.ctx.createOscillator();const g=this.ctx.createGain(); o.connect(g);g.connect(this.ctx.destination); o.frequency.setValueAtTime(800,this.ctx.currentTime); g.gain.setValueAtTime(0.05,this.ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,this.ctx.currentTime+0.05); o.start();o.stop(this.ctx.currentTime+0.05); }
+    click() { if (!this.enabled || !this.ctx) return; this.haptic('light'); const o=this.ctx.createOscillator();const g=this.ctx.createGain(); o.connect(g);g.connect(this.ctx.destination); o.frequency.setValueAtTime(800,this.ctx.currentTime); g.gain.setValueAtTime(0.03,this.ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,this.ctx.currentTime+0.05); o.start();o.stop(this.ctx.currentTime+0.05); }
 }
 const audio = new AudioManager();
 
@@ -733,8 +793,15 @@ const ui = {
     modals: { rules: document.getElementById('modal-rules'), pause: document.getElementById('modal-pause'), victory: document.getElementById('modal-victory'), settings: document.getElementById('modal-settings') },
     switchScreen(name) {
         Object.values(this.screens).forEach(s => { if(s) { s.classList.remove('active'); s.classList.add('hidden'); } });
-        if (name === 'game') this.screens.hud.style.display = 'flex';
-        else { this.screens.hud.style.display = 'none'; this.screens[name].classList.remove('hidden'); this.screens[name].classList.add('active'); }
+        if (name === 'game') {
+            this.screens.hud.style.display = 'flex';
+            document.getElementById('gameCanvas').classList.remove('hidden-visual');
+        } else {
+            this.screens.hud.style.display = 'none';
+            this.screens[name].classList.remove('hidden');
+            this.screens[name].classList.add('active');
+            document.getElementById('gameCanvas').classList.add('hidden-visual');
+        }
         vkBridge.send('VKWebAppShowBannerAd', { banner_location: 'bottom' }).catch(()=>{});
     },
     showModals(name) { this.modals[name].classList.add('visible'); if(name === 'rules') rulesDemo.start(); },
@@ -745,7 +812,6 @@ const ui = {
         const list = document.getElementById('levels-list'); list.innerHTML = '';
         LEVELS_CONFIG.forEach((lvl, idx) => {
             const div = document.createElement('div');
-            
             let isLocked = false;
             let winsPrev = 0;
             let unlockText = "";
