@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
+            /* Light Theme */
             --bg-grad-1: #f5f7fa;
             --bg-grad-2: #c3cfe2;
             --ui-bg: #FFFFFF;
@@ -20,22 +21,23 @@
             --blind-accent: #9b59b6;
             --blind-hover: #8e44ad;
             --shadow-color: rgba(0,0,0,0.1);
-            --slot-base: rgba(0,0,0,0.08);
+            --slot-base: rgba(0,0,0,0.1);
             --badge-bg: #FF7675;
             --badge-ad: #fdcb6e;
             --lock-overlay: rgba(255,255,255,0.85);
         }
+        /* Dark Theme - Modern Deep Navy/Purple */
         .dark-theme {
-            --bg-grad-1: #2d3436;
-            --bg-grad-2: #000000;
-            --ui-bg: #2d3436;
-            --text-main: #dfe6e9;
-            --text-sec: #b2bec3;
-            --card-bg: #353b48;
-            --accent: #a29bfe;
-            --accent-hover: #6c5ce7;
+            --bg-grad-1: #1B1B2F;
+            --bg-grad-2: #0F0F1A;
+            --ui-bg: #1B1B2F;
+            --text-main: #F8F9FA;
+            --text-sec: #ADB5BD;
+            --card-bg: #272740;
+            --accent: #8C7AE6;
+            --accent-hover: #7158E2;
             --blind-accent: #b33939;
-            --shadow-color: rgba(0,0,0,0.4);
+            --shadow-color: rgba(0,0,0,0.5);
             --slot-base: rgba(255,255,255,0.15);
             --lock-overlay: rgba(0,0,0,0.7);
         }
@@ -286,7 +288,6 @@ const dataManager = {
     },
     mergeData(loaded) {
         if(loaded.progress) {
-            // Миграция старых сохранений, если прогресс был не разделен по режимам
             for (let key in loaded.progress) {
                 if (!isNaN(key)) {
                     this.data.progress[`classic_${key}`] = loaded.progress[key];
@@ -318,7 +319,6 @@ const dataManager = {
         if(this.data.sessions[key]) delete this.data.sessions[key];
         this.data.levelsSinceAd++; this.save();
         
-        // Для теста - разблокированы все уровни, просто переходим к следующему, если есть
         if (diffIdx < LEVELS_CONFIG.length - 1) return diffIdx + 1;
         return false;
     },
@@ -334,14 +334,14 @@ const dataManager = {
     },
     async showInterstitialAd() {
         const wasSound = settings.sound;
-        if(wasSound) audio.toggleSound(false); // Глушим звук перед рекламой
+        if(wasSound) audio.toggleSound(false);
         try { 
             const r = await vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' }); 
             return r.result; 
         }
         catch(e) { return false; }
         finally {
-            if(wasSound) setTimeout(() => audio.toggleSound(true), 500); // Возвращаем звук
+            if(wasSound) setTimeout(() => audio.toggleSound(true), 500);
         }
     },
     async showRewardAd() {
@@ -377,7 +377,7 @@ const settings = {
     }
 };
 
-/** CONFIG */
+/** CONFIG - 12 UNIQUE, DISTINCT, HIGH CONTRAST COLORS (NO GRAYS) */
 const LEVELS_CONFIG = [
     { id: 0, name: "Новичок",   colors: 3, slots: 5,  size: 4, reqWins: 0 },
     { id: 1, name: "Ученик",    colors: 4, slots: 6,  size: 4, reqWins: 10 },
@@ -388,7 +388,20 @@ const LEVELS_CONFIG = [
     { id: 6, name: "Легенда",   colors: 9, slots: 11, size: 5, reqWins: 10 },
     { id: 7, name: "Гений",     colors: 10, slots: 12, size: 5, reqWins: 10 }
 ];
-const PALETTE = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6', '#e67e22', '#1abc9c', '#34495e', '#ecf0f1', '#95a5a6', '#8e44ad', '#d35400'];
+const PALETTE = [
+    '#ff4757', // 0: Ярко-красный
+    '#1e90ff', // 1: Яркий синий
+    '#2ed573', // 2: Сочный зеленый
+    '#ffa502', // 3: Оранжево-желтый
+    '#ff9ff3', // 4: Светло-розовый
+    '#9c88ff', // 5: Лавандовый (Фиолетовый)
+    '#00d2d3', // 6: Бирюзовый
+    '#feca57', // 7: Золотой / Желтый
+    '#5f27cd', // 8: Темно-фиолетовый (Индиго)
+    '#ff7f50', // 9: Коралловый
+    '#833471', // 10: Бордовый
+    '#01a3a4'  // 11: Темно-бирюзовый
+];
 
 /* --- AUDIO & MUSIC --- */
 class AudioManager {
@@ -423,7 +436,7 @@ class AudioManager {
     }
     play(type) {
         if (!this.enabled || !this.ctx) return;
-        if (this.ctx.state === 'suspended') this.ctx.resume(); // Пробуждаем на всякий случай
+        if (this.ctx.state === 'suspended') this.ctx.resume();
         
         const now = this.ctx.currentTime, osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
         osc.connect(gain); gain.connect(this.ctx.destination);
@@ -474,14 +487,10 @@ const ui = {
         const list = document.getElementById('levels-list'); list.innerHTML = '';
         LEVELS_CONFIG.forEach((lvl, idx) => {
             const div = document.createElement('div');
-            // Для теста все уровни открыты
             let isLocked = false; 
-            
             div.className = `level-card`;
             div.onclick = () => { audio.click(); game.startLevel(idx); };
-            
             div.innerHTML = `<div><h3>${lvl.name}</h3><p>Уровень: ${dataManager.getLevelNum(idx)}</p></div><div style="width:36px; height:36px; background:var(--bg-grad-1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text-sec);"><svg class="icon" style="width:18px; height:18px; margin-left:2px;" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>`;
-            
             list.appendChild(div);
         });
         this.switchScreen('levels');
@@ -620,54 +629,46 @@ class Game {
         this.triggerDraw();
     }
     
+    // Полноценное случайное блуждание для гарантии максимального запутывания дна
     generateSolvableLevel(cfg) {
         let tempStacks = Array.from({length: cfg.slots}, () => []);
         for(let i=0; i<cfg.colors; i++) { for(let k=0; k<cfg.size; k++) tempStacks[i].push(i); } 
         
-        const passes = cfg.colors * 400; 
+        const passes = cfg.colors * cfg.size * 30; // Огромное количество шагов (~1500)
         for(let p=0; p<passes; p++) {
             let validSources = [];
+            // Любая стопка, где есть монеты - это валидный источник (разрешаем брать ЛЮБУЮ верхнюю монету)
             for(let i=0; i<cfg.slots; i++) {
-                if(tempStacks[i].length > 0) {
-                    if(tempStacks[i].length === 1) {
-                        validSources.push(i);
-                    } else {
-                        const top = tempStacks[i][tempStacks[i].length - 1];
-                        const under = tempStacks[i][tempStacks[i].length - 2];
-                        if(top === under) validSources.push(i);
-                    }
-                }
+                if(tempStacks[i].length > 0) validSources.push(i);
             }
             if(validSources.length === 0) continue; 
             
-            let bestSources = validSources.filter(i => tempStacks[i].length > 1);
-            if(bestSources.length === 0) bestSources = validSources;
-            const src = bestSources[Math.floor(Math.random() * bestSources.length)];
+            const src = validSources[Math.floor(Math.random() * validSources.length)];
             const topColor = tempStacks[src][tempStacks[src].length - 1];
             
-            let validTargets = [];
             let idealTargets = [];
+            let fallbackTargets = [];
             
+            // Валидная цель - любая стопка, где есть место
             for(let i=0; i<cfg.slots; i++) { 
                 if(i !== src && tempStacks[i].length < cfg.size) {
-                    validTargets.push(i);
-                    // Идеальная цель: пустой слот или слот с монетой ДРУГОГО цвета
+                    // Идеально: кладем на другой цвет или в пустой слот
                     if(tempStacks[i].length === 0 || tempStacks[i][tempStacks[i].length - 1] !== topColor) {
                         idealTargets.push(i);
+                    } else {
+                        fallbackTargets.push(i);
                     }
                 }
             }
             
-            // Если есть идеальные цели, используем только их
-            if(idealTargets.length > 0) validTargets = idealTargets;
+            let targets = idealTargets.length > 0 ? idealTargets : fallbackTargets;
             
-            if(validTargets.length > 0) {
-                const tgt = validTargets[Math.floor(Math.random() * validTargets.length)];
+            if(targets.length > 0) {
+                const tgt = targets[Math.floor(Math.random() * targets.length)];
                 tempStacks[tgt].push(tempStacks[src].pop());
             }
         }
         
-        // В классике все монеты сразу открыты! В слепом - только верхние.
         return tempStacks.map(stack => stack.map((c, idx) => ({ 
             c: c, 
             rev: ui.gameMode === 'classic' ? true : (idx === stack.length - 1) 
@@ -689,7 +690,7 @@ class Game {
     }
     handleInput(x, y) {
         if (this.state==='ANIMATING' || this.state==='PAUSED') return;
-        if (this.ctx.state === 'suspended') this.ctx.resume(); // Пробуждаем звук
+        if (this.ctx.state === 'suspended') this.ctx.resume();
         
         const rect=this.canvas.getBoundingClientRect(), cx=x-rect.left, cy=y-rect.top;
         let hit=-1; const cfg=LEVELS_CONFIG[this.currentLevelIdx], maxH=cfg.size*this.coinHeight+50;
@@ -783,7 +784,13 @@ class Game {
         for(let i=0; i<this.stacks.length; i++){
             const p=this.layout.slots[i];
             this.ctx.beginPath(); this.ctx.ellipse(p.x,p.y,this.slotRadius,this.slotRadius*0.35,0,0,Math.PI*2);
-            this.ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--slot-base'); this.ctx.fill();
+            this.ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--slot-base').trim(); 
+            this.ctx.fill();
+            // Добавлена легкая обводка для баз (чтобы лучше читалось в темной теме)
+            this.ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+            this.ctx.lineWidth = 1;
+            this.ctx.stroke();
+
             if(this.selectedStack===i){
                 this.ctx.beginPath(); this.ctx.ellipse(p.x,p.y,this.slotRadius+6,(this.slotRadius+6)*0.35,0,0,Math.PI*2);
                 this.ctx.strokeStyle=getComputedStyle(document.body).getPropertyValue('--accent'); this.ctx.lineWidth=4; this.ctx.stroke();
