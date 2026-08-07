@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Light Theme */
             --bg-grad-1: #f5f7fa;
             --bg-grad-2: #c3cfe2;
             --ui-bg: #FFFFFF;
@@ -26,7 +25,6 @@
             --badge-ad: #fdcb6e;
             --lock-overlay: rgba(255,255,255,0.85);
         }
-        /* Dark Theme */
         .dark-theme {
             --bg-grad-1: #2d3436;
             --bg-grad-2: #000000;
@@ -41,158 +39,50 @@
             --slot-base: rgba(255,255,255,0.15);
             --lock-overlay: rgba(0,0,0,0.7);
         }
-        * {
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            font-family: 'Nunito', sans-serif;
-        }
-        body {
-            margin: 0; padding: 0;
-            background: #1e272e;
-            width: 100vw; height: 100vh;
-            display: flex; justify-content: center; align-items: center;
-            overflow: hidden;
-        }
-        #app-container {
-            position: relative;
-            width: 100%; height: 100%;
-            max-width: 450px; max-height: 900px;
-            background: linear-gradient(135deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%);
-            overflow: hidden;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            display: flex; flex-direction: column;
-            transition: background 0.3s;
-        }
-        canvas {
-            display: block; width: 100%; height: 100%;
-            touch-action: none; z-index: 1;
-            cursor: pointer; transition: opacity 0.2s ease;
-        }
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Nunito', sans-serif; }
+        body { margin: 0; padding: 0; background: #1e272e; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        #app-container { position: relative; width: 100%; height: 100%; max-width: 450px; max-height: 900px; background: linear-gradient(135deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%); overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.5); display: flex; flex-direction: column; transition: background 0.3s; }
+        canvas { display: block; width: 100%; height: 100%; touch-action: none; z-index: 1; cursor: pointer; transition: opacity 0.2s ease; }
         canvas.hidden-visual { opacity: 0; pointer-events: none; }
         #confetti-canvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 20; }
-        
-        /* UI SCREENS */
-        .screen {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%;
-            display: flex; flex-direction: column;
-            background: linear-gradient(135deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%);
-            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-            z-index: 10; padding: 20px;
-            align-items: center; justify-content: center;
-        }
+        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; background: linear-gradient(135deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%); transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); z-index: 10; padding: 20px; align-items: center; justify-content: center; }
         .screen.hidden { transform: translateX(100%); pointer-events: none; }
         .screen.active { transform: translateX(0); }
         #screen-levels { justify-content: flex-start; }
         #screen-other-games { justify-content: flex-start; overflow-y: auto; }
-        
-        /* HUD */
-        #hud {
-            position: absolute; top: 0; left: 0;
-            width: 100%; padding: 15px 20px;
-            display: flex; justify-content: space-between; align-items: flex-start;
-            z-index: 5; pointer-events: none; height: 100px;
-        }
+        #hud { position: absolute; top: 0; left: 0; width: 100%; padding: 15px 20px; display: flex; justify-content: space-between; align-items: flex-start; z-index: 5; pointer-events: none; height: 100px; }
         #hud button { pointer-events: auto; }
-        
-        /* COMPONENTS */
         .logo-box { margin-bottom: 50px; text-align: center; animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
         .logo-main { font-size: 56px; font-weight: 900; color: var(--text-main); line-height: 0.9; text-shadow: 2px 2px 0px rgba(128,128,128,0.2); }
         .logo-sub { font-size: 20px; color: var(--accent); font-weight: 700; letter-spacing: 4px; text-transform: uppercase; margin-top: 10px; }
-        
-        .btn-main {
-            background: var(--accent); color: #fff;
-            width: 80%; padding: 22px; border-radius: 20px; border: none;
-            font-size: 24px; font-weight: 800;
-            box-shadow: 0 8px 0 var(--accent-hover), 0 20px 30px rgba(0,0,0,0.2);
-            margin-bottom: 20px; cursor: pointer; transition: transform 0.1s;
-        }
+        .btn-main { background: var(--accent); color: #fff; width: 80%; padding: 22px; border-radius: 20px; border: none; font-size: 24px; font-weight: 800; box-shadow: 0 8px 0 var(--accent-hover), 0 20px 30px rgba(0,0,0,0.2); margin-bottom: 20px; cursor: pointer; transition: transform 0.1s; }
         .btn-main:active { transform: translateY(8px); box-shadow: 0 0 0 transparent !important; }
-        
         .btn-row { display: flex; gap: 15px; width: 80%; margin-bottom: 20px; }
-        .btn-small {
-            flex: 1; background: var(--card-bg); color: var(--text-sec);
-            padding: 18px; border-radius: 18px; border: none;
-            font-weight: 700; font-size: 16px;
-            box-shadow: 0 5px 0 var(--shadow-color); cursor: pointer;
-        }
+        .btn-small { flex: 1; background: var(--card-bg); color: var(--text-sec); padding: 18px; border-radius: 18px; border: none; font-weight: 700; font-size: 16px; box-shadow: 0 5px 0 var(--shadow-color); cursor: pointer; }
         .btn-small:active { transform: translateY(5px); box-shadow: none; }
-        
-        .btn-icon-round {
-            position: relative; width: 50px; height: 50px;
-            border-radius: 50%; background: var(--card-bg); border: none;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 0 var(--shadow-color); cursor: pointer; color: var(--text-main);
-        }
+        .btn-icon-round { position: relative; width: 50px; height: 50px; border-radius: 50%; background: var(--card-bg); border: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 var(--shadow-color); cursor: pointer; color: var(--text-main); }
         .btn-icon-round:active { transform: translateY(4px); box-shadow: none; }
-        
-        .btn-settings-main {
-            position: absolute; top: 20px; right: 20px;
-            width: 44px; height: 44px; border-radius: 14px;
-            background: transparent; border: 2px solid var(--text-sec); color: var(--text-sec);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; opacity: 0.6; transition: opacity 0.2s;
-        }
+        .btn-settings-main { position: absolute; top: 20px; right: 20px; width: 44px; height: 44px; border-radius: 14px; background: transparent; border: 2px solid var(--text-sec); color: var(--text-sec); display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0.6; transition: opacity 0.2s; }
         .btn-settings-main:hover { opacity: 1; }
-        
-        /* Badge for Undo */
-        .badge {
-            position: absolute; bottom: -5px; right: -5px;
-            background-color: var(--badge-bg); color: white;
-            font-size: 10px; font-weight: 900; padding: 4px 6px;
-            border-radius: 10px; min-width: 20px; text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 2px solid var(--card-bg);
-        }
+        .badge { position: absolute; bottom: -5px; right: -5px; background-color: var(--badge-bg); color: white; font-size: 10px; font-weight: 900; padding: 4px 6px; border-radius: 10px; min-width: 20px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 2px solid var(--card-bg); }
         .badge.ad { background-color: var(--badge-ad); color: #2d3436; padding: 4px 4px; }
-        
-        /* Level List */
-        .scroll-list {
-            width: 100%; flex: 1; overflow-y: auto; padding: 10px 20px;
-            display: flex; flex-direction: column; gap: 12px;
-            mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
-            -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
-            padding-bottom: 40px;
-        }
-        .level-card {
-            background: var(--card-bg); padding: 20px; border-radius: 18px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 10px var(--shadow-color); cursor: pointer;
-            transition: transform 0.1s; position: relative; overflow: hidden;
-        }
+        .scroll-list { width: 100%; flex: 1; overflow-y: auto; padding: 10px 20px; display: flex; flex-direction: column; gap: 12px; mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent); padding-bottom: 40px; }
+        .level-card { background: var(--card-bg); padding: 20px; border-radius: 18px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px var(--shadow-color); cursor: pointer; transition: transform 0.1s; position: relative; overflow: hidden; }
         .level-card:active { transform: scale(0.97); }
         .level-card h3 { margin: 0; color: var(--text-main); font-size: 18px; }
         .level-card p { margin: 4px 0 0; color: var(--text-sec); font-size: 13px; font-weight: 700; }
         .level-card.locked { pointer-events: none; }
-        .level-card.locked::after {
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--lock-overlay); z-index: 1;
-        }
+        .level-card.locked::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--lock-overlay); z-index: 1; }
         .level-card .lock-icon-overlay { position: absolute; right: 20px; z-index: 2; color: var(--text-sec); opacity: 0.7; }
-        
-        /* Modals */
-        .modal-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 50; display: flex;
-            justify-content: center; align-items: center; backdrop-filter: blur(8px);
-            opacity: 0; pointer-events: none; transition: opacity 0.3s;
-        }
+        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 50; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(8px); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .modal-overlay.visible { opacity: 1; pointer-events: auto; }
-        .modal {
-            background: var(--card-bg); width: 85%; padding: 25px;
-            border-radius: 28px; text-align: center; transform: scale(0.9);
-            transition: transform 0.3s; box-shadow: 0 20px 40px rgba(0,0,0,0.3); color: var(--text-main);
-        }
+        .modal { background: var(--card-bg); width: 85%; padding: 25px; border-radius: 28px; text-align: center; transform: scale(0.9); transition: transform 0.3s; box-shadow: 0 20px 40px rgba(0,0,0,0.3); color: var(--text-main); }
         .modal-overlay.visible .modal { transform: scale(1); }
         .modal h2 { margin: 0 0 15px; font-size: 28px; color: var(--text-main); }
-        
-        /* Rules */
         .rules-canvas-container { width: 100%; height: 120px; background: var(--bg-grad-1); border-radius: 16px; margin-bottom: 20px; border: 2px solid var(--slot-base); }
         .rule-text { text-align: left; font-size: 14px; color: var(--text-main); margin-bottom: 10px; line-height: 1.4; }
         .rule-text b { color: var(--accent); }
-        
-        /* Settings Toggles */
         .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--shadow-color); }
         .setting-row:last-child { border-bottom: none; }
         .setting-label { font-size: 18px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
@@ -200,23 +90,14 @@
         .toggle-switch.active { background: var(--accent); }
         .toggle-knob { position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; background: white; border-radius: 50%; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .toggle-switch.active .toggle-knob { transform: translateX(22px); }
-        
-        /* Other Games Grid */
         #other-games-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; padding: 10px 0; }
         .other-game-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.1s; }
         .other-game-item:active { transform: scale(0.95); }
         .game-icon { width: 70px; height: 70px; background: #eee; border-radius: 18px; overflow: hidden; margin-bottom: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         .game-icon img { width: 100%; height: 100%; object-fit: cover; }
         .game-name { font-size: 11px; font-weight: 700; color: var(--text-main); text-align: center; line-height: 1.2; }
-        
         .icon { width: 24px; height: 24px; fill: currentColor; }
-        .btn-back {
-            position: absolute; top: 20px; left: 20px; width: 40px; height: 40px;
-            border-radius: 12px; background: var(--card-bg); border: none;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--text-main); box-shadow: 0 4px 0 var(--shadow-color);
-            cursor: pointer; z-index: 20;
-        }
+        .btn-back { position: absolute; top: 20px; left: 20px; width: 40px; height: 40px; border-radius: 12px; background: var(--card-bg); border: none; display: flex; align-items: center; justify-content: center; color: var(--text-main); box-shadow: 0 4px 0 var(--shadow-color); cursor: pointer; z-index: 20; }
     </style>
 </head>
 <body>
@@ -225,7 +106,6 @@
     <canvas id="gameCanvas"></canvas>
     <canvas id="confetti-canvas"></canvas>
     
-    <!-- HUD -->
     <div id="hud" style="display: none;">
         <button class="btn-icon-round" onclick="audio.click(); game.pause()">
             <svg class="icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
@@ -240,7 +120,6 @@
         </button>
     </div>
 
-    <!-- MAIN MENU -->
     <div id="screen-menu" class="screen active">
         <button class="btn-settings-main" onclick="audio.click(); ui.showSettings()">
             <svg class="icon" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L3.16 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.04.64.09.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
@@ -256,7 +135,6 @@
         </div>
     </div>
     
-    <!-- MODE SELECT SCREEN -->
     <div id="screen-mode" class="screen hidden">
         <button class="btn-back" onclick="audio.click(); ui.showMenu()">
             <svg class="icon" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
@@ -268,7 +146,6 @@
         <button class="btn-main" style="background: var(--blind-accent); box-shadow: 0 8px 0 var(--blind-hover), 0 20px 30px rgba(0,0,0,0.2);" onclick="audio.click(); ui.selectMode('blind')">ВСЛЕПУЮ</button>
     </div>
 
-    <!-- LEVEL SELECT -->
     <div id="screen-levels" class="screen hidden">
         <button class="btn-back" onclick="audio.click(); ui.switchScreen('mode')">
             <svg class="icon" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
@@ -278,7 +155,6 @@
         <div class="scroll-list" id="levels-list"></div>
     </div>
 
-    <!-- OTHER GAMES SCREEN -->
     <div id="screen-other-games" class="screen hidden">
         <button class="btn-back" onclick="audio.click(); ui.showMenu()">
             <svg class="icon" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
@@ -288,7 +164,6 @@
         <div id="other-games-container"></div>
     </div>
 
-    <!-- SETTINGS MODAL -->
     <div id="modal-settings" class="modal-overlay">
         <div class="modal">
             <h2>Настройки</h2>
@@ -308,7 +183,6 @@
         </div>
     </div>
 
-    <!-- RULES MODAL -->
     <div id="modal-rules" class="modal-overlay">
         <div class="modal">
             <h2>Как играть</h2>
@@ -321,7 +195,6 @@
         </div>
     </div>
 
-    <!-- PAUSE MODAL -->
     <div id="modal-pause" class="modal-overlay">
         <div class="modal">
             <h2>Пауза</h2>
@@ -330,7 +203,6 @@
         </div>
     </div>
 
-    <!-- VICTORY MODAL -->
     <div id="modal-victory" class="modal-overlay">
         <div class="modal">
             <div style="font-size: 60px; margin-bottom: 10px; animation: popIn 0.5s;">🏆</div>
@@ -413,7 +285,16 @@ const dataManager = {
         }
     },
     mergeData(loaded) {
-        if(loaded.progress) this.data.progress = {...this.data.progress, ...loaded.progress};
+        if(loaded.progress) {
+            // Миграция старых сохранений, если прогресс был не разделен по режимам
+            for (let key in loaded.progress) {
+                if (!isNaN(key)) {
+                    this.data.progress[`classic_${key}`] = loaded.progress[key];
+                    delete loaded.progress[key];
+                }
+            }
+            this.data.progress = {...this.data.progress, ...loaded.progress};
+        }
         if(loaded.settings) this.data.settings = {...this.data.settings, ...loaded.settings};
         if(loaded.sessions) this.data.sessions = {...this.data.sessions, ...loaded.sessions};
         if(loaded.levelsSinceAd) this.data.levelsSinceAd = loaded.levelsSinceAd;
@@ -426,39 +307,54 @@ const dataManager = {
         localStorage.setItem('ct_data_local', str);
         if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_${this.vkUserId}`, value: str }).catch(()=>{});
     },
-    getLevelNum(diffIdx) { return this.data.progress[diffIdx] || 1; },
+    getLevelNum(diffIdx) { 
+        return this.data.progress[`${ui.gameMode}_${diffIdx}`] || 1; 
+    },
     incrementLevel(diffIdx) {
-        if(!this.data.progress[diffIdx]) this.data.progress[diffIdx] = 1;
-        const winsBefore = this.data.progress[diffIdx] - 1;
-        this.data.progress[diffIdx]++;
-        const winsAfter = this.data.progress[diffIdx] - 1;
+        const key = `${ui.gameMode}_${diffIdx}`;
+        if(!this.data.progress[key]) this.data.progress[key] = 1;
+        this.data.progress[key]++;
         
-        const modeKey = ui.gameMode + '_' + diffIdx;
-        if(this.data.sessions[modeKey]) delete this.data.sessions[modeKey];
-        
+        if(this.data.sessions[key]) delete this.data.sessions[key];
         this.data.levelsSinceAd++; this.save();
-        if (diffIdx < LEVELS_CONFIG.length - 1) {
-            const nextLvlConfig = LEVELS_CONFIG[diffIdx + 1];
-            if (winsBefore < nextLvlConfig.reqWins && winsAfter >= nextLvlConfig.reqWins) return diffIdx + 1;
-        }
+        
+        // Для теста - разблокированы все уровни, просто переходим к следующему, если есть
+        if (diffIdx < LEVELS_CONFIG.length - 1) return diffIdx + 1;
         return false;
     },
     saveSession(mode, diffIdx, stacks) {
         this.data.sessions[`${mode}_${diffIdx}`] = { stacks: stacks }; this.save();
     },
     getSession(mode, diffIdx) { return this.data.sessions[`${mode}_${diffIdx}`]; },
+    
     checkAndShowInterstitial() {
         if (this.data.levelsSinceAd >= 5) {
             this.showInterstitialAd().then(() => { this.data.levelsSinceAd = 0; this.save(); }).catch(()=>{});
         }
     },
     async showInterstitialAd() {
-        try { const r = await vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' }); return r.result; }
+        const wasSound = settings.sound;
+        if(wasSound) audio.toggleSound(false); // Глушим звук перед рекламой
+        try { 
+            const r = await vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' }); 
+            return r.result; 
+        }
         catch(e) { return false; }
+        finally {
+            if(wasSound) setTimeout(() => audio.toggleSound(true), 500); // Возвращаем звук
+        }
     },
     async showRewardAd() {
-        try { const r = await vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'reward' }); return r.result; } 
+        const wasSound = settings.sound;
+        if(wasSound) audio.toggleSound(false);
+        try { 
+            const r = await vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'reward' }); 
+            return r.result; 
+        } 
         catch(e) { return false; }
+        finally {
+            if(wasSound) setTimeout(() => audio.toggleSound(true), 500);
+        }
     }
 };
 
@@ -507,7 +403,15 @@ class AudioManager {
     }
     init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); if (this.ctx.state === 'suspended') this.ctx.resume(); }
     initMusic() { if(this.enabled) this.musicEl.play().catch(()=>{}); }
-    toggleSound(state) { this.enabled = state; if(state) { if(this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); this.musicEl.play().catch(()=>{}); } else this.musicEl.pause(); }
+    toggleSound(state) { 
+        this.enabled = state; 
+        if(state) { 
+            if(this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); 
+            this.musicEl.play().catch(()=>{}); 
+        } else {
+            this.musicEl.pause();
+        } 
+    }
     handleVisibility(isVisible) {
         if (!isVisible) { if (!this.musicEl.paused) { this.wasPlaying = true; this.musicEl.pause(); } } 
         else { if (this.wasPlaying && this.enabled) { this.musicEl.play().catch(()=>{}); this.wasPlaying = false; } }
@@ -519,6 +423,8 @@ class AudioManager {
     }
     play(type) {
         if (!this.enabled || !this.ctx) return;
+        if (this.ctx.state === 'suspended') this.ctx.resume(); // Пробуждаем на всякий случай
+        
         const now = this.ctx.currentTime, osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
         osc.connect(gain); gain.connect(this.ctx.destination);
         switch(type) {
@@ -536,7 +442,9 @@ class AudioManager {
         }
     }
     click() { 
-        if (!this.enabled || !this.ctx) return; this.haptic('light'); 
+        if (!this.enabled || !this.ctx) return; 
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        this.haptic('light'); 
         const o=this.ctx.createOscillator();const g=this.ctx.createGain(); 
         o.connect(g);g.connect(this.ctx.destination); 
         o.frequency.setValueAtTime(800,this.ctx.currentTime); g.gain.setValueAtTime(0.1,this.ctx.currentTime); 
@@ -566,20 +474,14 @@ const ui = {
         const list = document.getElementById('levels-list'); list.innerHTML = '';
         LEVELS_CONFIG.forEach((lvl, idx) => {
             const div = document.createElement('div');
-            let isLocked = false, winsPrev = 0, unlockText = "";
-            if (idx > 0) {
-                const prevLvl = LEVELS_CONFIG[idx-1];
-                winsPrev = dataManager.getLevelNum(idx-1) - 1; 
-                if (winsPrev < prevLvl.reqWins) { isLocked = true; unlockText = `${winsPrev}/${prevLvl.reqWins} на ${prevLvl.name}`; }
-            }
-            div.className = `level-card ${isLocked ? 'locked' : ''}`;
-            div.onclick = () => { if(!isLocked){ audio.click(); game.startLevel(idx); } };
+            // Для теста все уровни открыты
+            let isLocked = false; 
             
-            if (isLocked) {
-                div.innerHTML = `<div><h3>${lvl.name}</h3><p>${unlockText}</p></div><div class="lock-icon-overlay"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg></div>`;
-            } else {
-                div.innerHTML = `<div><h3>${lvl.name}</h3><p>Уровень: ${dataManager.getLevelNum(idx)}</p></div><div style="width:36px; height:36px; background:var(--bg-grad-1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text-sec);"><svg class="icon" style="width:18px; height:18px; margin-left:2px;" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>`;
-            }
+            div.className = `level-card`;
+            div.onclick = () => { audio.click(); game.startLevel(idx); };
+            
+            div.innerHTML = `<div><h3>${lvl.name}</h3><p>Уровень: ${dataManager.getLevelNum(idx)}</p></div><div style="width:36px; height:36px; background:var(--bg-grad-1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text-sec);"><svg class="icon" style="width:18px; height:18px; margin-left:2px;" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>`;
+            
             list.appendChild(div);
         });
         this.switchScreen('levels');
@@ -587,20 +489,19 @@ const ui = {
     showOtherGames() {
         const container = document.getElementById('other-games-container'); container.innerHTML = '';
         const games = [
-            { name: 'Bubble Shooter', appId: 54051411, icon: 'https://sun9-22.userapi.com/s/v1/ig2/C9E4c8X3x_b6nB3c3_q0kH8O-pI_U1dM8Z-wZ5_n-I5a5_t3kG1b4T_9L2b4-h8p2e8D5y_o3P8h2K5l9A4H5o_0.jpg?size=150x150&quality=95&crop=0,0,150,150&ava=1' }, 
-            { name: 'Тетрис', appId: 54051413, icon: 'https://sun9-53.userapi.com/s/v1/ig2/I0Z3c1P5y_a1K5y0_t0jR5G_qX_pM1A0L-rK5_n-M5d5_h1vF1y0D_1C4q8-r8y0w0D3e_w9M0o1F5k1I1A3v_2.jpg?size=150x150&quality=95&crop=0,0,150,150&ava=1' }, 
-            { name: 'Tower Blocks', appId: 53962513, icon: 'https://sun9-55.userapi.com/s/v1/ig2/Z2K3p5Y1s_q0D1u_l1hG8N_wI_vH1Z0A-rK5_x-L1d5_f1wJ1n0E_8X0a5-f5q0p0M1j_s8F0u5R5f0O0J0k_1.jpg?size=150x150&quality=95&crop=0,0,150,150&ava=1' }, 
-            { name: 'Блок Про', appId: 53936296, icon: 'https://sun9-32.userapi.com/s/v1/ig2/O8L5h1X2z_m0B3e_v1kH5R_qO_uD1Z0L-wK5_c-M5d5_a1wL1j0M_2K0q4-g0t0x0F1g_q0N0y1G5h0R0M0b_3.jpg?size=150x150&quality=95&crop=0,0,150,150&ava=1' }, 
-            { name: 'Филворды', appId: 53867134, icon: 'https://sun9-66.userapi.com/s/v1/ig2/V2K3f1P2y_n0B1k_y1hN5R_wI_qL1F0A-gK5_c-L1d5_a1wJ1j0F_2T0a5-m5t0p0R1g_q0L0u5Y5f0R0J0v_1.jpg?size=150x150&quality=95&crop=0,0,150,150&ava=1' }, 
-            { name: 'Словли', appId: 53861990, icon: 'https://sun9-15.userapi.com/s/v1/ig2/Q0K5n1P4w_n0B3f_t0hL5F_wU_zN1Z0A-vK5_c-L1d5_h1wL1j0E_2T0a5-m0y0p0A1j_q0N0u5F5g0R0A0v_2.jpg?size=150x150&quality=95&crop=0,0,150,150&ava=1' }, 
-            { name: 'Brick Balls', appId: 54023580, icon: 'https://sun9-3.userapi.com/s/v1/ig2/D1K3n1T3w_b0B3e_v1hL5G_wU_qM1Z0L-wK5_c-L1d5_a1wJ1y0F_2T0q5-g5t0p0X1g_q0N0u5V5f0P0J0b_3.jpg?size=150x150&quality=95&crop=0,0,150,150&ava=1' }, 
-            { name: '2048', appId: 53965380, icon: 'https://sun9-5.userapi.com/s/v1/ig2/S1L5f1U4w_m0B3e_v1hL5R_wI_uD1Z0L-wK5_c-M5d5_a1wL1y0E_2X0q4-g0t0x0F1g_q0N0y1V5h0R0M0b_3.jpg?size=150x150&quality=95&crop=0,0,150,150&ava=1' }, 
-            { name: 'Math Matrix', appId: 53970659, icon: 'https://sun9-11.userapi.com/s/v1/ig2/V2K3f1P2y_n0B1k_y1hN5R_wI_qL1F0A-gK5_c-L1d5_a1wJ1j0F_2T0a5-m5t0p0R1g_q0L0u5Y5f0R0J0v_1.jpg?size=150x150&quality=95&crop=0,0,150,150&ava=1' }
+            { name: 'Bubble Shooter', appId: 54051411, icon: 'icon1.png' }, 
+            { name: 'Тетрис', appId: 54051413, icon: 'icon2.png' }, 
+            { name: 'Tower Blocks', appId: 53962513, icon: 'icon3.png' }, 
+            { name: 'Блок Про', appId: 53936296, icon: 'icon4.png' }, 
+            { name: 'Филворды', appId: 53867134, icon: 'icon5.png' }, 
+            { name: 'Словли', appId: 53861990, icon: 'icon6.png' }, 
+            { name: 'Brick Balls', appId: 54023580, icon: 'icon7.png' }, 
+            { name: '2048', appId: 53965380, icon: 'icon8.png' }, 
+            { name: 'Math Matrix', appId: 53970659, icon: 'icon9.png' }
         ];
         games.forEach(g => {
             const item = document.createElement('div'); item.className = 'other-game-item';
             item.onclick = () => { audio.click(); vkBridge.send('VKWebAppOpenApp', { app_id: g.appId }).catch(()=>{}); };
-            // Добавлена картинка с фоллбэком на случай отсутствия
             item.innerHTML = `<div class="game-icon" style="background:#eee"><img src="${g.icon}" onerror="this.style.display='none'"></div><div class="game-name">${g.name}</div>`;
             container.appendChild(item);
         });
@@ -638,14 +539,6 @@ function drawDetailedCoin(ctx, x, y, r, h, c, isHidden) {
     
     ctx.beginPath(); ctx.ellipse(x, y, r, r*0.35, 0, 0, Math.PI); 
     ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1.5; ctx.stroke();
-    
-    // Отрисовка вопросика строго по центру ребра монеты
-    if(isHidden) {
-        ctx.fillStyle = 'rgba(255,255,255,0.85)';
-        ctx.font = `900 ${Math.max(12, h*0.85)}px sans-serif`; 
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText('?', x, y - h/2);
-    }
     
     const gt = ctx.createRadialGradient(x, y-h-r*0.1, 0, x, y-h, r);
     gt.addColorStop(0, l); gt.addColorStop(1, actualColor);
@@ -719,7 +612,6 @@ class Game {
         for(let i=0; i<count; i++){
             const r=Math.floor(i/cols), c=i%cols;
             const itemsInRow = (r===rows-1 && count%cols!==0) ? count%cols : cols;
-            // ИСПРАВЛЕННАЯ ЦЕНТРОВКА ПОЛЯ
             const rowW = itemsInRow * (this.slotRadius * 2) + (itemsInRow - 1) * gap;
             const startX = (this.width - rowW) / 2 + this.slotRadius;
             
@@ -728,13 +620,11 @@ class Game {
         this.triggerDraw();
     }
     
-    // Эвристический алгоритм перемешивания, исключающий кучи одинаковых монет
     generateSolvableLevel(cfg) {
         let tempStacks = Array.from({length: cfg.slots}, () => []);
-        // Шаг 1: Собранное состояние
         for(let i=0; i<cfg.colors; i++) { for(let k=0; k<cfg.size; k++) tempStacks[i].push(i); } 
         
-        const passes = cfg.colors * 400; // Огромное количество шагов для точного размешивания
+        const passes = cfg.colors * 400; 
         for(let p=0; p<passes; p++) {
             let validSources = [];
             for(let i=0; i<cfg.slots; i++) {
@@ -750,33 +640,38 @@ class Game {
             }
             if(validSources.length === 0) continue; 
             
-            // Приоритетно выбираем те стопки, где есть совпадения, чтобы их разбить!
             let bestSources = validSources.filter(i => tempStacks[i].length > 1);
             if(bestSources.length === 0) bestSources = validSources;
             const src = bestSources[Math.floor(Math.random() * bestSources.length)];
             const topColor = tempStacks[src][tempStacks[src].length - 1];
             
             let validTargets = [];
+            let idealTargets = [];
+            
             for(let i=0; i<cfg.slots; i++) { 
                 if(i !== src && tempStacks[i].length < cfg.size) {
-                    // Стараемся не класть на тот же самый цвет, чтобы не собирать их обратно
+                    validTargets.push(i);
+                    // Идеальная цель: пустой слот или слот с монетой ДРУГОГО цвета
                     if(tempStacks[i].length === 0 || tempStacks[i][tempStacks[i].length - 1] !== topColor) {
-                        validTargets.push(i);
+                        idealTargets.push(i);
                     }
                 }
             }
-            if(validTargets.length === 0) { // Фолбэк, если все остальные слоты заняты нужным цветом
-                for(let i=0; i<cfg.slots; i++) {
-                    if(i !== src && tempStacks[i].length < cfg.size) validTargets.push(i);
-                }
-            }
+            
+            // Если есть идеальные цели, используем только их
+            if(idealTargets.length > 0) validTargets = idealTargets;
             
             if(validTargets.length > 0) {
                 const tgt = validTargets[Math.floor(Math.random() * validTargets.length)];
                 tempStacks[tgt].push(tempStacks[src].pop());
             }
         }
-        return tempStacks.map(stack => stack.map((c, idx) => ({ c: c, rev: idx === stack.length - 1 })));
+        
+        // В классике все монеты сразу открыты! В слепом - только верхние.
+        return tempStacks.map(stack => stack.map((c, idx) => ({ 
+            c: c, 
+            rev: ui.gameMode === 'classic' ? true : (idx === stack.length - 1) 
+        })));
     }
 
     startLevel(idx) {
@@ -794,6 +689,8 @@ class Game {
     }
     handleInput(x, y) {
         if (this.state==='ANIMATING' || this.state==='PAUSED') return;
+        if (this.ctx.state === 'suspended') this.ctx.resume(); // Пробуждаем звук
+        
         const rect=this.canvas.getBoundingClientRect(), cx=x-rect.left, cy=y-rect.top;
         let hit=-1; const cfg=LEVELS_CONFIG[this.currentLevelIdx], maxH=cfg.size*this.coinHeight+50;
         for(let i=0; i<this.layout.slots.length; i++){
@@ -812,7 +709,6 @@ class Game {
         if(tg.length===0 || tg[tg.length-1].c === c.c){
             let n=0; 
             for(let i=s.length-1; i>=0; i--) {
-                // ИСПРАВЛЕНО: берем монеты, только если совпадает цвет И она УЖЕ ОТКРЫТА (rev)
                 if(s[i].c === c.c && s[i].rev) n++; 
                 else break;
             }
@@ -899,7 +795,6 @@ class Game {
             if(this.selectedStack===i && s.length>0){ 
                 const c=s[s.length-1]; 
                 for(let k=s.length-1; k>=0; k--) {
-                    // Подсвечиваем для поднятия только открытые монеты нужного цвета
                     if(s[k].c===c.c && s[k].rev) lift=k; 
                     else break; 
                 }
