@@ -268,7 +268,6 @@ const dataManager = {
         settings.sound = this.data.settings.sound;
         settings.vibration = this.data.settings.vibration !== undefined ? this.data.settings.vibration : true;
         settings.updateUI();
-        audio.initMusic();
     },
     async load() {
         let rawData = null;
@@ -405,34 +404,32 @@ const PALETTE = [
     '#d35400'  // 11: Ржаво-оранжевый (бронзовый)
 ];
 
-/* --- AUDIO MANAGER (FILES BASED) --- */
+/* --- HYBRID AUDIO MANAGER (NO LATENCY + LOCAL FALLBACK) --- */
 class AudioManager {
     constructor() { 
         this.enabled = true; 
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        this.buffers = {};
+        this.audioPool = {}; 
         
-        // Создаем HTML Audio элементы с файлами
-        this.bgm = new Audio('music.mp3');
-        this.bgm.loop = true;
-        this.bgm.volume = 0.2;
-        
-        this.sounds = {
-            pop: new Audio('pop.mp3'),
-            land: new Audio('land.mp3'),
-            error: new Audio('error.mp3'),
-            win: new Audio('win.mp3'),
-            click: new Audio('click.mp3')
-        };
-        
-        // Предзагрузка
-        for(let key in this.sounds) {
-            this.sounds[key].preload = 'auto';
-        }
+        this.bgmMenu = new Audio('menu_music.mp3');
+        this.bgmMenu.loop = true; this.bgmMenu.volume = 0.2;
+        this.bgmGame = new Audio('game_music.mp3');
+        this.bgmGame.loop = true; this.bgmGame.volume = 0.15;
+        this.activeBgm = this.bgmMenu;
         
         this.wasPlaying = false;
+        this.unlocked = false;
         
-        // Разблокировка аудио на первый клик (требование браузеров)
+        this.loadSFX();
+        
         const unlock = () => {
-            if(this.enabled) this.bgm.play().catch(()=>{});
+            if(this.unlocked) return;
+            this.unlocked = true;
+            if(this.ctx.state === 'suspended') this.ctx.resume();
+            
+            if(this.enabled) this.activeBgm.play().catch(()=>{});
+            
             document.body.removeEventListener('click', unlock);
             document.body.removeEventListener('touchstart', unlock);
         };
@@ -440,22 +437,56 @@ class AudioManager {
         document.body.addEventListener('touchstart', unlock);
     }
     
-    initMusic() { if(this.enabled) this.bgm.play().catch(()=>{}); }
+    async loadSFX() {
+        const files = ['pop', 'land', 'error', 'win', 'click'];
+        for(let name of files) {
+            const fileName = name + '.mp3';
+            
+            this.audioPool[name] = [];
+            for(let i=0; i<3; i++) {
+                const a = new Audio(fileName);
+                a.preload = 'auto';
+                this.audioPool[name].push(a);
+            }
+
+            try {
+                const res = await fetch(fileName);
+                const arrayBuffer = await res.arrayBuffer();
+                this.buffers[name] = await this.ctx.decodeAudioData(arrayBuffer);
+            } catch(e) {}
+        }
+    }
+    
+    switchBGM(track) {
+        const target = track === 'game' ? this.bgmGame : this.bgmMenu;
+        if (this.activeBgm === target) return; 
+        
+        if (this.activeBgm) {
+            this.activeBgm.pause();
+            this.activeBgm.currentTime = 0; 
+        }
+        this.activeBgm = target;
+        
+        if (this.enabled && this.unlocked) {
+            this.activeBgm.play().catch(()=>{});
+        }
+    }
     
     toggleSound(state) { 
         this.enabled = state; 
         if(state) { 
-            this.bgm.play().catch(()=>{}); 
+            if(this.ctx.state === 'suspended') this.ctx.resume();
+            if(this.unlocked) this.activeBgm.play().catch(()=>{}); 
         } else {
-            this.bgm.pause();
+            this.activeBgm.pause();
         } 
     }
     
     handleVisibility(isVisible) {
         if (!isVisible) { 
-            if (!this.bgm.paused) { this.wasPlaying = true; this.bgm.pause(); } 
+            if (!this.activeBgm.paused) { this.wasPlaying = true; this.activeBgm.pause(); } 
         } else { 
-            if (this.wasPlaying && this.enabled) { this.bgm.play().catch(()=>{}); this.wasPlaying = false; } 
+            if (this.wasPlaying && this.enabled && this.unlocked) { this.activeBgm.play().catch(()=>{}); this.wasPlaying = false; } 
         }
     }
     
@@ -476,16 +507,29 @@ class AudioManager {
         if(type==='error') this.haptic('error');
         if(type==='win') this.haptic('success');
         
-        if (this.sounds[type]) {
-            // Клонируем ноду, чтобы звуки могли накладываться друг на друга (например быстрые тапы)
-            const clone = this.sounds[type].cloneNode();
-            clone.play().catch(()=>{});
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        
+        if (this.buffers[type]) {
+            const source = this.ctx.createBufferSource();
+            source.buffer = this.buffers[type];
+            source.connect(this.ctx.destination);
+            source.start(0);
+        } 
+        else if (this.audioPool[type]) {
+            const pool = this.audioPool[type];
+            for(let i=0; i<pool.length; i++) {
+                if(pool[i].paused || pool[i].currentTime === 0) {
+                    pool[i].currentTime = 0;
+                    pool[i].play().catch(()=>{});
+                    return;
+                }
+            }
+            pool[0].currentTime = 0;
+            pool[0].play().catch(()=>{});
         }
     }
     
-    click() { 
-        this.play('click'); 
-    }
+    click() { this.play('click'); }
 }
 const audio = new AudioManager();
 
@@ -494,10 +538,21 @@ const ui = {
     screens: { menu: document.getElementById('screen-menu'), mode: document.getElementById('screen-mode'), levels: document.getElementById('screen-levels'), hud: document.getElementById('hud'), other: document.getElementById('screen-other-games') },
     modals: { rules: document.getElementById('modal-rules'), pause: document.getElementById('modal-pause'), victory: document.getElementById('modal-victory'), settings: document.getElementById('modal-settings') },
     gameMode: 'classic',
+    
     switchScreen(name) {
         Object.values(this.screens).forEach(s => { if(s) { s.classList.remove('active'); s.classList.add('hidden'); } });
-        if (name === 'game') { this.screens.hud.style.display = 'flex'; document.getElementById('gameCanvas').classList.remove('hidden-visual'); } 
-        else { this.screens.hud.style.display = 'none'; this.screens[name].classList.remove('hidden'); this.screens[name].classList.add('active'); document.getElementById('gameCanvas').classList.add('hidden-visual'); }
+        
+        if (name === 'game') { 
+            this.screens.hud.style.display = 'flex'; 
+            document.getElementById('gameCanvas').classList.remove('hidden-visual'); 
+            audio.switchBGM('game');
+        } else { 
+            this.screens.hud.style.display = 'none'; 
+            this.screens[name].classList.remove('hidden'); 
+            this.screens[name].classList.add('active'); 
+            document.getElementById('gameCanvas').classList.add('hidden-visual'); 
+            audio.switchBGM('menu');
+        }
         vkBridge.send('VKWebAppShowBannerAd', { banner_location: 'bottom' }).catch(()=>{});
     },
     showModals(name) { this.modals[name].classList.add('visible'); if(name === 'rules') rulesDemo.start(); },
@@ -509,7 +564,6 @@ const ui = {
         const list = document.getElementById('levels-list'); list.innerHTML = '';
         LEVELS_CONFIG.forEach((lvl, idx) => {
             const div = document.createElement('div');
-            // Уровни всегда открыты для удобства
             div.className = `level-card`;
             div.onclick = () => { audio.click(); game.startLevel(idx); };
             div.innerHTML = `<div><h3>${lvl.name}</h3><p>Уровень: ${dataManager.getLevelNum(idx)}</p></div><div style="width:36px; height:36px; background:var(--bg-grad-1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text-sec);"><svg class="icon" style="width:18px; height:18px; margin-left:2px;" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>`;
@@ -651,12 +705,11 @@ class Game {
         this.triggerDraw();
     }
     
-    // Идеальное случайное блуждание
     generateSolvableLevel(cfg) {
         let tempStacks = Array.from({length: cfg.slots}, () => []);
         for(let i=0; i<cfg.colors; i++) { for(let k=0; k<cfg.size; k++) tempStacks[i].push(i); } 
         
-        const passes = cfg.colors * cfg.size * 30; // ~1500+ шагов перемешивания
+        const passes = cfg.colors * cfg.size * 30; 
         for(let p=0; p<passes; p++) {
             let validSources = [];
             for(let i=0; i<cfg.slots; i++) {
@@ -696,14 +749,12 @@ class Game {
     startLevel(idx) {
         this.currentLevelIdx = idx; const cfg = LEVELS_CONFIG[idx];
         
-        // Удалена загрузка сессии. Теперь уровень генерируется с нуля.
         this.stacks = this.generateSolvableLevel(cfg); 
         dataManager.saveSession(ui.gameMode, idx, this.stacks);
         
         this.state = 'IDLE'; this.selectedStack = -1; this.moves = 0; this.history = []; this.animations = [];
         this.undosLeft = 5; ui.updateUndoBadge(this.undosLeft);
         
-        // Шапка: Классика - Сложность
         const modeName = ui.gameMode === 'blind' ? "ВСЛЕПУЮ" : "КЛАССИКА";
         document.getElementById('hud-mode').innerText = `${modeName} — ${cfg.name.toUpperCase()}`;
         document.getElementById('hud-lvl').innerText = `УРОВЕНЬ ${dataManager.getLevelNum(idx)}`;
@@ -778,7 +829,6 @@ class Game {
     pause() { this.state='PAUSED'; ui.showModals('pause'); }
     resume() { this.state='IDLE'; ui.hideModals(); this.triggerDraw(); }
     
-    // ВЫХОД В МЕНЮ (Сбрасывает сессию уровня, чтобы он начался заново)
     quitToMenu() { 
         ui.hideModals(); 
         dataManager.clearSession(ui.gameMode, this.currentLevelIdx);
@@ -873,7 +923,7 @@ function loopC(){
 }
 
 // Init
-const game=new Game(); settings.init(); dataManager.init();
+const game=new Game(); dataManager.init();
 </script>
 </body>
 </html>
