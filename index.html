@@ -118,6 +118,8 @@
             cursor: pointer;
             transition: transform 0.1s;
             border-left: 6px solid var(--accent);
+            position: relative;
+            overflow: hidden;
         }
         .level-card:active { transform: scale(0.96); box-shadow: 0 2px 8px var(--shadow-color); }
         .level-icon-wrapper {
@@ -128,6 +130,10 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 22px; font-weight: 900;
         }
+
+        .level-card.locked { pointer-events: none; }
+        .level-card.locked::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--lock-overlay); z-index: 1; }
+        .level-card .lock-icon-overlay { position: absolute; right: 20px; z-index: 2; color: var(--text-sec); opacity: 0.7; }
 
         .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 50; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(8px); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .modal-overlay.visible { opacity: 1; pointer-events: auto; }
@@ -374,12 +380,21 @@ const dataManager = {
     incrementLevel(diffIdx) {
         const key = `${ui.gameMode}_${diffIdx}`;
         if(!this.data.progress[key]) this.data.progress[key] = 1;
+        
+        // Для замков: считаем победы
+        const winsBefore = this.data.progress[key] - 1;
         this.data.progress[key]++;
+        const winsAfter = this.data.progress[key] - 1;
         
         this.clearInitialLevel(ui.gameMode, diffIdx);
         this.data.levelsSinceAd++; this.save();
         
-        if (diffIdx < LEVELS_CONFIG.length - 1) return diffIdx + 1;
+        if (diffIdx < LEVELS_CONFIG.length - 1) {
+            const nextLvlConfig = LEVELS_CONFIG[diffIdx + 1];
+            if (winsBefore < nextLvlConfig.reqWins && winsAfter >= nextLvlConfig.reqWins) {
+                return diffIdx + 1; // Уведомляем об открытии нового уровня
+            }
+        }
         return false;
     },
     
@@ -636,21 +651,52 @@ const ui = {
         const list = document.getElementById('levels-list'); list.innerHTML = '';
         LEVELS_CONFIG.forEach((lvl, idx) => {
             const div = document.createElement('div');
-            div.className = `level-card`;
-            div.onclick = () => { audio.click(); game.startLevel(idx); };
             
-            div.innerHTML = `
-                <div style="display:flex; align-items:center; gap: 15px;">
-                    <div class="level-icon-wrapper">${idx + 1}</div>
-                    <div>
-                        <h3 style="margin:0; font-size:18px; color:var(--text-main);">${lvl.name}</h3>
-                        <p style="margin:4px 0 0; font-size:13px; color:var(--text-sec); font-weight:700;">Пройдено: ${dataManager.getLevelNum(idx) - 1}</p>
+            let isLocked = false;
+            let winsPrev = 0;
+            let unlockText = "";
+            
+            // Проверка блокировки
+            if (idx > 0) {
+                const prevLvl = LEVELS_CONFIG[idx-1];
+                const prevLvlWins = dataManager.getLevelNum(idx-1) - 1; 
+                if (prevLvlWins < prevLvl.reqWins) {
+                    isLocked = true;
+                    unlockText = `${prevLvlWins}/${prevLvl.reqWins} на ${prevLvl.name}`;
+                }
+            }
+
+            div.className = `level-card ${isLocked ? 'locked' : ''}`;
+            div.onclick = () => { if(!isLocked){ audio.click(); game.startLevel(idx); } };
+            
+            if (isLocked) {
+                div.innerHTML = `
+                    <div style="display:flex; align-items:center; gap: 15px;">
+                        <div class="level-icon-wrapper" style="filter: grayscale(1); opacity: 0.5;">${idx + 1}</div>
+                        <div>
+                            <h3 style="margin:0; font-size:18px; color:var(--text-main);">${lvl.name}</h3>
+                            <p style="margin:4px 0 0; font-size:13px; color:var(--text-sec); font-weight:700;">${unlockText}</p>
+                        </div>
                     </div>
-                </div>
-                <div style="color:var(--accent);">
-                    <svg class="icon" style="width:28px; height:28px;" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
-                </div>
-            `;
+                    <div class="lock-icon-overlay">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                    </div>
+                `;
+            } else {
+                div.innerHTML = `
+                    <div style="display:flex; align-items:center; gap: 15px;">
+                        <div class="level-icon-wrapper">${idx + 1}</div>
+                        <div>
+                            <h3 style="margin:0; font-size:18px; color:var(--text-main);">${lvl.name}</h3>
+                            <p style="margin:4px 0 0; font-size:13px; color:var(--text-sec); font-weight:700;">Пройдено: ${dataManager.getLevelNum(idx) - 1}</p>
+                        </div>
+                    </div>
+                    <div style="color:var(--accent);">
+                        <svg class="icon" style="width:28px; height:28px;" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                    </div>
+                `;
+            }
+            
             list.appendChild(div);
         });
         this.switchScreen('levels');
