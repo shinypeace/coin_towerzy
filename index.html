@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Coin Tower: Master</title>
+    <title>Coin Sort Logic Game</title>
     <!-- VK Bridge -->
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
@@ -176,13 +176,14 @@
         </button>
     </div>
 
+    <!-- MAIN MENU -->
     <div id="screen-menu" class="screen active">
         <button class="btn-settings-main" onclick="audio.click(); ui.showSettings()">
             <svg class="icon" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L3.16 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.04.64.09.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
         </button>
         <div class="logo-box">
-            <div class="logo-main">Coin<br>Tower</div>
-            <div class="logo-sub">Logic Sort</div>
+            <div class="logo-main">Coin<br>Sort</div>
+            <div class="logo-sub">Logic Game</div>
         </div>
         <button class="btn-main" onclick="audio.click(); ui.startFlow()">ИГРАТЬ</button>
         <div class="btn-row">
@@ -191,6 +192,7 @@
         </div>
     </div>
     
+    <!-- MODE SELECT SCREEN -->
     <div id="screen-mode" class="screen hidden">
         <button class="btn-back" onclick="audio.click(); ui.showMenu()">
             <svg class="icon" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
@@ -202,21 +204,25 @@
         <button class="btn-main" style="background: var(--blind-accent); box-shadow: 0 8px 0 var(--blind-hover), 0 20px 30px rgba(0,0,0,0.2);" onclick="audio.click(); ui.selectMode('blind')">ВСЛЕПУЮ</button>
     </div>
 
+    <!-- LEVEL SELECT SCREEN -->
     <div id="screen-levels" class="screen hidden">
         <button class="btn-back" onclick="audio.click(); ui.switchScreen('mode')">
             <svg class="icon" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
         </button>
-        <div style="height: 40px;"></div>
-        <h2 style="margin-left: 20px; margin-bottom: 20px; color: var(--text-main); font-weight: 900; align-self: flex-start;">Уровни</h2>
+        <div class="logo-box" style="margin-top: 60px; margin-bottom: 20px;">
+            <div class="logo-main" style="font-size: 40px;">Уровни</div>
+        </div>
         <div class="scroll-list" id="levels-list"></div>
     </div>
 
+    <!-- OTHER GAMES SCREEN -->
     <div id="screen-other-games" class="screen hidden">
         <button class="btn-back" onclick="audio.click(); ui.showMenu()">
             <svg class="icon" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
         </button>
-        <div style="height: 60px;"></div>
-        <h2 style="margin-bottom: 20px; color: var(--text-main); font-weight: 900;">Другие игры</h2>
+        <div class="logo-box" style="margin-top: 60px; margin-bottom: 20px;">
+            <div class="logo-main" style="font-size: 40px;">Другие игры</div>
+        </div>
         <div id="other-games-container"></div>
     </div>
 
@@ -377,7 +383,7 @@ const dataManager = {
         return false;
     },
     
-    /* ИСПРАВЛЕНИЕ 1: ГЛУБОКОЕ КЛОНИРОВАНИЕ МАССИВОВ ПРИ СОХРАНЕНИИ */
+    /* ГЛУБОКОЕ КЛОНИРОВАНИЕ МАССИВОВ ПРИ СОХРАНЕНИИ */
     saveInitialLevel(mode, diffIdx, stacks) {
         this.data.initialLevels[`${mode}_${diffIdx}`] = JSON.parse(JSON.stringify(stacks)); 
         this.save();
@@ -471,10 +477,11 @@ class AudioManager {
         this.buffers = {};
         this.audioPool = {}; 
         
+        // Громкость теперь 100% (1.0). Настройка громкости производится в аудиофайлах.
         this.bgmMenu = new Audio('menu_music.mp3');
-        this.bgmMenu.loop = true; this.bgmMenu.volume = 0.1;
+        this.bgmMenu.loop = true; this.bgmMenu.volume = 1.0;
         this.bgmGame = new Audio('game_music.mp3');
-        this.bgmGame.loop = true; this.bgmGame.volume = 0.07;
+        this.bgmGame.loop = true; this.bgmGame.volume = 1.0;
         
         this.activeBgm = this.bgmMenu;
         this.wasPlaying = false;
@@ -831,7 +838,6 @@ class Game {
     startLevel(idx) {
         this.currentLevelIdx = idx; const cfg = LEVELS_CONFIG[idx];
         
-        // Загружаем ИЗНАЧАЛЬНУЮ генерацию или создаем новую с помощью глубокого клонирования
         const savedInitial = dataManager.getInitialLevel(ui.gameMode, idx);
         
         if (savedInitial) {
