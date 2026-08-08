@@ -8,55 +8,29 @@
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
     <style>
+        /* Базовые стили и Темы */
         :root {
-            /* Light Theme */
-            --bg-grad-1: #f5f7fa;
-            --bg-grad-2: #c3cfe2;
-            --ui-bg: #FFFFFF;
-            --text-main: #2D3436;
-            --text-sec: #636E72;
-            --card-bg: #FFFFFF;
-            --accent: #6C5CE7;
-            --accent-hover: #5649c0;
-            --blind-accent: #9b59b6;
-            --blind-hover: #8e44ad;
-            --shadow-color: rgba(0,0,0,0.1);
-            --slot-base: rgba(0,0,0,0.1);
-            --badge-bg: #FF7675;
-            --badge-ad: #fdcb6e;
-            --lock-overlay: rgba(255,255,255,0.85);
-            --icon-bg: rgba(108, 92, 231, 0.15);
-        }
-        /* Dark Theme - Modern Deep Navy/Purple */
-        .dark-theme {
-            --bg-grad-1: #1B1B2F;
-            --bg-grad-2: #0F0F1A;
-            --ui-bg: #1B1B2F;
-            --text-main: #F8F9FA;
-            --text-sec: #ADB5BD;
-            --card-bg: #272740;
-            --accent: #8C7AE6;
-            --accent-hover: #7158E2;
-            --blind-accent: #b33939;
-            --shadow-color: rgba(0,0,0,0.5);
-            --slot-base: rgba(255,255,255,0.15);
-            --lock-overlay: rgba(0,0,0,0.7);
-            --icon-bg: rgba(140, 122, 230, 0.2);
+            --ui-bg: #FFFFFF; --text-main: #2D3436; --text-sec: #636E72; --card-bg: #FFFFFF;
+            --accent: #6C5CE7; --accent-hover: #5649c0; --blind-accent: #9b59b6; --blind-hover: #8e44ad;
+            --shadow-color: rgba(0,0,0,0.1); --slot-base: rgba(0,0,0,0.1); --badge-bg: #FF7675; --badge-ad: #fdcb6e;
+            --lock-overlay: rgba(255,255,255,0.85); --icon-bg: rgba(108, 92, 231, 0.15);
+            --bg-grad-1: #f5f7fa; --bg-grad-2: #c3cfe2; /* Default Light */
         }
         
-        /* ЖЕСТКИЙ ЗАПРЕТ ВЫДЕЛЕНИЯ ТЕКСТА ДЛЯ ВСЕХ УСТРОЙСТВ */
-        * { 
-            box-sizing: border-box; 
-            user-select: none; 
-            -webkit-user-select: none; 
-            -moz-user-select: none; 
-            -ms-user-select: none; 
-            -webkit-tap-highlight-color: transparent; 
-            font-family: 'Nunito', sans-serif; 
-        }
-        
+        /* 9 THEMES */
+        .theme-0 { --bg-grad-1: #f5f7fa; --bg-grad-2: #c3cfe2; } /* Светлая */
+        .theme-1 { --bg-grad-1: #1B1B2F; --bg-grad-2: #0F0F1A; --ui-bg:#1B1B2F; --text-main:#F8F9FA; --text-sec:#ADB5BD; --card-bg:#272740; --shadow-color:rgba(0,0,0,0.5); --slot-base:rgba(255,255,255,0.15); --lock-overlay:rgba(0,0,0,0.7); } /* Темная */
+        .theme-2 { --bg-grad-1: #ff9a9e; --bg-grad-2: #fecfef; } /* Закат */
+        .theme-3 { --bg-grad-1: #0ba360; --bg-grad-2: #3cba92; --ui-bg:#0ba360; --text-main:#FFFFFF; --text-sec:#d1f2e6; --card-bg:#128c55; --shadow-color:rgba(0,0,0,0.3); --slot-base:rgba(255,255,255,0.2); } /* Лес */
+        .theme-4 { --bg-grad-1: #09203f; --bg-grad-2: #537895; --ui-bg:#09203f; --text-main:#FFFFFF; --text-sec:#b0c4de; --card-bg:#10315c; --shadow-color:rgba(0,0,0,0.5); --slot-base:rgba(255,255,255,0.15); } /* Океан */
+        .theme-5 { --bg-grad-1: #21003c; --bg-grad-2: #ff007f; --ui-bg:#21003c; --text-main:#FFFFFF; --text-sec:#ff99cc; --card-bg:#3b0066; --shadow-color:rgba(0,0,0,0.6); --slot-base:rgba(255,255,255,0.2); --accent:#00e5ff; } /* Киберпанк */
+        .theme-6 { --bg-grad-1: #D4B499; --bg-grad-2: #9F7A59; --ui-bg:#D4B499; --card-bg:#FDF5E6; --accent:#795548; } /* Кофе */
+        .theme-7 { --bg-grad-1: #2c0001; --bg-grad-2: #8a0306; --ui-bg:#2c0001; --text-main:#FFD700; --text-sec:#ffb3b3; --card-bg:#590002; --accent:#FFD700; --shadow-color:rgba(0,0,0,0.5); } /* Королевская */
+        .theme-8 { --bg-grad-1: #000000; --bg-grad-2: #001a00; --ui-bg:#000000; --text-main:#00ff00; --text-sec:#008000; --card-bg:#001100; --accent:#00ff00; --slot-base:rgba(0,255,0,0.1); } /* Матрица */
+
+        * { box-sizing: border-box; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Nunito', sans-serif; }
         body { margin: 0; padding: 0; background: #1e272e; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        #app-container { position: relative; width: 100%; height: 100%; max-width: 450px; max-height: 900px; background: linear-gradient(135deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%); overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.5); display: flex; flex-direction: column; transition: background 0.3s; }
+        #app-container { position: relative; width: 100%; height: 100%; max-width: 450px; max-height: 900px; background: linear-gradient(135deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%); overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.5); display: flex; flex-direction: column; transition: background 0.5s; }
         canvas { display: block; width: 100%; height: 100%; touch-action: none; z-index: 1; cursor: pointer; transition: opacity 0.2s ease; }
         canvas.hidden-visual { opacity: 0; pointer-events: none; }
         #confetti-canvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 20; }
@@ -64,119 +38,105 @@
         .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; background: linear-gradient(135deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%); transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); z-index: 10; padding: 20px; align-items: center; justify-content: center; }
         .screen.hidden { transform: translateX(100%); pointer-events: none; }
         .screen.active { transform: translateX(0); }
-        #screen-levels { justify-content: flex-start; }
-        #screen-other-games { justify-content: flex-start; overflow-y: auto; }
+        .screen-scroll { justify-content: flex-start; overflow-y: auto; padding-bottom: 40px;}
         
         #hud { position: absolute; top: 0; left: 0; width: 100%; padding: 15px 20px; display: flex; justify-content: space-between; align-items: flex-start; z-index: 5; pointer-events: none; height: 100px; }
         #hud button { pointer-events: auto; }
         
-        .logo-box { margin-bottom: 50px; text-align: center; animation: float 3s ease-in-out infinite; }
+        .top-bar-economy { position: absolute; top: 15px; left: 20px; right: 20px; display: flex; justify-content: space-between; align-items: center; z-index: 15; pointer-events: none; }
+        .currency-pill { background: rgba(0,0,0,0.4); color: #FFD700; padding: 8px 15px; border-radius: 20px; font-weight: 900; display: flex; align-items: center; gap: 8px; font-size: 16px; backdrop-filter: blur(5px); pointer-events: auto; cursor: pointer; }
+        .currency-pill img, .currency-pill span { line-height: 1; }
+        
+        .logo-box { margin-top: 40px; margin-bottom: 30px; text-align: center; animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
-        .logo-main { font-size: 56px; font-weight: 900; color: var(--text-main); line-height: 0.9; text-shadow: 2px 2px 0px rgba(128,128,128,0.2); }
-        .logo-sub { font-size: 20px; color: var(--accent); font-weight: 700; letter-spacing: 4px; text-transform: uppercase; margin-top: 10px; }
+        .logo-main { font-size: 52px; font-weight: 900; color: var(--text-main); line-height: 0.9; text-shadow: 2px 2px 0px rgba(128,128,128,0.2); }
+        .logo-sub { font-size: 18px; color: var(--accent); font-weight: 700; letter-spacing: 4px; text-transform: uppercase; margin-top: 10px; }
         
-        .btn-main { background: var(--accent); color: #fff; width: 80%; padding: 22px; border-radius: 20px; border: none; font-size: 24px; font-weight: 800; box-shadow: 0 8px 0 var(--accent-hover), 0 20px 30px rgba(0,0,0,0.2); margin-bottom: 20px; cursor: pointer; transition: transform 0.1s; }
+        .btn-main { background: var(--accent); color: #fff; width: 80%; padding: 20px; border-radius: 20px; border: none; font-size: 22px; font-weight: 800; box-shadow: 0 8px 0 var(--accent-hover), 0 15px 25px rgba(0,0,0,0.2); margin-bottom: 15px; cursor: pointer; transition: transform 0.1s; display: flex; justify-content: center; align-items: center; gap: 10px;}
         .btn-main:active { transform: translateY(8px); box-shadow: 0 0 0 transparent !important; }
-        
+        .btn-hardcore { background: #ff4757; box-shadow: 0 8px 0 #ff0000, 0 15px 25px rgba(0,0,0,0.2); }
+        .btn-hardcore:active { box-shadow: 0 0 0 transparent !important; }
         .btn-alt { background: #00d2d3; color: #fff; width: 100%; padding: 18px; border-radius: 18px; border: none; font-size: 18px; font-weight: 800; box-shadow: 0 6px 0 #01a3a4, 0 10px 20px rgba(0,0,0,0.15); margin-bottom: 15px; cursor: pointer; transition: transform 0.1s; }
         .btn-alt:active { transform: translateY(6px); box-shadow: 0 0 0 transparent !important; }
 
-        .btn-row { display: flex; gap: 15px; width: 80%; margin-bottom: 20px; }
-        .btn-small { flex: 1; background: var(--card-bg); color: var(--text-sec); padding: 18px; border-radius: 18px; border: none; font-weight: 700; font-size: 16px; box-shadow: 0 5px 0 var(--shadow-color); cursor: pointer; }
+        .btn-row { display: flex; gap: 10px; width: 80%; margin-bottom: 15px; }
+        .btn-small { flex: 1; background: var(--card-bg); color: var(--text-sec); padding: 15px; border-radius: 16px; border: none; font-weight: 800; font-size: 14px; box-shadow: 0 5px 0 var(--shadow-color); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
         .btn-small:active { transform: translateY(5px); box-shadow: none; }
         
         .btn-icon-round { position: relative; width: 50px; height: 50px; border-radius: 50%; background: var(--card-bg); border: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 var(--shadow-color); cursor: pointer; color: var(--text-main); }
         .btn-icon-round:active { transform: translateY(4px); box-shadow: none; }
-        .btn-settings-main { position: absolute; top: 20px; right: 20px; width: 44px; height: 44px; border-radius: 14px; background: transparent; border: 2px solid var(--text-sec); color: var(--text-sec); display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0.6; transition: opacity 0.2s; }
-        .btn-settings-main:hover { opacity: 1; }
+        .btn-settings-main { position: absolute; top: 15px; right: 20px; width: 44px; height: 44px; border-radius: 14px; background: rgba(0,0,0,0.3); border: none; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index:20; pointer-events: auto;}
         
-        .badge { position: absolute; bottom: -5px; right: -5px; background-color: var(--badge-bg); color: white; font-size: 10px; font-weight: 900; padding: 4px 6px; border-radius: 10px; min-width: 20px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 2px solid var(--card-bg); }
+        .badge { position: absolute; bottom: -5px; right: -5px; background-color: var(--badge-bg); color: white; font-size: 11px; font-weight: 900; padding: 4px 6px; border-radius: 10px; min-width: 22px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 2px solid var(--card-bg); }
         .badge.ad { background-color: var(--badge-ad); color: #2d3436; padding: 4px 4px; }
         
-        /* СКРЫТИЕ ПОЛЗУНКА ПРОКРУТКИ, НО СОХРАНЕНИЕ СКРОЛЛА */
-        .scroll-list, #screen-other-games { 
-            width: 100%; flex: 1; overflow-y: auto; padding: 10px 20px; 
-            display: flex; flex-direction: column; gap: 14px; 
-            mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent); 
-            -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent); 
-            padding-bottom: 40px; 
-            -ms-overflow-style: none; /* IE and Edge */
-            scrollbar-width: none; /* Firefox */
-        }
-        .scroll-list::-webkit-scrollbar, #screen-other-games::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, Opera */
-        }
+        .scroll-list { width: 100%; flex: 1; overflow-y: auto; padding: 10px 20px; display: flex; flex-direction: column; gap: 14px; -ms-overflow-style: none; scrollbar-width: none; mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);}
+        .scroll-list::-webkit-scrollbar { display: none; }
         
-        .level-card {
-            background: var(--card-bg);
-            padding: 18px 20px;
-            border-radius: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 6px 15px var(--shadow-color);
-            cursor: pointer;
-            transition: transform 0.1s;
-            border-left: 6px solid var(--accent);
-            position: relative;
-            overflow: hidden;
-        }
+        .level-card { background: var(--card-bg); padding: 18px 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 6px 15px var(--shadow-color); cursor: pointer; transition: transform 0.1s; border-left: 6px solid var(--accent); position: relative; overflow: hidden; }
         .level-card:active { transform: scale(0.96); box-shadow: 0 2px 8px var(--shadow-color); }
-        .level-icon-wrapper {
-            width: 48px; height: 48px;
-            background: var(--icon-bg);
-            color: var(--accent);
-            border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 22px; font-weight: 900;
-        }
-
-        .level-card.locked { pointer-events: none; }
+        .level-icon-wrapper { width: 48px; height: 48px; background: var(--icon-bg); color: var(--accent); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; }
+        .level-card.locked { pointer-events: none; border-left: 6px solid #ccc;}
         .level-card.locked::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--lock-overlay); z-index: 1; }
-        .level-card .lock-icon-overlay { position: absolute; right: 20px; z-index: 2; color: var(--text-sec); opacity: 0.7; }
 
-        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 50; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(8px); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        /* Shop Grid */
+        .shop-tabs { display: flex; width: 100%; gap: 10px; padding: 0 20px; margin-bottom: 20px; }
+        .shop-tab { flex: 1; padding: 12px 0; text-align: center; background: var(--slot-base); color: var(--text-sec); border-radius: 15px; font-weight: 800; cursor: pointer; }
+        .shop-tab.active { background: var(--accent); color: #fff; }
+        .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; padding: 0 20px; }
+        .shop-item { background: var(--card-bg); border-radius: 16px; padding: 15px 10px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 10px var(--shadow-color); position: relative; }
+        .shop-item.locked { opacity: 0.7; }
+        .shop-item.active-item { border: 3px solid var(--accent); }
+        .item-preview { width: 60px; height: 60px; border-radius: 12px; background: var(--bg-grad-1); margin-bottom: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;}
+        .item-price { font-size: 12px; font-weight: 800; color: #FFD700; display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 10px;}
+        .item-btn { margin-top: 10px; width: 100%; padding: 8px; border-radius: 10px; font-weight: 800; font-size: 12px; border: none; cursor: pointer; background: var(--accent); color: #fff; }
+        .item-btn.equipped { background: var(--slot-base); color: var(--text-sec); }
+        .booster-item { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 15px 20px; border-radius: 18px; margin: 0 20px 15px; box-shadow: 0 4px 10px var(--shadow-color); width: calc(100% - 40px);}
+
+        /* Modals */
+        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .modal-overlay.visible { opacity: 1; pointer-events: auto; }
-        .modal { background: var(--card-bg); width: 85%; padding: 25px; border-radius: 28px; text-align: center; transform: scale(0.9); transition: transform 0.3s; box-shadow: 0 20px 40px rgba(0,0,0,0.3); color: var(--text-main); }
+        .modal { background: var(--card-bg); width: 85%; max-height: 80vh; overflow-y: auto; padding: 25px; border-radius: 28px; text-align: center; transform: scale(0.9); transition: transform 0.3s; box-shadow: 0 20px 40px rgba(0,0,0,0.4); color: var(--text-main); -ms-overflow-style: none; scrollbar-width: none;}
+        .modal::-webkit-scrollbar { display: none; }
         .modal-overlay.visible .modal { transform: scale(1); }
-        .modal h2 { margin: 0 0 15px; font-size: 28px; color: var(--text-main); }
+        .modal h2 { margin: 0 0 15px; font-size: 26px; color: var(--text-main); font-weight: 900;}
         
-        .rules-canvas-container { width: 100%; height: 120px; background: var(--bg-grad-1); border-radius: 16px; margin-bottom: 20px; border: 2px solid var(--slot-base); }
-        .rule-text { text-align: left; font-size: 14px; color: var(--text-main); margin-bottom: 10px; line-height: 1.4; }
-        .rule-text b { color: var(--accent); }
-        
-        .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--shadow-color); }
-        .setting-row:last-child { border-bottom: none; }
-        .setting-label { font-size: 18px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
-        .toggle-switch { position: relative; width: 50px; height: 28px; background: #ccc; border-radius: 14px; cursor: pointer; transition: background 0.3s; }
-        .toggle-switch.active { background: var(--accent); }
-        .toggle-knob { position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; background: white; border-radius: 50%; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .toggle-switch.active .toggle-knob { transform: translateX(22px); }
-        
-        #other-games-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; padding: 10px 0; }
-        .other-game-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.1s; }
-        .other-game-item:active { transform: scale(0.95); }
-        .game-icon { width: 70px; height: 70px; background: #eee; border-radius: 18px; overflow: hidden; margin-bottom: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .game-icon img { width: 100%; height: 100%; object-fit: cover; }
-        .game-name { font-size: 11px; font-weight: 700; color: var(--text-main); text-align: center; line-height: 1.2; }
+        /* Daily Rewards Grid */
+        .daily-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;}
+        .daily-item { background: var(--slot-base); border-radius: 15px; padding: 10px 5px; display: flex; flex-direction: column; align-items: center; position: relative;}
+        .daily-item.claimed { opacity: 0.5; }
+        .daily-item.today { background: rgba(108, 92, 231, 0.2); border: 2px solid var(--accent); transform: scale(1.05); }
+        .daily-day { font-size: 11px; font-weight: 800; color: var(--text-sec); margin-bottom: 5px; }
+        .daily-icon { font-size: 24px; margin-bottom: 5px; }
+        .daily-val { font-size: 14px; font-weight: 900; color: var(--text-main); }
+        .daily-item-7 { grid-column: span 3; display: flex; flex-direction: row; justify-content: center; gap: 20px; padding: 15px; }
+
+        .btn-back { position: absolute; top: 15px; left: 20px; width: 44px; height: 44px; border-radius: 14px; background: rgba(0,0,0,0.3); border: none; display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; z-index: 20; }
         .icon { width: 24px; height: 24px; fill: currentColor; }
-        .btn-back { position: absolute; top: 20px; left: 20px; width: 40px; height: 40px; border-radius: 12px; background: var(--card-bg); border: none; display: flex; align-items: center; justify-content: center; color: var(--text-main); box-shadow: 0 4px 0 var(--shadow-color); cursor: pointer; z-index: 20; }
     </style>
 </head>
 <body>
 <div id="app-container">
+    <div class="top-bar-economy" id="economy-bar">
+        <div class="currency-pill" onclick="ui.showShop('boosters')">🪙 <span id="ui-coins">0</span></div>
+        <div style="display:flex; gap: 10px;">
+            <div class="currency-pill" style="color: #ff4757;">❤️ <span id="ui-lives">3</span></div>
+        </div>
+    </div>
+
     <canvas id="gameCanvas"></canvas>
     <canvas id="confetti-canvas"></canvas>
     
     <div id="hud" style="display: none;">
-        <button class="btn-icon-round" onclick="audio.click(); game.pause()">
+        <button class="btn-icon-round" style="margin-top: 50px;" onclick="audio.click(); game.pause()">
             <svg class="icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
         </button>
-        <div style="text-align: center; margin-top: 10px;">
+        <div style="text-align: center; margin-top: 50px;">
             <div style="font-size: 11px; color: var(--text-sec); font-weight: 800; letter-spacing: 1px;" id="hud-mode">КЛАССИКА — НОВИЧОК</div>
             <div style="font-size: 22px; color: var(--text-main); font-weight: 900;" id="hud-lvl">УРОВЕНЬ 1</div>
+            <div id="hud-hardcore-moves" style="display:none; color: #ff4757; font-weight: 900; font-size: 18px; margin-top: 5px;">Ходов: <span id="hud-moves-val">0</span></div>
         </div>
-        <button class="btn-icon-round" onclick="audio.click(); game.requestUndo()">
+        <button class="btn-icon-round" style="margin-top: 50px;" onclick="audio.click(); game.requestUndo()">
             <svg class="icon" viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
             <div id="undo-badge" class="badge">5</div>
         </button>
@@ -191,14 +151,17 @@
             <div class="logo-main">Coin<br>Sort</div>
             <div class="logo-sub">Logic Game</div>
         </div>
-        <button class="btn-main" onclick="audio.click(); ui.startFlow()">ИГРАТЬ</button>
+        
+        <button class="btn-main btn-hardcore" onclick="audio.click(); game.startHardcore()">ХАРДКОР ☠️</button>
+        <button class="btn-main" onclick="audio.click(); ui.switchScreen('mode')">ИГРАТЬ</button>
+        
         <div class="btn-row">
-            <button class="btn-small" onclick="audio.click(); ui.showRules()">ПРАВИЛА</button>
-            <button class="btn-small" onclick="audio.click(); ui.showOtherGames()">ДРУГИЕ ИГРЫ</button>
+            <button class="btn-small" style="background: #f1c40f; color:#000" onclick="audio.click(); game.startDaily()">🌟 Ежедневный</button>
+            <button class="btn-small" onclick="audio.click(); ui.showShop('themes')">🛒 Магазин</button>
         </div>
     </div>
     
-    <!-- MODE SELECT SCREEN -->
+    <!-- MODE SELECT -->
     <div id="screen-mode" class="screen hidden">
         <button class="btn-back" onclick="audio.click(); ui.showMenu()">
             <svg class="icon" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
@@ -210,56 +173,72 @@
         <button class="btn-main" style="background: var(--blind-accent); box-shadow: 0 8px 0 var(--blind-hover), 0 20px 30px rgba(0,0,0,0.2);" onclick="audio.click(); ui.selectMode('blind')">ВСЛЕПУЮ</button>
     </div>
 
-    <!-- LEVEL SELECT SCREEN -->
-    <div id="screen-levels" class="screen hidden">
+    <!-- LEVELS -->
+    <div id="screen-levels" class="screen hidden screen-scroll">
         <button class="btn-back" onclick="audio.click(); ui.switchScreen('mode')">
             <svg class="icon" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
         </button>
         <div class="logo-box" style="margin-top: 60px; margin-bottom: 20px;">
             <div class="logo-main" style="font-size: 40px;">Уровни</div>
         </div>
-        <div class="scroll-list" id="levels-list"></div>
+        <div class="scroll-list" id="levels-list" style="padding-top:0"></div>
     </div>
 
-    <!-- OTHER GAMES SCREEN -->
-    <div id="screen-other-games" class="screen hidden">
+    <!-- SHOP -->
+    <div id="screen-shop" class="screen hidden screen-scroll">
         <button class="btn-back" onclick="audio.click(); ui.showMenu()">
             <svg class="icon" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
         </button>
         <div class="logo-box" style="margin-top: 60px; margin-bottom: 20px;">
-            <div class="logo-main" style="font-size: 40px;">Другие игры</div>
+            <div class="logo-main" style="font-size: 40px;">Магазин</div>
         </div>
-        <div id="other-games-container"></div>
+        
+        <div class="shop-tabs">
+            <div class="shop-tab active" id="tab-themes" onclick="audio.click(); ui.showShop('themes')">Темы</div>
+            <div class="shop-tab" id="tab-skins" onclick="audio.click(); ui.showShop('skins')">Скины</div>
+            <div class="shop-tab" id="tab-boosters" onclick="audio.click(); ui.showShop('boosters')">Бустеры</div>
+        </div>
+        
+        <div class="shop-grid" id="shop-grid"></div>
+        <div id="shop-boosters" style="display:none; width:100%"></div>
     </div>
 
+    <!-- MODALS -->
+    <!-- Daily Reward Modal -->
+    <div id="modal-daily" class="modal-overlay">
+        <div class="modal">
+            <h2>Ежедневная награда</h2>
+            <p style="color:var(--text-sec); margin-bottom:20px;">Заходи каждый день!</p>
+            <div class="daily-grid" id="daily-grid"></div>
+            <button class="btn-main" style="width:100%; margin-top:10px;" onclick="audio.click(); ui.claimDaily()">ЗАБРАТЬ</button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
     <div id="modal-settings" class="modal-overlay">
         <div class="modal">
-            <h2>Настройки</h2>
+            <h2>Меню</h2>
             <div class="setting-row">
-                <div class="setting-label"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>Темная тема</div>
-                <div class="toggle-switch" id="toggle-theme" onclick="audio.click(); settings.toggleTheme()"><div class="toggle-knob"></div></div>
-            </div>
-            <div class="setting-row">
-                <div class="setting-label"><svg class="icon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>Звук</div>
+                <div class="setting-label">Звук</div>
                 <div class="toggle-switch active" id="toggle-sound" onclick="audio.click(); settings.toggleSound()"><div class="toggle-knob"></div></div>
             </div>
             <div class="setting-row">
-                <div class="setting-label"><svg class="icon" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M17 19H7V5h10v14zm0-18H7c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm-1 6h-2v2h2v-2zm-4 0H9v2h3v-2zM5 7h1v10H5V7zm14 0h-1v10h1V7z"/></svg>Вибрация</div>
+                <div class="setting-label">Вибрация</div>
                 <div class="toggle-switch active" id="toggle-vibro" onclick="audio.click(); settings.toggleVibration()"><div class="toggle-knob"></div></div>
             </div>
-            <button class="btn-small" style="width:100%; margin-top:20px; background: var(--accent); color:white;" onclick="audio.click(); ui.hideModals()">ГОТОВО</button>
+            <button class="btn-small" style="width:100%; margin-top:20px; margin-bottom:10px" onclick="audio.click(); ui.hideModals(); ui.showModals('rules')">КАК ИГРАТЬ</button>
+            <button class="btn-main" style="width:100%;" onclick="audio.click(); ui.hideModals()">ЗАКРЫТЬ</button>
         </div>
     </div>
 
     <div id="modal-rules" class="modal-overlay">
         <div class="modal">
-            <h2>Как играть</h2>
+            <h2>Правила</h2>
             <div class="rules-canvas-container"><canvas id="rules-canvas"></canvas></div>
             <div class="rule-text">1. Нажми на стопку, чтобы <b>взять</b> монеты.</div>
             <div class="rule-text">2. Нажми на другую, чтобы <b>положить</b>.</div>
-            <div class="rule-text">3. Класть можно только на <b>тот же цвет</b> или пустое место.</div>
-            <div class="rule-text" style="margin-top:15px; padding-top:10px; border-top:1px solid var(--shadow-color);">💡 Ошибся? Используй <b>Отмену хода</b> (стрелка назад).</div>
-            <button class="btn-small" style="width:100%; margin-top:15px; background:var(--accent); color:white" onclick="audio.click(); ui.hideModals()">ПОНЯТНО</button>
+            <div class="rule-text">3. Класть можно только на <b>тот же цвет</b>.</div>
+            <button class="btn-main" style="width:100%; margin-top:15px;" onclick="audio.click(); ui.hideModals()">ПОНЯТНО</button>
         </div>
     </div>
 
@@ -267,7 +246,18 @@
         <div class="modal">
             <h2>Пауза</h2>
             <button class="btn-main" style="width:100%; margin-bottom:15px" onclick="audio.click(); game.resume()">ПРОДОЛЖИТЬ</button>
-            <button class="btn-small" style="width:100%;" onclick="audio.click(); game.quitToMenu()">МЕНЮ</button>
+            <button class="btn-small" style="width:100%; margin-bottom:15px" onclick="audio.click(); game.restartLevel()">НАЧАТЬ ЗАНОВО</button>
+            <button class="btn-small" style="width:100%; border:2px solid #ff4757; color:#ff4757" onclick="audio.click(); game.quitToMenu()">В МЕНЮ</button>
+        </div>
+    </div>
+    
+    <div id="modal-out-of-moves" class="modal-overlay">
+        <div class="modal">
+            <h2 style="color:#ff4757">Ходы кончились!</h2>
+            <p style="margin-bottom:20px; color:var(--text-sec)">Используй жизнь, чтобы получить +5 ходов.</p>
+            <button class="btn-main" style="width:100%; margin-bottom:15px;" onclick="audio.click(); game.useLife()">Использовать ❤️ (<span id="oom-lives"></span>)</button>
+            <button class="btn-small" style="width:100%; margin-bottom:15px; background:var(--badge-ad); color:#000" onclick="audio.click(); game.adLife()">Смотреть рекламу (❤️)</button>
+            <button class="btn-small" style="width:100%;" onclick="audio.click(); game.quitToMenu()">Сдаться</button>
         </div>
     </div>
 
@@ -275,74 +265,83 @@
         <div class="modal">
             <div style="font-size: 60px; margin-bottom: 10px; animation: popIn 0.5s;">🏆</div>
             <h2 id="vic-title">Победа!</h2>
-            <div id="vic-normal-content">
-                <p>Уровень пройден</p>
-                <div style="background:var(--bg-grad-1); padding:15px; border-radius:15px; margin-bottom:20px; display:flex; justify-content:space-between; font-weight:bold; color:var(--text-sec)">
+            
+            <div style="background:var(--slot-base); padding:15px; border-radius:15px; margin-bottom:20px;">
+                <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--text-sec); margin-bottom:5px;">
                     <span>Ходов:</span><span id="vic-moves" style="color:var(--text-main)">0</span>
                 </div>
-                <button class="btn-main" style="width:100%; margin-bottom:15px" onclick="audio.click(); game.restartLevel()">СЛЕДУЮЩИЙ</button>
+                <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--text-sec);">
+                    <span>Награда:</span><span style="color:#FFD700">+<span id="vic-coins">0</span> 🪙</span>
+                </div>
             </div>
+            
             <div id="vic-unlock-content" style="display:none;">
                 <p style="margin-bottom:20px; color:var(--accent); font-weight:bold;">Открыт новый уровень сложности!</p>
-                <h3 id="vic-unlock-name" style="margin-bottom:20px; color:var(--text-main); font-size: 24px;"></h3>
-                <button id="vic-btn-go-next" class="btn-main" style="width:100%; margin-bottom:15px; font-size:18px;">ПЕРЕЙТИ</button>
-                <button class="btn-alt" onclick="audio.click(); game.restartLevel()">ПРОДОЛЖИТЬ ЗДЕСЬ</button>
             </div>
+            
+            <button class="btn-main" style="width:100%; margin-bottom:15px" onclick="audio.click(); game.nextLevel()">СЛЕДУЮЩИЙ</button>
             <button class="btn-small" style="width:100%;" onclick="audio.click(); game.quitToMenu()">МЕНЮ</button>
         </div>
     </div>
 </div>
 
 <script>
-/** SECURITY / OBFUSCATION */
+/** OBFUSCATION */
 const Obfuscator = {
     key: 42,
-    encode(data) {
-        const str = JSON.stringify(data); let res = "";
-        for(let i=0; i<str.length; i++) res += String.fromCharCode(str.charCodeAt(i) ^ this.key);
-        return btoa(encodeURIComponent(res));
-    },
-    decode(b64) {
-        try {
-            const str = decodeURIComponent(atob(b64)); let res = "";
-            for(let i=0; i<str.length; i++) res += String.fromCharCode(str.charCodeAt(i) ^ this.key);
-            return JSON.parse(res);
-        } catch(e) { return null; }
-    }
+    encode(data) { const str = JSON.stringify(data); let res = ""; for(let i=0; i<str.length; i++) res += String.fromCharCode(str.charCodeAt(i) ^ this.key); return btoa(encodeURIComponent(res)); },
+    decode(b64) { try { const str = decodeURIComponent(atob(b64)); let res = ""; for(let i=0; i<str.length; i++) res += String.fromCharCode(str.charCodeAt(i) ^ this.key); return JSON.parse(res); } catch(e) { return null; } }
 };
 
 /** DATA MANAGER */
 const dataManager = {
     vkUserId: null,
-    data: { progress: {}, settings: { sound: true, theme: 'light', vibration: true }, initialLevels: {}, sessions: {}, levelsSinceAd: 0 },
+    data: { 
+        progress: {}, 
+        settings: { sound: true, vibration: true }, 
+        initialLevels: {}, 
+        levelsSinceAd: 0,
+        coins: 100,
+        inventory: { undos: 5, lives: 3 },
+        unlockedThemes: [0,1,2,3,4,5,6,7,8], // ВСЕ ОТКРЫТО ДЛЯ ТЕСТА
+        unlockedSkins: [0,1,2,3,4,5,6,7,8],  // ВСЕ ОТКРЫТО ДЛЯ ТЕСТА
+        currentTheme: 0,
+        currentSkin: 0,
+        hardcoreLevel: 1,
+        dailyLevelState: { date: "", completed: false },
+        dailyReward: { lastClaim: 0, streak: 0 }
+    },
     async init() {
         try {
             await vkBridge.send('VKWebAppInit');
             const user = await vkBridge.send('VKWebAppGetUserInfo');
             this.vkUserId = user.id;
-            await vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'interstitial' }).catch(()=>{});
-            await vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'reward' }).catch(()=>{});
+            vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'interstitial' }).catch(()=>{});
+            vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'reward' }).catch(()=>{});
             vkBridge.send('VKWebAppShowBannerAd', { banner_location: 'bottom' }).catch(()=>{});
-            
             vkBridge.subscribe(e => {
                 if(e.detail.type === 'VKWebAppViewHide') audio.handleVisibility(false);
                 if(e.detail.type === 'VKWebAppViewRestore') audio.handleVisibility(true);
             });
         } catch (e) { console.warn('VK Init err'); }
+        
         await this.load();
         
-        settings.setTheme(this.data.settings.theme);
+        // Setup Theme
+        document.getElementById('app-container').className = `theme-${this.data.currentTheme}`;
+        
         settings.sound = this.data.settings.sound;
         settings.vibration = this.data.settings.vibration !== undefined ? this.data.settings.vibration : true;
         settings.updateUI();
+        ui.updateEconomy();
+        
+        // Check Daily Reward
+        setTimeout(() => this.checkDailyReward(), 500);
     },
     async load() {
         let rawData = null;
         if (this.vkUserId) {
-            try {
-                const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_${this.vkUserId}`] });
-                if (res.keys[0]?.value) rawData = res.keys[0].value;
-            } catch(e){}
+            try { const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_${this.vkUserId}`] }); if (res.keys[0]?.value) rawData = res.keys[0].value; } catch(e){}
         }
         if(!rawData) rawData = localStorage.getItem('ct_data_local');
         if (rawData) {
@@ -353,35 +352,37 @@ const dataManager = {
     },
     mergeData(loaded) {
         if(loaded.progress) {
-            for (let key in loaded.progress) {
-                if (!isNaN(key)) {
-                    this.data.progress[`classic_${key}`] = loaded.progress[key];
-                    delete loaded.progress[key];
-                }
-            }
+            for (let key in loaded.progress) { if (!isNaN(key)) { this.data.progress[`classic_${key}`] = loaded.progress[key]; delete loaded.progress[key]; } }
             this.data.progress = {...this.data.progress, ...loaded.progress};
         }
         if(loaded.settings) this.data.settings = {...this.data.settings, ...loaded.settings};
         if(loaded.initialLevels) this.data.initialLevels = {...this.data.initialLevels, ...loaded.initialLevels};
-        if(loaded.sessions) this.data.sessions = {...this.data.sessions, ...loaded.sessions};
+        
+        // New features merge
+        if(loaded.coins !== undefined) this.data.coins = loaded.coins;
+        if(loaded.inventory) this.data.inventory = {...this.data.inventory, ...loaded.inventory};
+        if(loaded.unlockedThemes) this.data.unlockedThemes = loaded.unlockedThemes;
+        if(loaded.unlockedSkins) this.data.unlockedSkins = loaded.unlockedSkins;
+        if(loaded.currentTheme !== undefined) this.data.currentTheme = loaded.currentTheme;
+        if(loaded.currentSkin !== undefined) this.data.currentSkin = loaded.currentSkin;
+        if(loaded.hardcoreLevel) this.data.hardcoreLevel = loaded.hardcoreLevel;
+        if(loaded.dailyLevelState) this.data.dailyLevelState = loaded.dailyLevelState;
+        if(loaded.dailyReward) this.data.dailyReward = loaded.dailyReward;
         if(loaded.levelsSinceAd) this.data.levelsSinceAd = loaded.levelsSinceAd;
     },
     async save() {
-        this.data.settings.theme = settings.theme;
         this.data.settings.sound = settings.sound;
         this.data.settings.vibration = settings.vibration;
         const str = Obfuscator.encode(this.data);
         localStorage.setItem('ct_data_local', str);
         if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_${this.vkUserId}`, value: str }).catch(()=>{});
+        ui.updateEconomy();
     },
-    getLevelNum(diffIdx) { 
-        return this.data.progress[`${ui.gameMode}_${diffIdx}`] || 1; 
-    },
+    getLevelNum(diffIdx) { return this.data.progress[`${ui.gameMode}_${diffIdx}`] || 1; },
     incrementLevel(diffIdx) {
         const key = `${ui.gameMode}_${diffIdx}`;
         if(!this.data.progress[key]) this.data.progress[key] = 1;
         
-        // Для замков: считаем победы
         const winsBefore = this.data.progress[key] - 1;
         this.data.progress[key]++;
         const winsAfter = this.data.progress[key] - 1;
@@ -391,30 +392,53 @@ const dataManager = {
         
         if (diffIdx < LEVELS_CONFIG.length - 1) {
             const nextLvlConfig = LEVELS_CONFIG[diffIdx + 1];
-            if (winsBefore < nextLvlConfig.reqWins && winsAfter >= nextLvlConfig.reqWins) {
-                return diffIdx + 1; // Уведомляем об открытии нового уровня
-            }
+            if (winsBefore < nextLvlConfig.reqWins && winsAfter >= nextLvlConfig.reqWins) return diffIdx + 1;
         }
         return false;
     },
+    saveInitialLevel(mode, diffIdx, stacks) { this.data.initialLevels[`${mode}_${diffIdx}`] = JSON.parse(JSON.stringify(stacks)); this.save(); },
+    getInitialLevel(mode, diffIdx) { return this.data.initialLevels[`${mode}_${diffIdx}`]; },
+    clearInitialLevel(mode, diffIdx) { delete this.data.initialLevels[`${mode}_${diffIdx}`]; this.save(); },
     
-    /* ГЛУБОКОЕ КЛОНИРОВАНИЕ МАССИВОВ ПРИ СОХРАНЕНИИ */
-    saveInitialLevel(mode, diffIdx, stacks) {
-        this.data.initialLevels[`${mode}_${diffIdx}`] = JSON.parse(JSON.stringify(stacks)); 
+    checkDailyReward() {
+        const now = new Date();
+        const last = new Date(this.data.dailyReward.lastClaim);
+        const isSameDay = now.getFullYear() === last.getFullYear() && now.getMonth() === last.getMonth() && now.getDate() === last.getDate();
+        
+        if (!isSameDay) {
+            const diffTime = Math.abs(now - last);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            
+            if (diffDays > 1 && this.data.dailyReward.lastClaim !== 0) {
+                this.data.dailyReward.streak = 0; // Сброс стрейка
+            }
+            if(this.data.dailyReward.streak >= 7) this.data.dailyReward.streak = 0;
+            
+            ui.showDailyModal();
+        }
+    },
+    claimDaily() {
+        const rewards = [
+            { t: 'coin', v: 50 }, { t: 'undo', v: 1 }, { t: 'coin', v: 100 },
+            { t: 'life', v: 1 }, { t: 'coin', v: 150 }, { t: 'undo', v: 2 }, { t: 'mega', v: 300 }
+        ];
+        const r = rewards[this.data.dailyReward.streak];
+        if(r.t === 'coin' || r.t === 'mega') this.data.coins += r.v;
+        if(r.t === 'undo') this.data.inventory.undos += r.v;
+        if(r.t === 'life') this.data.inventory.lives += r.v;
+        if(r.t === 'mega') this.data.inventory.lives += 1;
+        
+        this.data.dailyReward.streak++;
+        this.data.dailyReward.lastClaim = new Date().getTime();
         this.save();
+        ui.hideModals();
+        audio.play('win');
+        fireConfetti();
     },
-    getInitialLevel(mode, diffIdx) { 
-        return this.data.initialLevels[`${mode}_${diffIdx}`]; 
-    },
-    clearInitialLevel(mode, diffIdx) {
-        delete this.data.initialLevels[`${mode}_${diffIdx}`]; 
-        delete this.data.sessions[`${mode}_${diffIdx}`];
-        this.save();
-    },
-    saveSession(mode, diffIdx, stacks) {
-        this.data.sessions[`${mode}_${diffIdx}`] = JSON.parse(JSON.stringify(stacks)); 
-        this.save();
-    },
+    
+    addCoins(amount) { this.data.coins += amount; this.save(); },
+    useUndo() { if(this.data.inventory.undos > 0) { this.data.inventory.undos--; this.save(); return true; } return false; },
+    useLife() { if(this.data.inventory.lives > 0) { this.data.inventory.lives--; this.save(); return true; } return false; },
     
     checkAndShowInterstitial() {
         if (this.data.levelsSinceAd >= 5) {
@@ -422,44 +446,32 @@ const dataManager = {
         }
     },
     async showInterstitialAd() {
-        const wasSound = settings.sound;
-        if(wasSound) audio.toggleMusicMute(true);
-        try { 
-            const r = await vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' }); 
-            return r.result; 
-        }
+        audio.toggleMusicMute(true);
+        try { const r = await vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' }); return r.result; }
         catch(e) { return false; }
-        finally {
-            if(wasSound) audio.toggleMusicMute(false);
-            if(audio.ctx.state === 'suspended') audio.ctx.resume();
-        }
+        finally { audio.toggleMusicMute(false); if(audio.ctx.state === 'suspended') audio.ctx.resume(); }
     },
-    async showRewardAd() {
-        const wasSound = settings.sound;
-        if(wasSound) audio.toggleMusicMute(true);
+    async showRewardAd(rewardType) {
+        audio.toggleMusicMute(true);
         try { 
             const r = await vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'reward' }); 
-            return r.result; 
+            if(r.result) {
+                if(rewardType === 'undo') this.data.inventory.undos += 3;
+                if(rewardType === 'life') this.data.inventory.lives += 1;
+                this.save();
+                return true;
+            }
+            return false;
         } 
         catch(e) { return false; }
-        finally {
-            if(wasSound) audio.toggleMusicMute(false);
-            if(audio.ctx.state === 'suspended') audio.ctx.resume();
-        }
+        finally { audio.toggleMusicMute(false); if(audio.ctx.state === 'suspended') audio.ctx.resume(); }
     }
 };
 
 /** SETTINGS */
 const settings = {
-    sound: true, theme: 'light', vibration: true,
+    sound: true, vibration: true,
     init() { this.updateUI(); },
-    toggleTheme() { this.setTheme(this.theme === 'light' ? 'dark' : 'light'); dataManager.save(); },
-    setTheme(mode) {
-        this.theme = mode; const app = document.getElementById('app-container'); const toggle = document.getElementById('toggle-theme');
-        if (mode === 'dark') { app.classList.add('dark-theme'); toggle.classList.add('active'); } 
-        else { app.classList.remove('dark-theme'); toggle.classList.remove('active'); }
-        if(typeof game !== 'undefined' && game) game.triggerDraw();
-    },
     toggleSound() { this.sound = !this.sound; this.updateUI(); audio.toggleSound(this.sound); dataManager.save(); },
     toggleVibration() { this.vibration = !this.vibration; this.updateUI(); dataManager.save(); },
     updateUI() {
@@ -479,9 +491,16 @@ const LEVELS_CONFIG = [
     { id: 6, name: "Легенда",   colors: 9, slots: 11, size: 5, reqWins: 10 },
     { id: 7, name: "Гений",     colors: 10, slots: 12, size: 5, reqWins: 10 }
 ];
-const PALETTE = [
-    '#ff4757', '#1e90ff', '#2ed573', '#f39c12', '#f1c40f', '#ff9ff3',
-    '#9c88ff', '#00d2d3', '#5f27cd', '#006266', '#833471', '#d35400'
+const PALETTE = ['#ff4757', '#1e90ff', '#2ed573', '#f39c12', '#f1c40f', '#ff9ff3', '#9c88ff', '#00d2d3', '#5f27cd', '#006266', '#833471', '#d35400'];
+
+const SHOP_THEMES = [
+    {id:0, name:"Светлая", c1:"#f5f7fa", c2:"#c3cfe2"}, {id:1, name:"Темная", c1:"#1B1B2F", c2:"#0F0F1A"}, {id:2, name:"Закат", c1:"#ff9a9e", c2:"#fecfef"},
+    {id:3, name:"Лес", c1:"#0ba360", c2:"#3cba92"}, {id:4, name:"Океан", c1:"#09203f", c2:"#537895"}, {id:5, name:"Киберпанк", c1:"#21003c", c2:"#ff007f"},
+    {id:6, name:"Кофе", c1:"#D4B499", c2:"#9F7A59"}, {id:7, name:"Король", c1:"#2c0001", c2:"#8a0306"}, {id:8, name:"Матрица", c1:"#000000", c2:"#001a00"}
+];
+const SHOP_SKINS = [
+    {id:0, name:"Классика"}, {id:1, name:"Суши"}, {id:2, name:"Пончик"}, {id:3, name:"Фишка"}, {id:4, name:"Винил"},
+    {id:5, name:"Дерево"}, {id:6, name:"Неон"}, {id:7, name:"Кристалл"}, {id:8, name:"Макарун"}
 ];
 
 /* --- AUDIO MANAGER --- */
@@ -489,144 +508,76 @@ class AudioManager {
     constructor() { 
         this.enabled = true; 
         this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-        this.buffers = {};
-        this.audioPool = {}; 
+        this.buffers = {}; this.audioPool = {}; 
         
-        // Громкость теперь 100% (1.0). Настройка громкости производится в аудиофайлах.
-        this.bgmMenu = new Audio('menu_music.mp3');
-        this.bgmMenu.loop = true; this.bgmMenu.volume = 1.0;
-        this.bgmGame = new Audio('game_music.mp3');
-        this.bgmGame.loop = true; this.bgmGame.volume = 1.0;
-        
+        this.bgmMenu = new Audio('menu_music.mp3'); this.bgmMenu.loop = true; this.bgmMenu.volume = 1.0;
+        this.bgmGame = new Audio('game_music.mp3'); this.bgmGame.loop = true; this.bgmGame.volume = 1.0;
         this.activeBgm = this.bgmMenu;
-        this.wasPlaying = false;
-        this.unlocked = false;
+        this.wasPlaying = false; this.unlocked = false;
         
         this.loadSFX();
         
         const unlock = () => {
-            if(this.unlocked) return;
-            this.unlocked = true;
+            if(this.unlocked) return; this.unlocked = true;
             if(this.ctx.state === 'suspended') this.ctx.resume();
-            
             if(this.enabled) this.activeBgm.play().catch(()=>{});
-            
-            document.body.removeEventListener('click', unlock);
-            document.body.removeEventListener('touchstart', unlock);
+            document.body.removeEventListener('click', unlock); document.body.removeEventListener('touchstart', unlock);
         };
-        document.body.addEventListener('click', unlock);
-        document.body.addEventListener('touchstart', unlock);
+        document.body.addEventListener('click', unlock); document.body.addEventListener('touchstart', unlock);
     }
     
     async loadSFX() {
         const files = ['pop', 'land', 'error', 'win', 'click'];
         for(let name of files) {
-            const fileName = name + '.mp3';
-            
             this.audioPool[name] = [];
-            for(let i=0; i<3; i++) {
-                const a = new Audio(fileName);
-                a.preload = 'auto';
-                this.audioPool[name].push(a);
-            }
-
-            try {
-                const res = await fetch(fileName);
-                const arrayBuffer = await res.arrayBuffer();
-                this.buffers[name] = await this.ctx.decodeAudioData(arrayBuffer);
-            } catch(e) {}
+            for(let i=0; i<3; i++) { const a = new Audio(name+'.mp3'); a.preload = 'auto'; this.audioPool[name].push(a); }
+            try { const res = await fetch(name+'.mp3'); const arrayBuffer = await res.arrayBuffer(); this.buffers[name] = await this.ctx.decodeAudioData(arrayBuffer); } catch(e) {}
         }
     }
     
     switchBGM(track) {
         const target = track === 'game' ? this.bgmGame : this.bgmMenu;
         if (this.activeBgm === target) return; 
-        
-        if (this.activeBgm) {
-            this.activeBgm.pause();
-            this.activeBgm.currentTime = 0; 
-        }
+        if (this.activeBgm) { this.activeBgm.pause(); this.activeBgm.currentTime = 0; }
         this.activeBgm = target;
-        
-        if (this.enabled && this.unlocked) {
-            this.activeBgm.play().catch(()=>{});
-        }
+        if (this.enabled && this.unlocked) this.activeBgm.play().catch(()=>{});
     }
     
-    toggleMusicMute(mute) {
-        this.bgmMenu.muted = mute;
-        this.bgmGame.muted = mute;
-    }
-    
-    toggleSound(state) { 
-        this.enabled = state; 
-        if(state) { 
-            if(this.ctx.state === 'suspended') this.ctx.resume();
-            if(this.unlocked) this.activeBgm.play().catch(()=>{}); 
-        } else {
-            this.activeBgm.pause();
-        } 
-    }
-    
-    handleVisibility(isVisible) {
-        if (!isVisible) { 
-            if (!this.activeBgm.paused) { this.wasPlaying = true; this.activeBgm.pause(); } 
-        } else { 
-            if (this.wasPlaying && this.enabled && this.unlocked) { this.activeBgm.play().catch(()=>{}); this.wasPlaying = false; } 
-        }
-    }
+    toggleMusicMute(mute) { this.bgmMenu.muted = mute; this.bgmGame.muted = mute; }
+    toggleSound(state) { this.enabled = state; if(state) { if(this.ctx.state === 'suspended') this.ctx.resume(); if(this.unlocked) this.activeBgm.play().catch(()=>{}); } else this.activeBgm.pause(); }
+    handleVisibility(isVisible) { if (!isVisible) { if (!this.activeBgm.paused) { this.wasPlaying = true; this.activeBgm.pause(); } } else { if (this.wasPlaying && this.enabled && this.unlocked) { this.activeBgm.play().catch(()=>{}); this.wasPlaying = false; } } }
     
     haptic(type) {
         if (!settings.vibration) return;
-        if (window.vkBridge) { 
-            if(type==='error'||type==='success') vkBridge.send("VKWebAppTapticNotificationOccurred", {"type": type}).catch(()=>{}); 
-            else vkBridge.send("VKWebAppTapticImpactOccurred", {"style": type || "light"}).catch(()=>{}); 
-        } 
+        if (window.vkBridge) { if(type==='error'||type==='success') vkBridge.send("VKWebAppTapticNotificationOccurred", {"type": type}).catch(()=>{}); else vkBridge.send("VKWebAppTapticImpactOccurred", {"style": type || "light"}).catch(()=>{}); } 
         else if (navigator.vibrate) navigator.vibrate(type==='error'?[50,50,50]:15);
     }
     
     play(type) {
         if (!this.enabled) return;
-        
-        if(type==='pop') this.haptic('light');
-        if(type==='land') this.haptic('medium');
-        if(type==='error') this.haptic('error');
-        if(type==='win') this.haptic('success');
-        
+        if(type==='pop') this.haptic('light'); if(type==='land') this.haptic('medium'); if(type==='error') this.haptic('error'); if(type==='win') this.haptic('success');
         if (this.ctx.state === 'suspended') this.ctx.resume();
         
-        if (this.buffers[type]) {
-            const source = this.ctx.createBufferSource();
-            source.buffer = this.buffers[type];
-            source.connect(this.ctx.destination);
-            source.start(0);
-        } 
+        if (this.buffers[type]) { const source = this.ctx.createBufferSource(); source.buffer = this.buffers[type]; source.connect(this.ctx.destination); source.start(0); } 
         else if (this.audioPool[type]) {
             const pool = this.audioPool[type];
-            for(let i=0; i<pool.length; i++) {
-                if(pool[i].paused || pool[i].currentTime === 0) {
-                    pool[i].currentTime = 0;
-                    pool[i].play().catch(()=>{});
-                    return;
-                }
-            }
-            pool[0].currentTime = 0;
-            pool[0].play().catch(()=>{});
+            for(let i=0; i<pool.length; i++) { if(pool[i].paused || pool[i].currentTime === 0) { pool[i].currentTime = 0; pool[i].play().catch(()=>{}); return; } }
+            pool[0].currentTime = 0; pool[0].play().catch(()=>{});
         }
     }
-    
     click() { this.play('click'); }
 }
 const audio = new AudioManager();
 
 /* --- UI --- */
 const ui = {
-    screens: { menu: document.getElementById('screen-menu'), mode: document.getElementById('screen-mode'), levels: document.getElementById('screen-levels'), hud: document.getElementById('hud'), other: document.getElementById('screen-other-games') },
-    modals: { rules: document.getElementById('modal-rules'), pause: document.getElementById('modal-pause'), victory: document.getElementById('modal-victory'), settings: document.getElementById('modal-settings') },
+    screens: { menu: document.getElementById('screen-menu'), mode: document.getElementById('screen-mode'), levels: document.getElementById('screen-levels'), hud: document.getElementById('hud'), shop: document.getElementById('screen-shop') },
+    modals: { rules: document.getElementById('modal-rules'), pause: document.getElementById('modal-pause'), victory: document.getElementById('modal-victory'), settings: document.getElementById('modal-settings'), daily: document.getElementById('modal-daily'), oom: document.getElementById('modal-out-of-moves') },
     gameMode: 'classic',
     
     switchScreen(name) {
         Object.values(this.screens).forEach(s => { if(s) { s.classList.remove('active'); s.classList.add('hidden'); } });
+        document.getElementById('economy-bar').style.display = (name === 'game') ? 'none' : 'flex';
         
         if (name === 'game') { 
             this.screens.hud.style.display = 'flex'; 
@@ -643,130 +594,292 @@ const ui = {
     },
     showModals(name) { this.modals[name].classList.add('visible'); if(name === 'rules') rulesDemo.start(); },
     hideModals() { Object.values(this.modals).forEach(m => m.classList.remove('visible')); rulesDemo.stop(); },
-    showMenu() { this.switchScreen('menu'); }, showRules() { this.showModals('rules'); }, showSettings() { this.showModals('settings'); },
+    showMenu() { this.updateEconomy(); this.switchScreen('menu'); }, showRules() { this.showModals('rules'); }, showSettings() { this.showModals('settings'); },
     startFlow() { audio.click(); this.switchScreen('mode'); },
     selectMode(mode) { this.gameMode = mode; this.showLevels(); },
+    
+    updateEconomy() {
+        document.getElementById('ui-coins').innerText = dataManager.data.coins;
+        document.getElementById('ui-lives').innerText = dataManager.data.inventory.lives;
+        const u = dataManager.data.inventory.undos;
+        const b = document.getElementById('undo-badge');
+        if(u > 0) { b.innerText = u; b.classList.remove('ad'); } else { b.innerText = "AD"; b.classList.add('ad'); }
+        document.getElementById('oom-lives').innerText = dataManager.data.inventory.lives;
+    },
+    
+    showDailyModal() {
+        const grid = document.getElementById('daily-grid'); grid.innerHTML = '';
+        const streak = dataManager.data.dailyReward.streak;
+        const rewards = [
+            {d:1, t:'coin', v:50, i:'🪙'}, {d:2, t:'undo', v:1, i:'↩️'}, {d:3, t:'coin', v:100, i:'🪙'},
+            {d:4, t:'life', v:1, i:'❤️'}, {d:5, t:'coin', v:150, i:'🪙'}, {d:6, t:'undo', v:2, i:'↩️'},
+            {d:7, t:'mega', v:300, i:'🎁'}
+        ];
+        
+        rewards.forEach((r, i) => {
+            const div = document.createElement('div');
+            let cls = 'daily-item';
+            if(i < streak) cls += ' claimed';
+            if(i === streak) cls += ' today';
+            if(i === 6) cls += ' daily-item-7';
+            div.className = cls;
+            
+            if(i === 6) {
+                div.innerHTML = `<div class="daily-day">ДЕНЬ 7</div><div style="display:flex; align-items:center; gap:10px;"><div class="daily-icon">🎁</div><div><div class="daily-val">+300 🪙</div><div class="daily-val">+1 ❤️</div></div></div>`;
+            } else {
+                div.innerHTML = `<div class="daily-day">ДЕНЬ ${r.d}</div><div class="daily-icon">${r.i}</div><div class="daily-val">+${r.v}</div>`;
+            }
+            grid.appendChild(div);
+        });
+        this.showModals('daily');
+    },
+    claimDaily() { dataManager.claimDaily(); this.updateEconomy(); },
+    
+    showShop(tab) {
+        this.switchScreen('shop');
+        document.querySelectorAll('.shop-tab').forEach(el => el.classList.remove('active'));
+        document.getElementById('tab-'+tab).classList.add('active');
+        
+        const grid = document.getElementById('shop-grid');
+        const boost = document.getElementById('shop-boosters');
+        
+        if (tab === 'boosters') {
+            grid.style.display = 'none'; boost.style.display = 'block';
+            boost.innerHTML = `
+                <div class="booster-item">
+                    <div style="display:flex; align-items:center; gap:15px">
+                        <div style="font-size:30px">↩️</div>
+                        <div style="text-align:left"><div style="font-weight:900; font-size:18px; color:var(--text-main)">Отмена хода</div><div style="font-size:12px; color:var(--text-sec)">У вас: ${dataManager.data.inventory.undos}</div></div>
+                    </div>
+                    <div>
+                        <button class="item-btn" style="width:auto; padding: 10px 20px" onclick="audio.click(); ui.buyBooster('undo', 50)">50 🪙</button>
+                    </div>
+                </div>
+                <div class="booster-item">
+                    <div style="display:flex; align-items:center; gap:15px">
+                        <div style="font-size:30px">❤️</div>
+                        <div style="text-align:left"><div style="font-weight:900; font-size:18px; color:var(--text-main)">Жизнь</div><div style="font-size:12px; color:var(--text-sec)">У вас: ${dataManager.data.inventory.lives}</div></div>
+                    </div>
+                    <div>
+                        <button class="item-btn" style="width:auto; padding: 10px 20px" onclick="audio.click(); ui.buyBooster('life', 150)">150 🪙</button>
+                    </div>
+                </div>
+                <div class="booster-item" style="border: 2px solid var(--accent)">
+                    <div style="display:flex; align-items:center; gap:15px">
+                        <div style="font-size:30px">📺</div>
+                        <div style="text-align:left"><div style="font-weight:900; font-size:18px; color:var(--text-main)">Халява</div><div style="font-size:12px; color:var(--text-sec)">За рекламу</div></div>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:5px">
+                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0" onclick="audio.click(); ui.adBooster('undo')">+3 ↩️</button>
+                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0" onclick="audio.click(); ui.adBooster('life')">+1 ❤️</button>
+                    </div>
+                </div>
+            `;
+        } else {
+            grid.style.display = 'grid'; boost.style.display = 'none';
+            grid.innerHTML = '';
+            const items = tab === 'themes' ? SHOP_THEMES : SHOP_SKINS;
+            const unlocked = tab === 'themes' ? dataManager.data.unlockedThemes : dataManager.data.unlockedSkins;
+            const current = tab === 'themes' ? dataManager.data.currentTheme : dataManager.data.currentSkin;
+            
+            items.forEach(item => {
+                const isUnlocked = unlocked.includes(item.id);
+                const isEq = current === item.id;
+                const div = document.createElement('div');
+                div.className = `shop-item ${!isUnlocked ? 'locked' : ''} ${isEq ? 'active-item' : ''}`;
+                
+                let previewHtml = '';
+                if(tab === 'themes') {
+                    previewHtml = `<div style="width:100%; height:100%; border-radius:10px; background: linear-gradient(135deg, ${item.c1}, ${item.c2})"></div>`;
+                } else {
+                    previewHtml = `<canvas id="prev-${item.id}" width="60" height="60"></canvas>`;
+                }
+                
+                div.innerHTML = `
+                    <div class="item-preview">${previewHtml}</div>
+                    <div style="font-size:13px; font-weight:800; color:var(--text-main); margin-bottom:5px; text-align:center; line-height:1">${item.name}</div>
+                    ${!isUnlocked ? `<div class="item-price">500 🪙</div>` : ''}
+                    <button class="item-btn ${isEq ? 'equipped' : ''}" onclick="audio.click(); ui.buyOrEquip('${tab}', ${item.id}, 500, ${isUnlocked})">
+                        ${isEq ? 'ВЫБРАНО' : (isUnlocked ? 'ВЫБРАТЬ' : 'КУПИТЬ')}
+                    </button>
+                `;
+                grid.appendChild(div);
+                
+                if(tab === 'skins') {
+                    setTimeout(() => {
+                        const pc = document.getElementById(`prev-${item.id}`);
+                        if(pc) {
+                            const pctx = pc.getContext('2d');
+                            drawDetailedCoin(pctx, 30, 45, 22, 12, PALETTE[1], false, item.id);
+                        }
+                    }, 50);
+                }
+            });
+        }
+    },
+    
+    buyOrEquip(type, id, price, isUnlocked) {
+        if (isUnlocked) {
+            if (type === 'themes') { dataManager.data.currentTheme = id; document.getElementById('app-container').className = `theme-${id}`; }
+            else { dataManager.data.currentSkin = id; }
+            dataManager.save();
+            this.showShop(type);
+        } else {
+            if (dataManager.data.coins >= price) {
+                dataManager.data.coins -= price;
+                audio.play('win');
+                if(type === 'themes') dataManager.data.unlockedThemes.push(id); else dataManager.data.unlockedSkins.push(id);
+                dataManager.save();
+                this.showShop(type);
+            } else { audio.play('error'); }
+        }
+    },
+    
+    buyBooster(type, price) {
+        if(dataManager.data.coins >= price) {
+            dataManager.data.coins -= price;
+            if(type==='undo') dataManager.data.inventory.undos++; else dataManager.data.inventory.lives++;
+            audio.play('pop'); dataManager.save(); this.showShop('boosters');
+        } else audio.play('error');
+    },
+    
+    async adBooster(type) {
+        const ok = await dataManager.showRewardAd(type);
+        if(ok) { this.showShop('boosters'); audio.play('win'); }
+    },
     
     showLevels() {
         const list = document.getElementById('levels-list'); list.innerHTML = '';
         LEVELS_CONFIG.forEach((lvl, idx) => {
             const div = document.createElement('div');
-            
-            let isLocked = false;
-            let winsPrev = 0;
-            let unlockText = "";
-            
-            // Проверка блокировки
+            let isLocked = false, winsPrev = 0, unlockText = "";
             if (idx > 0) {
                 const prevLvl = LEVELS_CONFIG[idx-1];
                 const prevLvlWins = dataManager.getLevelNum(idx-1) - 1; 
-                if (prevLvlWins < prevLvl.reqWins) {
-                    isLocked = true;
-                    unlockText = `${prevLvlWins}/${prevLvl.reqWins} на ${prevLvl.name}`;
-                }
+                if (prevLvlWins < prevLvl.reqWins) { isLocked = true; unlockText = `${prevLvlWins}/${prevLvl.reqWins} на ${prevLvl.name}`; }
             }
-
             div.className = `level-card ${isLocked ? 'locked' : ''}`;
             div.onclick = () => { if(!isLocked){ audio.click(); game.startLevel(idx); } };
             
             if (isLocked) {
-                div.innerHTML = `
-                    <div style="display:flex; align-items:center; gap: 15px;">
-                        <div class="level-icon-wrapper" style="filter: grayscale(1); opacity: 0.5;">${idx + 1}</div>
-                        <div>
-                            <h3 style="margin:0; font-size:18px; color:var(--text-main);">${lvl.name}</h3>
-                            <p style="margin:4px 0 0; font-size:13px; color:var(--text-sec); font-weight:700;">${unlockText}</p>
-                        </div>
-                    </div>
-                    <div class="lock-icon-overlay">
-                        <svg class="icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-                    </div>
-                `;
+                div.innerHTML = `<div style="display:flex; align-items:center; gap: 15px;"><div class="level-icon-wrapper" style="filter: grayscale(1); opacity: 0.5;">${idx + 1}</div><div><h3 style="margin:0; font-size:18px; color:var(--text-main);">${lvl.name}</h3><p style="margin:4px 0 0; font-size:13px; color:var(--text-sec); font-weight:700;">${unlockText}</p></div></div><div class="lock-icon-overlay"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg></div>`;
             } else {
-                div.innerHTML = `
-                    <div style="display:flex; align-items:center; gap: 15px;">
-                        <div class="level-icon-wrapper">${idx + 1}</div>
-                        <div>
-                            <h3 style="margin:0; font-size:18px; color:var(--text-main);">${lvl.name}</h3>
-                            <p style="margin:4px 0 0; font-size:13px; color:var(--text-sec); font-weight:700;">Пройдено: ${dataManager.getLevelNum(idx) - 1}</p>
-                        </div>
-                    </div>
-                    <div style="color:var(--accent);">
-                        <svg class="icon" style="width:28px; height:28px;" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
-                    </div>
-                `;
+                div.innerHTML = `<div style="display:flex; align-items:center; gap: 15px;"><div class="level-icon-wrapper">${idx + 1}</div><div><h3 style="margin:0; font-size:18px; color:var(--text-main);">${lvl.name}</h3><p style="margin:4px 0 0; font-size:13px; color:var(--text-sec); font-weight:700;">Пройдено: ${dataManager.getLevelNum(idx) - 1}</p></div></div><div style="color:var(--accent);"><svg class="icon" style="width:28px; height:28px;" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></div>`;
             }
-            
             list.appendChild(div);
         });
         this.switchScreen('levels');
     },
     
-    showOtherGames() {
-        const container = document.getElementById('other-games-container'); container.innerHTML = '';
-        const games = [
-            { name: 'Bubble Shooter', appId: 54051411, icon: 'icon1.png' }, 
-            { name: 'Тетрис', appId: 54051413, icon: 'icon2.png' }, 
-            { name: 'Tower Blocks', appId: 53962513, icon: 'icon3.png' }, 
-            { name: 'Блок Про', appId: 53936296, icon: 'icon4.png' }, 
-            { name: 'Филворды', appId: 53867134, icon: 'icon5.png' }, 
-            { name: 'Словли', appId: 53861990, icon: 'icon6.png' }, 
-            { name: 'Brick Balls', appId: 54023580, icon: 'icon7.png' }, 
-            { name: '2048', appId: 53965380, icon: 'icon8.png' }, 
-            { name: 'Math Matrix', appId: 53970659, icon: 'icon9.png' }
-        ];
-        games.forEach(g => {
-            const item = document.createElement('div'); item.className = 'other-game-item';
-            item.onclick = () => { audio.click(); vkBridge.send('VKWebAppOpenApp', { app_id: g.appId }).catch(()=>{}); };
-            item.innerHTML = `<div class="game-icon" style="background:#eee"><img src="${g.icon}" onerror="this.style.display='none'"></div><div class="game-name">${g.name}</div>`;
-            container.appendChild(item);
-        });
-        this.switchScreen('other');
-    },
-    updateUndoBadge(count) {
-        const el = document.getElementById('undo-badge');
-        if (count > 0) { el.innerText = count; el.classList.remove('ad'); } else { el.innerText = "AD"; el.classList.add('ad'); }
-    },
-    showVictoryModal(unlockedNextDiffIdx) {
-        const normalContent = document.getElementById('vic-normal-content'), unlockContent = document.getElementById('vic-unlock-content');
-        if (unlockedNextDiffIdx !== false) {
-            normalContent.style.display = 'none'; unlockContent.style.display = 'block';
-            document.getElementById('vic-unlock-name').innerText = LEVELS_CONFIG[unlockedNextDiffIdx].name;
-            document.getElementById('vic-btn-go-next').onclick = () => { 
-                audio.click(); 
-                ui.hideModals();
-                game.startLevel(unlockedNextDiffIdx); 
-            };
+    showVictoryModal(coinsEarned, isHardcore, unlockedNextDiff) {
+        document.getElementById('vic-coins').innerText = coinsEarned;
+        const norm = document.getElementById('vic-normal-content'), unl = document.getElementById('vic-unlock-content');
+        
+        if(isHardcore) {
+            norm.style.display = 'block'; unl.style.display = 'none';
         } else {
-            normalContent.style.display = 'block'; unlockContent.style.display = 'none';
+            if (unlockedNextDiff !== false) {
+                norm.style.display = 'none'; unl.style.display = 'block';
+                document.getElementById('vic-unlock-name').innerText = LEVELS_CONFIG[unlockedNextDiff].name;
+                document.getElementById('vic-btn-go-next').onclick = () => { audio.click(); ui.hideModals(); game.startLevel(unlockedNextDiff); };
+            } else {
+                norm.style.display = 'block'; unl.style.display = 'none';
+            }
         }
         this.showModals('victory');
     }
 };
 
-/* --- DRAW HELPERS --- */
-function drawDetailedCoin(ctx, x, y, r, h, c, isHidden) {
-    const actualColor = isHidden ? '#7f8c8d' : c;
-    const s = shadeColor(actualColor, -40), l = shadeColor(actualColor, 20);
-    const g = ctx.createLinearGradient(x-r, y, x+r, y);
-    g.addColorStop(0, s); g.addColorStop(0.5, actualColor); g.addColorStop(1, s);
+/* --- ENHANCED DRAW HELPERS (SKINS) --- */
+function drawDetailedCoin(ctx, x, y, r, h, c, isHidden, skinId = dataManager.data.currentSkin) {
+    if(isHidden) { c = '#7f8c8d'; skinId = 0; } // Скрытые всегда выглядят как базовая серая
+    const s = shadeColor(c, -40), l = shadeColor(c, 20);
     
-    ctx.fillStyle = g; ctx.beginPath(); 
-    ctx.ellipse(x, y, r, r*0.35, 0, 0, Math.PI); 
-    ctx.ellipse(x, y-h, r, r*0.35, 0, Math.PI, 0); 
-    ctx.fill();
-    ctx.fillRect(x-r, y-h, r*2, h);
+    // Base cylinder for most
+    if (skinId !== 8) { // Macaron is fully custom
+        const g = ctx.createLinearGradient(x-r, y, x+r, y);
+        g.addColorStop(0, s); g.addColorStop(0.5, c); g.addColorStop(1, s);
+        ctx.fillStyle = g; ctx.beginPath(); 
+        ctx.ellipse(x, y, r, r*0.35, 0, 0, Math.PI); ctx.ellipse(x, y-h, r, r*0.35, 0, Math.PI, 0); ctx.fill();
+        ctx.fillRect(x-r, y-h, r*2, h);
+    }
+
+    ctx.save();
     
-    ctx.beginPath(); ctx.ellipse(x, y, r, r*0.35, 0, 0, Math.PI); 
-    ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1.5; ctx.stroke();
-    
-    const gt = ctx.createRadialGradient(x, y-h-r*0.1, 0, x, y-h, r);
-    gt.addColorStop(0, l); gt.addColorStop(1, actualColor);
-    ctx.fillStyle = gt; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
-    ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.7, r*0.25, 0, 0, Math.PI*2); ctx.stroke();
-    ctx.strokeStyle = 'rgba(0,0,0,0.1)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x-r, y); ctx.lineTo(x-r, y-h); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x+r, y); ctx.lineTo(x+r, y-h); ctx.stroke();
-    ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.stroke();
+    switch(skinId) {
+        case 0: // Классика
+            ctx.beginPath(); ctx.ellipse(x, y, r, r*0.35, 0, 0, Math.PI); ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1.5; ctx.stroke();
+            const gt = ctx.createRadialGradient(x, y-h-r*0.1, 0, x, y-h, r); gt.addColorStop(0, l); gt.addColorStop(1, c);
+            ctx.fillStyle = gt; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.7, r*0.25, 0, 0, Math.PI*2); ctx.stroke();
+            break;
+            
+        case 1: // Суши
+            // Nori wrap
+            ctx.fillStyle = '#2d3436'; ctx.fillRect(x-r, y-h, r*2, h); ctx.beginPath(); ctx.ellipse(x, y, r, r*0.35, 0, 0, Math.PI); ctx.fill();
+            // Rice top
+            ctx.fillStyle = '#f5f6fa'; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
+            // Fish core
+            ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.5, r*0.2, 0, 0, Math.PI*2); ctx.fill();
+            break;
+            
+        case 2: // Пончик
+            ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
+            // Sprinkles
+            ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.lineCap='round';
+            for(let i=0; i<4; i++) { ctx.beginPath(); ctx.moveTo(x+(i*5-10), y-h+(i%2===0?2:-2)); ctx.lineTo(x+(i*5-7), y-h+(i%2===0?4:-4)); ctx.stroke(); }
+            // Hole (punch through background approximation)
+            ctx.globalCompositeOperation = 'destination-out'; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.3, r*0.15, 0, 0, Math.PI*2); ctx.fill();
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.3, r*0.15, 0, 0, Math.PI*2); ctx.fill(); // Fake shadow
+            break;
+            
+        case 3: // Фишка (Poker)
+            ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle = '#fff'; ctx.lineWidth = 4;
+            for(let i=0; i<4; i++) { ctx.beginPath(); ctx.ellipse(x, y-h, r*0.8, r*0.28, 0, i*Math.PI/2, (i*Math.PI/2)+0.5); ctx.stroke(); }
+            ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.4, r*0.15, 0, 0, Math.PI*2); ctx.fill();
+            break;
+            
+        case 4: // Винил
+            ctx.fillStyle = '#1e272e'; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle = '#485460'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.7, r*0.25, 0, 0, Math.PI*2); ctx.stroke();
+            ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.4, r*0.15, 0, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#1e272e'; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.1, r*0.04, 0, 0, Math.PI*2); ctx.fill();
+            break;
+            
+        case 5: // Дерево
+            ctx.fillStyle = '#d1ccc0'; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle = '#a4b0be'; ctx.lineWidth=1; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.6, r*0.2, 0, 0, Math.PI*2); ctx.stroke();
+            ctx.fillStyle = c; ctx.globalAlpha = 0.85; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.8, r*0.28, 0, 0, Math.PI*2); ctx.fill(); ctx.globalAlpha = 1;
+            break;
+            
+        case 6: // Неон
+            ctx.fillStyle = '#2f3542'; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle = c; ctx.lineWidth = 3; ctx.shadowColor = c; ctx.shadowBlur = 10;
+            ctx.beginPath(); ctx.ellipse(x, y-h, r*0.8, r*0.28, 0, 0, Math.PI*2); ctx.stroke();
+            ctx.shadowBlur = 0;
+            break;
+            
+        case 7: // Кристалл
+            ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.ellipse(x, y-h, r*0.5, r*0.18, 0, 0, Math.PI*2); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(x-r*0.5, y-h); ctx.lineTo(x-r, y-h); ctx.moveTo(x+r*0.5, y-h); ctx.lineTo(x+r, y-h); ctx.stroke();
+            break;
+            
+        case 8: // Макарун (Уникальная отрисовка)
+            // Низ
+            ctx.fillStyle = s; ctx.beginPath(); ctx.ellipse(x, y-h*0.2, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
+            // Крем
+            ctx.fillStyle = '#f1f2f6'; ctx.beginPath(); ctx.ellipse(x, y-h*0.5, r*1.05, r*0.36, 0, 0, Math.PI*2); ctx.fill();
+            // Верх
+            ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
+            ctx.fillRect(x-r, y-h, r*2, h*0.5);
+            ctx.beginPath(); ctx.ellipse(x, y-h+h*0.5, r, r*0.35, 0, 0, Math.PI); ctx.fill();
+            break;
+    }
+    ctx.restore();
 }
 function shadeColor(c, a) { return '#' + c.replace(/^#/, '').replace(/../g, c => ('0'+Math.min(255, Math.max(0, parseInt(c, 16) + a)).toString(16)).substr(-2)); }
 
@@ -780,12 +893,12 @@ const rulesDemo = {
         ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--ui-bg'); ctx.clearRect(0,0,w,h);
         const s1x = w/2-40, s2x = w/2+40, by = h-30;
         ctx.fillStyle = 'rgba(0,0,0,0.1)'; [s1x, s2x].forEach(x => { ctx.beginPath(); ctx.ellipse(x, by, 25, 8, 0, 0, Math.PI*2); ctx.fill(); });
-        const c = this.t%4; drawDetailedCoin(ctx, s1x, by, 22, 10, PALETTE[1], false); drawDetailedCoin(ctx, s1x, by-12, 22, 10, PALETTE[1], false);
+        const c = this.t%4; drawDetailedCoin(ctx, s1x, by, 22, 10, PALETTE[1], false, 0); drawDetailedCoin(ctx, s1x, by-12, 22, 10, PALETTE[1], false, 0);
         let cx = s1x, cy = by-24;
         if(c>=1 && c<2) { const p=c-1, e=p<0.5?2*p*p:-1+(4-2*p)*p; cx=s1x+(s2x-s1x)*e; cy=(by-24)-Math.sin(p*Math.PI)*40; }
         else if(c>=2 && c<3) { cx=s2x; cy=by; }
         else if(c>=3) { const p=c-3, e=p<0.5?2*p*p:-1+(4-2*p)*p; cx=s2x+(s1x-s2x)*e; cy=by-Math.sin(p*Math.PI)*40; cy-=(24*p); }
-        drawDetailedCoin(ctx, cx, cy, 22, 10, PALETTE[1], false);
+        drawDetailedCoin(ctx, cx, cy, 22, 10, PALETTE[1], false, 0);
     }
 };
 
@@ -794,7 +907,14 @@ class Game {
     constructor() {
         this.canvas = document.getElementById('gameCanvas'); this.ctx = this.canvas.getContext('2d');
         this.width=0; this.height=0; this.state = 'IDLE'; this.currentLevelIdx=0; this.stacks=[]; this.selectedStack=-1; this.history=[]; this.moves=0; this.animations=[]; this.layout={cols:4,slots:[]};
-        this.undosLeft = 5; this.needsDraw = false;
+        this.needsDraw = false;
+        
+        // HARDCORE / DAILY STATE
+        this.isHardcore = false;
+        this.isDaily = false;
+        this.movesLeft = 0;
+        this.perfectMoves = 0;
+        
         this.resize(); window.addEventListener('resize', ()=>this.resize());
         const h=(e)=>{if(e.type==='touchstart')e.preventDefault();const x=e.type==='touchstart'?e.touches[0].clientX:e.clientX,y=e.type==='touchstart'?e.touches[0].clientY:e.clientY;this.handleInput(x,y)};
         this.canvas.addEventListener('mousedown',h); this.canvas.addEventListener('touchstart',h,{passive:false});
@@ -809,7 +929,12 @@ class Game {
     }
     recalcLayout() {
         if (!this.stacks.length) return;
-        const count = this.stacks.length; const cfg = LEVELS_CONFIG[this.currentLevelIdx];
+        const count = this.stacks.length;
+        let cfg;
+        if(this.isHardcore) cfg = this.getHardcoreCfg();
+        else if(this.isDaily) cfg = LEVELS_CONFIG[5]; // Daily is Master level
+        else cfg = LEVELS_CONFIG[this.currentLevelIdx];
+        
         let cols = 3; if(count > 6) cols = 4;
         
         const hudOffset = 100, padding = 20, gap = 16;
@@ -834,16 +959,16 @@ class Game {
             const itemsInRow = (r===rows-1 && count%cols!==0) ? count%cols : cols;
             const rowW = itemsInRow * (this.slotRadius * 2) + (itemsInRow - 1) * gap;
             const startX = (this.width - rowW) / 2 + this.slotRadius;
-            
             this.layout.slots.push({x: startX + c*(this.slotRadius*2 + gap), y: startY + r*rowH});
         }
         this.triggerDraw();
     }
     
-    generateSolvableLevel(cfg) {
+    generateSolvableLevel(cfg, isBlind) {
         let tempStacks = Array.from({length: cfg.slots}, () => []);
         for(let i=0; i<cfg.colors; i++) { for(let k=0; k<cfg.size; k++) tempStacks[i].push(i); } 
         
+        this.perfectMoves = 0;
         const passes = cfg.colors * cfg.size * 30; 
         for(let p=0; p<passes; p++) {
             let validSources = [];
@@ -855,16 +980,11 @@ class Game {
             const src = validSources[Math.floor(Math.random() * validSources.length)];
             const topColor = tempStacks[src][tempStacks[src].length - 1];
             
-            let idealTargets = [];
-            let fallbackTargets = [];
-            
+            let idealTargets = []; let fallbackTargets = [];
             for(let i=0; i<cfg.slots; i++) { 
                 if(i !== src && tempStacks[i].length < cfg.size) {
-                    if(tempStacks[i].length === 0 || tempStacks[i][tempStacks[i].length - 1] !== topColor) {
-                        idealTargets.push(i);
-                    } else {
-                        fallbackTargets.push(i);
-                    }
+                    if(tempStacks[i].length === 0 || tempStacks[i][tempStacks[i].length - 1] !== topColor) idealTargets.push(i);
+                    else fallbackTargets.push(i);
                 }
             }
             
@@ -872,42 +992,107 @@ class Game {
             if(targets.length > 0) {
                 const tgt = targets[Math.floor(Math.random() * targets.length)];
                 tempStacks[tgt].push(tempStacks[src].pop());
+                this.perfectMoves++; // Track rough shuffle depth
             }
         }
         
+        // Normalize perfect moves
+        this.perfectMoves = Math.max(this.perfectMoves, cfg.colors * 5);
+        
         return tempStacks.map(stack => stack.map((c, idx) => ({ 
-            c: c, 
-            rev: ui.gameMode === 'classic' ? true : (idx === stack.length - 1) 
+            c: c, rev: !isBlind ? true : (idx === stack.length - 1) 
         })));
     }
 
     startLevel(idx) {
+        this.isHardcore = false; this.isDaily = false;
         this.currentLevelIdx = idx; const cfg = LEVELS_CONFIG[idx];
         
         const savedInitial = dataManager.getInitialLevel(ui.gameMode, idx);
-        
         if (savedInitial) {
             this.stacks = JSON.parse(JSON.stringify(savedInitial));
+            // Rough estimation if loaded
+            this.perfectMoves = cfg.colors * 8;
         } else {
-            this.stacks = this.generateSolvableLevel(cfg); 
+            this.stacks = this.generateSolvableLevel(cfg, ui.gameMode === 'blind'); 
             dataManager.saveInitialLevel(ui.gameMode, idx, this.stacks);
         }
         
-        this.state = 'IDLE'; this.selectedStack = -1; this.moves = 0; this.history = []; this.animations = [];
-        this.undosLeft = 5; ui.updateUndoBadge(this.undosLeft);
-        
+        this.setupCommonLevel();
         const modeName = ui.gameMode === 'blind' ? "ВСЛЕПУЮ" : "КЛАССИКА";
         document.getElementById('hud-mode').innerText = `${modeName} — ${cfg.name.toUpperCase()}`;
         document.getElementById('hud-lvl').innerText = `УРОВЕНЬ ${dataManager.getLevelNum(idx)}`;
+        document.getElementById('hud-hardcore-moves').style.display = 'none';
         
         this.resize(); ui.switchScreen('game');
     }
     
+    getHardcoreCfg() {
+        const hcLvl = dataManager.data.hardcoreLevel;
+        let diffIdx = Math.floor((hcLvl - 1) / 10);
+        if(diffIdx > 7) diffIdx = 7;
+        return LEVELS_CONFIG[diffIdx];
+    }
+    
+    startHardcore() {
+        this.isHardcore = true; this.isDaily = false;
+        const cfg = this.getHardcoreCfg();
+        const hcLvl = dataManager.data.hardcoreLevel;
+        const isBlind = hcLvl % 4 === 0;
+        
+        this.stacks = this.generateSolvableLevel(cfg, isBlind);
+        this.setupCommonLevel();
+        
+        // Limit calculation
+        this.movesLeft = Math.floor((cfg.colors * cfg.size) + (this.perfectMoves * 0.4) + 15);
+        
+        document.getElementById('hud-mode').innerText = `ХАРДКОР ${isBlind ? '(ВСЛЕПУЮ)' : ''}`;
+        document.getElementById('hud-lvl').innerText = `ВОЛНА ${hcLvl}`;
+        document.getElementById('hud-hardcore-moves').style.display = 'block';
+        document.getElementById('hud-moves-val').innerText = this.movesLeft;
+        
+        this.resize(); ui.switchScreen('game');
+    }
+    
+    startDaily() {
+        const today = new Date().toISOString().split('T')[0];
+        if(dataManager.data.dailyLevelState.date === today && dataManager.data.dailyLevelState.completed) {
+            audio.play('error');
+            return; // УЖЕ ПРОЙДЕН
+        }
+        
+        this.isDaily = true; this.isHardcore = false;
+        const cfg = LEVELS_CONFIG[5]; // Master
+        
+        // Pseudo-random seed logic could go here, but random is fine for now
+        this.stacks = this.generateSolvableLevel(cfg, false);
+        this.setupCommonLevel();
+        
+        document.getElementById('hud-mode').innerText = `ЕЖЕДНЕВНЫЙ ВЫЗОВ`;
+        document.getElementById('hud-lvl').innerText = `СУПЕР-ПРИЗ!`;
+        document.getElementById('hud-hardcore-moves').style.display = 'none';
+        
+        this.resize(); ui.switchScreen('game');
+    }
+    
+    setupCommonLevel() {
+        this.state = 'IDLE'; this.selectedStack = -1; this.moves = 0; this.history = []; this.animations = [];
+        ui.updateEconomy();
+    }
+
     handleInput(x, y) {
         if (this.state==='ANIMATING' || this.state==='PAUSED') return;
         
         const rect=this.canvas.getBoundingClientRect(), cx=x-rect.left, cy=y-rect.top;
-        let hit=-1; const cfg=LEVELS_CONFIG[this.currentLevelIdx], maxH=cfg.size*this.coinHeight+50;
+        let hit=-1; 
+        
+        let cfg;
+        if(this.isHardcore) cfg = this.getHardcoreCfg();
+        else if(this.isDaily) cfg = LEVELS_CONFIG[5];
+        else cfg = LEVELS_CONFIG[this.currentLevelIdx];
+        
+        const maxH=cfg.size*this.coinHeight+50;
+        
         for(let i=0; i<this.layout.slots.length; i++){
             const p=this.layout.slots[i];
             if(Math.abs(cx-p.x)<this.slotRadius+10 && cy<p.y+this.slotRadius && cy>p.y-maxH) { hit=i; break; }
@@ -917,8 +1102,14 @@ class Game {
         else { if(this.selectedStack===hit){this.selectedStack=-1; audio.play('pop');} else this.attemptMove(this.selectedStack,hit); }
         this.triggerDraw();
     }
+    
     attemptMove(f, t) {
-        const s=this.stacks[f], tg=this.stacks[t], cfg=LEVELS_CONFIG[this.currentLevelIdx];
+        let cfg;
+        if(this.isHardcore) cfg = this.getHardcoreCfg();
+        else if(this.isDaily) cfg = LEVELS_CONFIG[5];
+        else cfg = LEVELS_CONFIG[this.currentLevelIdx];
+        
+        const s=this.stacks[f], tg=this.stacks[t];
         if(tg.length>=cfg.size){ audio.play('error'); this.selectedStack=-1; return; }
         const c=s[s.length-1];
         if(tg.length===0 || tg[tg.length-1].c === c.c){
@@ -936,47 +1127,121 @@ class Game {
             for(let k=0; k<move; k++){ coins.push(this.stacks[f].pop()); }
             if(this.stacks[f].length > 0) this.stacks[f][this.stacks[f].length - 1].rev = true;
             
+            if(!this.isHardcore && !this.isDaily) dataManager.saveSession(ui.gameMode, this.currentLevelIdx, this.stacks);
+            
             const sp=this.layout.slots[f], ep=this.layout.slots[t], sh=this.stacks[f].length*this.coinHeight, eh=this.stacks[t].length*this.coinHeight;
             this.animations.push({ coins:coins, sx:sp.x, sy:sp.y-sh, ex:ep.x, ey:ep.y-eh, targetIdx:t, t:0, dur:250 });
-            this.selectedStack=-1; this.moves++; audio.play('land'); this.state='ANIMATING';
+            this.selectedStack=-1; this.moves++; 
+            
+            if(this.isHardcore) {
+                this.movesLeft--;
+                document.getElementById('hud-moves-val').innerText = this.movesLeft;
+            }
+            
+            audio.play('land'); this.state='ANIMATING';
         } else { audio.play('error'); this.selectedStack=-1; }
         this.triggerDraw();
     }
+    
     async requestUndo() {
         audio.click(); if (this.state==='ANIMATING' || this.history.length===0) return;
-        if (this.undosLeft > 0) { this.performUndo(); this.undosLeft--; ui.updateUndoBadge(this.undosLeft); } 
-        else {
-            const success = await dataManager.showRewardAd();
-            if (success) { this.undosLeft += 3; ui.updateUndoBadge(this.undosLeft); }
+        
+        if(dataManager.useUndo()) {
+            this.performUndo();
+            ui.updateEconomy();
+        } else {
+            const success = await dataManager.showRewardAd('undo');
+            if(success) ui.updateEconomy();
         }
     }
     performUndo() {
         this.stacks = this.history.pop(); this.selectedStack = -1; audio.play('pop');
+        if(this.isHardcore) { this.movesLeft++; document.getElementById('hud-moves-val').innerText = this.movesLeft; }
         this.triggerDraw();
     }
+    
     checkWin() {
-        const cfg=LEVELS_CONFIG[this.currentLevelIdx]; let c=0, e=0;
+        let cfg;
+        if(this.isHardcore) cfg = this.getHardcoreCfg();
+        else if(this.isDaily) cfg = LEVELS_CONFIG[5];
+        else cfg = LEVELS_CONFIG[this.currentLevelIdx];
+        
+        let c=0, e=0;
         for(let s of this.stacks){ if(s.length===0){e++;continue;} if(s.length===cfg.size && s.every(x=>x.c===s[0].c))c++; }
+        
         if(c === this.stacks.length-e && this.stacks.length-e > 0){
             setTimeout(()=>{ 
                 audio.play('win'); fireConfetti(); 
-                const unlockedDiff = dataManager.incrementLevel(this.currentLevelIdx);
+                
+                let coinsEarned = 0;
+                let unlockedDiff = false;
+                
+                if(this.isDaily) {
+                    coinsEarned = 250;
+                    dataManager.data.dailyLevelState.date = new Date().toISOString().split('T')[0];
+                    dataManager.data.dailyLevelState.completed = true;
+                } else if(this.isHardcore) {
+                    coinsEarned = 30 + (Math.floor(dataManager.data.hardcoreLevel / 5) * 10);
+                    dataManager.data.hardcoreLevel++;
+                } else {
+                    // Classic Calculation
+                    const base = cfg.colors * 15;
+                    const penalty = Math.max(0, this.moves - this.perfectMoves);
+                    coinsEarned = Math.max(10, base - penalty);
+                    unlockedDiff = dataManager.incrementLevel(this.currentLevelIdx);
+                }
+                
+                dataManager.addCoins(coinsEarned);
                 dataManager.checkAndShowInterstitial();
-                document.getElementById('vic-moves').innerText=this.moves; ui.showVictoryModal(unlockedDiff); 
+                
+                document.getElementById('vic-moves').innerText=this.moves; 
+                ui.showVictoryModal(coinsEarned, this.isHardcore, unlockedDiff); 
+                ui.updateEconomy();
+                
             },300);
+        } else if (this.isHardcore && this.movesLeft <= 0) {
+            // GAME OVER HARDCORE
+            setTimeout(() => {
+                this.state = 'PAUSED';
+                ui.showModals('oom');
+            }, 300);
         }
     }
+    
+    useLife() {
+        if(dataManager.useLife()) {
+            ui.hideModals(); this.movesLeft += 5; document.getElementById('hud-moves-val').innerText = this.movesLeft; this.state='IDLE'; ui.updateEconomy();
+        } else audio.play('error');
+    }
+    
+    async adLife() {
+        const ok = await dataManager.showRewardAd('life');
+        if(ok) {
+            dataManager.useLife(); // Immediately use it
+            ui.hideModals(); this.movesLeft += 5; document.getElementById('hud-moves-val').innerText = this.movesLeft; this.state='IDLE'; ui.updateEconomy();
+        }
+    }
+    
     pause() { this.state='PAUSED'; ui.showModals('pause'); }
     resume() { this.state='IDLE'; ui.hideModals(); this.triggerDraw(); }
     
     quitToMenu() { 
         ui.hideModals(); 
+        if(!this.isHardcore && !this.isDaily) dataManager.clearSession(ui.gameMode, this.currentLevelIdx);
         ui.showMenu(); 
     }
     
     restartLevel() { 
         ui.hideModals(); 
-        this.startLevel(this.currentLevelIdx); 
+        if(this.isHardcore) this.startHardcore();
+        else if(this.isDaily) this.startDaily();
+        else this.startLevel(this.currentLevelIdx); 
+    }
+    
+    nextLevel() {
+        ui.hideModals();
+        if(this.isHardcore) this.startHardcore();
+        else this.startLevel(this.currentLevelIdx); // it stays on same diff, player selects next manually or auto if you want
     }
     
     loop(t) {
@@ -1028,7 +1293,7 @@ class Game {
             }
             for(let j=0; j<s.length; j++){
                 let off = j*this.coinHeight; if(j>=lift) off+=20;
-                drawDetailedCoin(this.ctx, p.x, p.y-off, this.coinRadius, this.coinHeight, PALETTE[s[j].c % PALETTE.length], ui.gameMode === 'blind' && !s[j].rev);
+                drawDetailedCoin(this.ctx, p.x, p.y-off, this.coinRadius, this.coinHeight, PALETTE[s[j].c % PALETTE.length], !s[j].rev);
             }
         }
         
