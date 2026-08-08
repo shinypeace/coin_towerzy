@@ -43,7 +43,18 @@
             --lock-overlay: rgba(0,0,0,0.7);
             --icon-bg: rgba(140, 122, 230, 0.2);
         }
-        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Nunito', sans-serif; }
+        
+        /* ЖЕСТКИЙ ЗАПРЕТ ВЫДЕЛЕНИЯ ТЕКСТА ДЛЯ ВСЕХ УСТРОЙСТВ */
+        * { 
+            box-sizing: border-box; 
+            user-select: none; 
+            -webkit-user-select: none; 
+            -moz-user-select: none; 
+            -ms-user-select: none; 
+            -webkit-tap-highlight-color: transparent; 
+            font-family: 'Nunito', sans-serif; 
+        }
+        
         body { margin: 0; padding: 0; background: #1e272e; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
         #app-container { position: relative; width: 100%; height: 100%; max-width: 450px; max-height: 900px; background: linear-gradient(135deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%); overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.5); display: flex; flex-direction: column; transition: background 0.3s; }
         canvas { display: block; width: 100%; height: 100%; touch-action: none; z-index: 1; cursor: pointer; transition: opacity 0.2s ease; }
@@ -82,9 +93,20 @@
         .badge { position: absolute; bottom: -5px; right: -5px; background-color: var(--badge-bg); color: white; font-size: 10px; font-weight: 900; padding: 4px 6px; border-radius: 10px; min-width: 20px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 2px solid var(--card-bg); }
         .badge.ad { background-color: var(--badge-ad); color: #2d3436; padding: 4px 4px; }
         
-        .scroll-list { width: 100%; flex: 1; overflow-y: auto; padding: 10px 20px; display: flex; flex-direction: column; gap: 14px; mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent); padding-bottom: 40px; }
+        /* СКРЫТИЕ ПОЛЗУНКА ПРОКРУТКИ, НО СОХРАНЕНИЕ СКРОЛЛА */
+        .scroll-list, #screen-other-games { 
+            width: 100%; flex: 1; overflow-y: auto; padding: 10px 20px; 
+            display: flex; flex-direction: column; gap: 14px; 
+            mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent); 
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent); 
+            padding-bottom: 40px; 
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+        .scroll-list::-webkit-scrollbar, #screen-other-games::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
         
-        /* New Level Card Design */
         .level-card {
             background: var(--card-bg);
             padding: 18px 20px;
@@ -280,7 +302,7 @@ const Obfuscator = {
 /** DATA MANAGER */
 const dataManager = {
     vkUserId: null,
-    data: { progress: {}, settings: { sound: true, theme: 'light', vibration: true }, initialLevels: {}, levelsSinceAd: 0 },
+    data: { progress: {}, settings: { sound: true, theme: 'light', vibration: true }, initialLevels: {}, sessions: {}, levelsSinceAd: 0 },
     async init() {
         try {
             await vkBridge.send('VKWebAppInit');
@@ -329,6 +351,7 @@ const dataManager = {
         }
         if(loaded.settings) this.data.settings = {...this.data.settings, ...loaded.settings};
         if(loaded.initialLevels) this.data.initialLevels = {...this.data.initialLevels, ...loaded.initialLevels};
+        if(loaded.sessions) this.data.sessions = {...this.data.sessions, ...loaded.sessions};
         if(loaded.levelsSinceAd) this.data.levelsSinceAd = loaded.levelsSinceAd;
     },
     async save() {
@@ -353,14 +376,23 @@ const dataManager = {
         if (diffIdx < LEVELS_CONFIG.length - 1) return diffIdx + 1;
         return false;
     },
+    
+    /* ИСПРАВЛЕНИЕ 1: ГЛУБОКОЕ КЛОНИРОВАНИЕ МАССИВОВ ПРИ СОХРАНЕНИИ */
     saveInitialLevel(mode, diffIdx, stacks) {
-        this.data.initialLevels[`${mode}_${diffIdx}`] = stacks; this.save();
+        this.data.initialLevels[`${mode}_${diffIdx}`] = JSON.parse(JSON.stringify(stacks)); 
+        this.save();
     },
     getInitialLevel(mode, diffIdx) { 
         return this.data.initialLevels[`${mode}_${diffIdx}`]; 
     },
     clearInitialLevel(mode, diffIdx) {
-        delete this.data.initialLevels[`${mode}_${diffIdx}`]; this.save();
+        delete this.data.initialLevels[`${mode}_${diffIdx}`]; 
+        delete this.data.sessions[`${mode}_${diffIdx}`];
+        this.save();
+    },
+    saveSession(mode, diffIdx, stacks) {
+        this.data.sessions[`${mode}_${diffIdx}`] = JSON.parse(JSON.stringify(stacks)); 
+        this.save();
     },
     
     checkAndShowInterstitial() {
@@ -415,7 +447,7 @@ const settings = {
     }
 };
 
-/** CONFIG - 12 UNIQUE CONTRAST COLORS */
+/** CONFIG */
 const LEVELS_CONFIG = [
     { id: 0, name: "Новичок",   colors: 3, slots: 5,  size: 4, reqWins: 0 },
     { id: 1, name: "Ученик",    colors: 4, slots: 6,  size: 4, reqWins: 10 },
@@ -431,7 +463,7 @@ const PALETTE = [
     '#9c88ff', '#00d2d3', '#5f27cd', '#006266', '#833471', '#d35400'
 ];
 
-/* --- HYBRID AUDIO MANAGER --- */
+/* --- AUDIO MANAGER --- */
 class AudioManager {
     constructor() { 
         this.enabled = true; 
@@ -439,7 +471,6 @@ class AudioManager {
         this.buffers = {};
         this.audioPool = {}; 
         
-        // Значительно уменьшена громкость
         this.bgmMenu = new Audio('menu_music.mp3');
         this.bgmMenu.loop = true; this.bgmMenu.volume = 0.1;
         this.bgmGame = new Audio('game_music.mp3');
@@ -650,7 +681,7 @@ const ui = {
             document.getElementById('vic-unlock-name').innerText = LEVELS_CONFIG[unlockedNextDiffIdx].name;
             document.getElementById('vic-btn-go-next').onclick = () => { 
                 audio.click(); 
-                ui.hideModals(); // Исправлен баг неработающей кнопки
+                ui.hideModals();
                 game.startLevel(unlockedNextDiffIdx); 
             };
         } else {
@@ -800,7 +831,7 @@ class Game {
     startLevel(idx) {
         this.currentLevelIdx = idx; const cfg = LEVELS_CONFIG[idx];
         
-        // Загружаем ИЗНАЧАЛЬНУЮ генерацию или создаем новую
+        // Загружаем ИЗНАЧАЛЬНУЮ генерацию или создаем новую с помощью глубокого клонирования
         const savedInitial = dataManager.getInitialLevel(ui.gameMode, idx);
         
         if (savedInitial) {
