@@ -26,7 +26,6 @@
         .theme-6 { --bg-grad-1: #D4B499; --bg-grad-2: #9F7A59; --ui-bg:#D4B499; --card-bg:#FDF5E6; --accent:#795548; } 
         .theme-7 { --bg-grad-1: #2c0001; --bg-grad-2: #8a0306; --ui-bg:#2c0001; --text-main:#FFD700; --text-sec:#ffb3b3; --card-bg:#590002; --accent:#FFD700; --shadow-color:rgba(0,0,0,0.5); } 
         .theme-8 { --bg-grad-1: #000000; --bg-grad-2: #001a00; --ui-bg:#000000; --text-main:#00ff00; --text-sec:#008000; --card-bg:#001100; --accent:#00ff00; --slot-base:rgba(0,255,0,0.1); } 
-
         /* ANTI-SELECTION */
         * { box-sizing: border-box; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Nunito', sans-serif; }
         
@@ -68,7 +67,6 @@
         /* Secondary Buttons (Better Contrast) */
         .btn-secondary { background: var(--bg-grad-2); color: var(--text-main); width: 100%; padding: 18px; border-radius: 18px; border: 2px solid rgba(0,0,0,0.1); font-size: 16px; font-weight: 800; box-shadow: 0 5px 0 rgba(0,0,0,0.1); margin-bottom: 15px; cursor: pointer; transition: transform 0.1s; }
         .btn-secondary:active { transform: translateY(5px); box-shadow: none; }
-
         .btn-icon-round { position: relative; width: 50px; height: 50px; border-radius: 50%; background: var(--card-bg); border: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 var(--shadow-color); cursor: pointer; color: var(--text-main); }
         .btn-icon-round:active { transform: translateY(4px); box-shadow: none; }
         
@@ -76,7 +74,7 @@
         .badge.ad { background-color: var(--badge-ad); color: #2d3436; padding: 4px 4px; }
         
         /* LEVELS & SHOP GRID */
-        .scroll-list { width: 100%; flex: 1; overflow-y: auto; padding: 10px 20px; display: flex; flex-direction: column; gap: 14px; -ms-overflow-style: none; scrollbar-width: none; mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);}
+        .scroll-list { width: 100%; flex: 1; overflow-y: auto; padding: 10px 0; display: flex; flex-direction: column; gap: 14px; -ms-overflow-style: none; scrollbar-width: none; mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);}
         .scroll-list::-webkit-scrollbar { display: none; }
         
         .level-card { background: var(--card-bg); padding: 18px 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 6px 15px var(--shadow-color); cursor: pointer; transition: transform 0.1s; border-left: 6px solid var(--accent); position: relative; overflow: hidden; }
@@ -84,11 +82,10 @@
         .level-icon-wrapper { width: 48px; height: 48px; background: var(--icon-bg); color: var(--accent); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; }
         .level-card.locked { pointer-events: none; border-left: 6px solid #ccc;}
         .level-card.locked::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--lock-overlay); z-index: 1; }
-
-        .shop-tabs { display: flex; width: 100%; gap: 10px; padding: 0 20px; margin-bottom: 20px; }
+        .shop-tabs { display: flex; width: 100%; gap: 10px; padding: 0 0 10px 0; margin-bottom: 10px; flex-shrink: 0;}
         .shop-tab { flex: 1; padding: 12px 0; text-align: center; background: var(--slot-base); color: var(--text-sec); border-radius: 15px; font-weight: 800; cursor: pointer; }
         .shop-tab.active { background: var(--accent); color: #fff; }
-        .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; padding: 0 20px; }
+        .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; padding: 0; }
         .shop-item { background: var(--card-bg); border-radius: 16px; padding: 15px 10px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 10px var(--shadow-color); position: relative; }
         .shop-item.locked { opacity: 0.7; }
         .shop-item.active-item { border: 3px solid var(--accent); }
@@ -96,8 +93,7 @@
         .item-price { font-size: 12px; font-weight: 800; color: #FFD700; display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 10px;}
         .item-btn { margin-top: 10px; width: 100%; padding: 8px; border-radius: 10px; font-weight: 800; font-size: 12px; border: none; cursor: pointer; background: var(--accent); color: #fff; }
         .item-btn.equipped { background: var(--slot-base); color: var(--text-sec); }
-        .booster-item { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 15px 20px; border-radius: 18px; margin: 0 20px 15px; box-shadow: 0 4px 10px var(--shadow-color); width: calc(100% - 40px);}
-
+        .booster-item { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 15px 20px; border-radius: 18px; margin: 0 0 15px; box-shadow: 0 4px 10px var(--shadow-color); width: 100%;}
         /* MODALS */
         .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .modal-overlay.visible { opacity: 1; pointer-events: auto; }
@@ -111,9 +107,9 @@
         .daily-item.claimed { opacity: 0.5; }
         .daily-item.today { background: rgba(108, 92, 231, 0.2); border: 2px solid var(--accent); transform: scale(1.05); }
         .daily-day { font-size: 11px; font-weight: 800; color: var(--text-sec); margin-bottom: 5px; }
-        .daily-icon { width:24px; height:24px; margin-bottom:5px; }
+        .daily-icon { width:28px; height:28px; margin-bottom:5px; }
         .daily-val { font-size: 14px; font-weight: 900; color: var(--text-main); }
-        .daily-item-7 { grid-column: span 3; display: flex; flex-direction: row; justify-content: center; gap: 20px; padding: 15px; }
+        .daily-item-7 { grid-column: span 3; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 20px; padding: 15px; }
         
         /* Form Toggles */
         .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--shadow-color); }
@@ -128,17 +124,26 @@
     </style>
 </head>
 <body>
-
-<!-- SVG ИКОНКА МОНЕТЫ (ДЛЯ ПЕРЕИСПОЛЬЗОВАНИЯ) -->
-<svg id="svg-coin" style="display:none;" viewBox="0 0 24 24" width="20" height="20">
-    <circle cx="12" cy="12" r="10" fill="#FFD700" stroke="#E67E22" stroke-width="2"/>
-    <circle cx="12" cy="12" r="6" fill="#F1C40F"/>
-    <path d="M11 7v10m2-10v10" stroke="#E67E22" stroke-width="1.5" stroke-linecap="round"/>
+<!-- ИДЕАЛЬНАЯ ИНТЕГРАЦИЯ SVG (ЧЕРЕЗ DEFS ДЛЯ НАДЕЖНОСТИ) -->
+<svg style="display:none;">
+    <defs>
+        <g id="svg-coin">
+            <circle cx="12" cy="12" r="10" fill="#FFD700" stroke="#E67E22" stroke-width="2"/>
+            <circle cx="12" cy="12" r="6" fill="#F1C40F"/>
+            <path d="M11 7v10m2-10v10" stroke="#E67E22" stroke-width="1.5" stroke-linecap="round"/>
+        </g>
+        <g id="svg-undo">
+            <path fill="currentColor" d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/>
+        </g>
+        <g id="svg-life">
+            <path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </g>
+    </defs>
 </svg>
 
 <div id="app-container">
     
-    <!-- ИДЕАЛЬНЫЙ TOP BAR -->
+    <!-- TOP BAR -->
     <div class="top-bar-economy" id="economy-bar">
         <button class="btn-back" id="top-back" onclick="audio.click(); ui.showMenu()" style="display: none;">
             <svg class="icon" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
@@ -151,7 +156,6 @@
             <svg class="icon" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L3.16 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.04.64.09.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
         </button>
     </div>
-
     <canvas id="gameCanvas"></canvas>
     <canvas id="confetti-canvas"></canvas>
     
@@ -165,22 +169,21 @@
             <div style="font-size: 22px; color: var(--text-main); font-weight: 900;" id="hud-lvl">УРОВЕНЬ 1</div>
             <div id="hud-hardcore-moves" style="display:none; color: #ff4757; font-weight: 900; font-size: 18px; margin-top: 5px;">Ходы: <span id="hud-moves-val">0</span></div>
         </div>
-        <button class="btn-icon-round" onclick="audio.click(); game.requestUndo()">
-            <svg class="icon" viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+        <button class="btn-icon-round" style="color:var(--text-main)" onclick="audio.click(); game.requestUndo()">
+            <svg viewBox="0 0 24 24" width="24" height="24"><use href="#svg-undo"></use></svg>
             <div id="undo-badge" class="badge">5</div>
         </button>
     </div>
-
+    
     <!-- MAIN MENU SCREEN -->
     <div id="screen-menu" class="screen active">
         <div class="logo-box">
             <div class="logo-main">Coin<br>Sort</div>
             <div class="logo-sub">Logic Game</div>
         </div>
-        <button class="btn-main" style="width: 80%; margin-bottom: 15px;" onclick="audio.click(); ui.switchScreen('mode')">ИГРАТЬ</button>
-        <button class="btn-main" style="background: #f39c12; width: 80%; margin-bottom: 15px;" onclick="audio.click(); game.startDaily()">ЕЖЕДНЕВНЫЙ</button>
-        <button class="btn-main" style="background: var(--blind-accent); width: 80%; margin-bottom: 25px;" onclick="audio.click(); ui.showShop('themes')">МАГАЗИН</button>
-        <button class="btn-secondary" style="width: 80%; padding: 15px;" onclick="audio.click(); ui.showRules()">Правила игры</button>
+        <button class="btn-main" style="width: 80%;" onclick="audio.click(); ui.switchScreen('mode')">ИГРАТЬ</button>
+        <button class="btn-main" style="background: #f39c12; width: 80%;" onclick="audio.click(); game.startDaily()">ЕЖЕДНЕВНЫЙ ⭐</button>
+        <button class="btn-main" style="background: var(--blind-accent); width: 80%;" onclick="audio.click(); ui.showShop('themes')">МАГАЗИН 🛒</button>
     </div>
     
     <!-- MODE SELECT SCREEN -->
@@ -190,20 +193,20 @@
         </div>
         <button class="btn-main" style="width: 80%;" onclick="audio.click(); ui.selectMode('classic')">КЛАССИКА</button>
         <button class="btn-main" style="background: var(--blind-accent); width: 80%;" onclick="audio.click(); ui.selectMode('blind')">ВСЛЕПУЮ</button>
-        <button class="btn-main btn-hardcore" style="width: 80%; margin-top: 20px;" onclick="audio.click(); ui.selectMode('hardcore')">ХАРДКОР ☠️</button>
+        <button class="btn-main btn-hardcore" style="width: 80%;" onclick="audio.click(); ui.selectMode('hardcore')">ХАРДКОР ☠️</button>
     </div>
-
+    
     <!-- LEVELS SCREEN -->
-    <div id="screen-levels" class="screen hidden screen-scroll">
+    <div id="screen-levels" class="screen hidden">
         <div class="logo-box" style="margin-top: 60px; margin-bottom: 20px;">
             <div class="logo-main" id="levels-title" style="font-size: 40px;">Уровни</div>
         </div>
-        <div class="scroll-list" id="levels-list" style="padding-top:0"></div>
+        <div class="scroll-list" id="levels-list" style="padding: 0 20px 40px 20px; width:100%"></div>
     </div>
-
-    <!-- SHOP SCREEN -->
-    <div id="screen-shop" class="screen hidden screen-scroll">
-        <div class="logo-box" style="margin-top: 60px; margin-bottom: 20px;">
+    
+    <!-- SHOP SCREEN (FIXED SCROLL LAYOUT) -->
+    <div id="screen-shop" class="screen hidden" style="padding-bottom: 0;">
+        <div class="logo-box" style="margin-top: 60px; margin-bottom: 20px; flex-shrink: 0;">
             <div class="logo-main" style="font-size: 40px;">Магазин</div>
         </div>
         <div class="shop-tabs">
@@ -211,10 +214,13 @@
             <div class="shop-tab" id="tab-skins" onclick="audio.click(); ui.showShop('skins')">Скины</div>
             <div class="shop-tab" id="tab-boosters" onclick="audio.click(); ui.showShop('boosters')">Бустеры</div>
         </div>
-        <div class="shop-grid" id="shop-grid"></div>
-        <div id="shop-boosters" style="display:none; width:100%"></div>
+        
+        <div class="scroll-list" style="padding: 10px 20px 40px 20px; width:100%">
+            <div class="shop-grid" id="shop-grid"></div>
+            <div id="shop-boosters" style="display:none; width:100%"></div>
+        </div>
     </div>
-
+    
     <!-- MODALS -->
     <div id="modal-daily" class="modal-overlay">
         <div class="modal">
@@ -224,7 +230,6 @@
             <button class="btn-main" style="width:100%; margin-top:10px;" onclick="audio.click(); ui.claimDaily()">ЗАБРАТЬ</button>
         </div>
     </div>
-
     <div id="modal-settings" class="modal-overlay">
         <div class="modal">
             <h2>Настройки</h2>
@@ -236,10 +241,11 @@
                 <div class="setting-label">Вибрация</div>
                 <div class="toggle-switch active" id="toggle-vibro" onclick="audio.click(); settings.toggleVibration()"><div class="toggle-knob"></div></div>
             </div>
-            <button class="btn-main" style="width:100%; margin-top:25px;" onclick="audio.click(); ui.hideModals()">ЗАКРЫТЬ</button>
+            
+            <button class="btn-secondary" style="width:100%; margin-top:20px; margin-bottom: 0;" onclick="audio.click(); ui.hideModals(); ui.showRules()">Как играть</button>
+            <button class="btn-main" style="width:100%; margin-top:15px;" onclick="audio.click(); ui.hideModals()">ЗАКРЫТЬ</button>
         </div>
     </div>
-
     <div id="modal-rules" class="modal-overlay">
         <div class="modal">
             <h2>Правила</h2>
@@ -252,7 +258,6 @@
             <button class="btn-main" style="width:100%;" onclick="audio.click(); ui.hideModals()">ПОНЯТНО</button>
         </div>
     </div>
-
     <div id="modal-pause" class="modal-overlay">
         <div class="modal">
             <h2>Пауза</h2>
@@ -266,15 +271,15 @@
         <div class="modal">
             <h2 style="color:#ff4757">Ходы кончились!</h2>
             <p style="margin-bottom:20px; color:var(--text-sec)">Используй жизнь, чтобы получить +5 ходов.</p>
-            <button class="btn-main" style="width:100%; margin-bottom:15px;" onclick="audio.click(); game.useLife()">
-                <svg viewBox="0 0 24 24" width="20" height="20" style="margin-right:5px;"><path fill="#fff" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <button class="btn-main" style="width:100%; margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="audio.click(); game.useLife()">
+                <svg viewBox="0 0 24 24" width="20" height="20" style="color: #fff"><use href="#svg-life"></use></svg>
                 Использовать (<span id="oom-lives"></span>)
             </button>
             <button class="btn-secondary" style="margin-bottom:15px;" onclick="audio.click(); game.adLife()">Бесплатно за рекламу</button>
             <button class="btn-secondary" style="border:none; box-shadow:none; text-decoration:underline;" onclick="audio.click(); game.quitToMenu()">Сдаться</button>
         </div>
     </div>
-
+    
     <div id="modal-victory" class="modal-overlay">
         <div class="modal">
             <div style="font-size: 60px; margin-bottom: 10px; animation: popIn 0.5s;">🏆</div>
@@ -293,7 +298,6 @@
         </div>
     </div>
 </div>
-
 <script>
 /** OBFUSCATION */
 const Obfuscator = {
@@ -301,7 +305,6 @@ const Obfuscator = {
     encode(data) { const str = JSON.stringify(data); let res = ""; for(let i=0; i<str.length; i++) res += String.fromCharCode(str.charCodeAt(i) ^ this.key); return btoa(encodeURIComponent(res)); },
     decode(b64) { try { const str = decodeURIComponent(atob(b64)); let res = ""; for(let i=0; i<str.length; i++) res += String.fromCharCode(str.charCodeAt(i) ^ this.key); return JSON.parse(res); } catch(e) { return null; } }
 };
-
 /** DATA MANAGER */
 const dataManager = {
     vkUserId: null,
@@ -380,7 +383,6 @@ const dataManager = {
         this.clearInitialLevel(mode, diffIdx);
         this.data.levelsSinceAd++; this.save();
         
-        // В хардкоре уровни бесконечные, без лимита reqWins. Окна "Новая сложность" нет.
         if (mode === 'hardcore') return false; 
         
         if (diffIdx < LEVELS_CONFIG.length - 1) {
@@ -390,7 +392,6 @@ const dataManager = {
         return false;
     },
     
-    // ГЛУБОКОЕ КЛОНИРОВАНИЕ
     saveInitialLevel(mode, diffIdx, stacks) { this.data.initialLevels[`${mode}_${diffIdx}`] = JSON.parse(JSON.stringify(stacks)); this.save(); },
     getInitialLevel(mode, diffIdx) { return this.data.initialLevels[`${mode}_${diffIdx}`]; },
     clearInitialLevel(mode, diffIdx) { delete this.data.initialLevels[`${mode}_${diffIdx}`]; this.save(); },
@@ -442,7 +443,6 @@ const dataManager = {
         finally { audio.toggleMusicMute(false); if(audio.ctx.state === 'suspended') audio.ctx.resume(); }
     }
 };
-
 /** SETTINGS */
 const settings = {
     sound: true, vibration: true,
@@ -454,7 +454,6 @@ const settings = {
         document.getElementById('toggle-vibro').classList.toggle('active', this.vibration);
     }
 };
-
 /** CONFIG */
 const LEVELS_CONFIG = [
     { id: 0, name: "Новичок",   colors: 3, slots: 5,  size: 4, reqWins: 0 },
@@ -467,10 +466,9 @@ const LEVELS_CONFIG = [
     { id: 7, name: "Гений",     colors: 10, slots: 12, size: 5, reqWins: 10 }
 ];
 const PALETTE = ['#ff4757', '#1e90ff', '#2ed573', '#f39c12', '#f1c40f', '#ff9ff3', '#9c88ff', '#00d2d3', '#5f27cd', '#006266', '#833471', '#d35400'];
-
 const SHOP_THEMES = [{id:0, name:"Светлая"}, {id:1, name:"Темная"}, {id:2, name:"Закат"}, {id:3, name:"Лес"}, {id:4, name:"Океан"}, {id:5, name:"Киберпанк"}, {id:6, name:"Кофе"}, {id:7, name:"Король"}, {id:8, name:"Матрица"}];
-const SHOP_SKINS = [{id:0, name:"Классика"}, {id:1, name:"Модерн"}, {id:2, name:"Мишень"}, {id:3, name:"Кости"}, {id:4, name:"Металлик"}, {id:5, name:"Пончик"}, {id:6, name:"Шахматы"}, {id:7, name:"Алмаз"}, {id:8, name:"Неон"}];
-
+// Скин "Неон" заменен на "Стекло"
+const SHOP_SKINS = [{id:0, name:"Классика"}, {id:1, name:"Модерн"}, {id:2, name:"Мишень"}, {id:3, name:"Кости"}, {id:4, name:"Металлик"}, {id:5, name:"Пончик"}, {id:6, name:"Шахматы"}, {id:7, name:"Алмаз"}, {id:8, name:"Стекло"}];
 /* --- AUDIO MANAGER --- */
 class AudioManager {
     constructor() { 
@@ -536,7 +534,6 @@ class AudioManager {
     click() { this.play('click'); }
 }
 const audio = new AudioManager();
-
 /* --- UI --- */
 const ui = {
     screens: { menu: document.getElementById('screen-menu'), mode: document.getElementById('screen-mode'), levels: document.getElementById('screen-levels'), hud: document.getElementById('hud'), shop: document.getElementById('screen-shop') },
@@ -548,24 +545,20 @@ const ui = {
         const back = document.getElementById('top-back');
         const coins = document.getElementById('top-coins');
         const sets = document.getElementById('top-settings');
-
         if(screen === 'game') {
             bar.style.display = 'none';
         } else if(screen === 'menu') {
-            bar.style.display = 'flex';
-            back.style.display = 'none';
-            sets.style.display = 'flex';
-            coins.style.order = 1; sets.style.order = 2; // Coins left, Sets right
-            bar.style.justifyContent = 'space-between';
+            bar.style.display = 'flex'; back.style.display = 'none'; sets.style.display = 'flex';
+            coins.style.display = 'flex'; coins.style.order = 1; sets.style.order = 2; bar.style.justifyContent = 'space-between';
+        } else if(screen === 'mode' || screen === 'levels') {
+            bar.style.display = 'flex'; back.style.display = 'flex'; sets.style.display = 'none';
+            coins.style.display = 'none'; // Скрываем монетки
+            back.style.order = 1; bar.style.justifyContent = 'flex-start';
         } else {
-            bar.style.display = 'flex';
-            back.style.display = 'flex';
-            sets.style.display = 'none';
-            back.style.order = 1; coins.style.order = 2; // Back left, Coins right
-            bar.style.justifyContent = 'space-between';
+            bar.style.display = 'flex'; back.style.display = 'flex'; sets.style.display = 'none';
+            coins.style.display = 'flex'; back.style.order = 1; coins.style.order = 2; bar.style.justifyContent = 'space-between';
         }
     },
-
     switchScreen(name) {
         Object.values(this.screens).forEach(s => { if(s) { s.classList.remove('active'); s.classList.add('hidden'); } });
         this.updateTopBar(name);
@@ -605,14 +598,25 @@ const ui = {
     showDailyModal() {
         const grid = document.getElementById('daily-grid'); grid.innerHTML = '';
         const streak = dataManager.data.dailyReward.streak;
-        const rewards = [{d:1, t:'coin', v:50, i:'🪙'}, {d:2, t:'undo', v:1, i:'<svg viewBox="0 0 24 24" width="20" height="20"><path fill="#2d3436" d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>'}, {d:3, t:'coin', v:100, i:'🪙'}, {d:4, t:'life', v:1, i:'❤️'}, {d:5, t:'coin', v:150, i:'🪙'}, {d:6, t:'undo', v:2, i:'<svg viewBox="0 0 24 24" width="20" height="20"><path fill="#2d3436" d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>'}, {d:7, t:'mega', v:300, i:'🎁'}];
+        const rewards = [
+            {d:1, t:'coin', v:50, i:'#svg-coin'}, 
+            {d:2, t:'undo', v:1, i:'#svg-undo'}, 
+            {d:3, t:'coin', v:100, i:'#svg-coin'}, 
+            {d:4, t:'life', v:1, i:'#svg-life'}, 
+            {d:5, t:'coin', v:150, i:'#svg-coin'}, 
+            {d:6, t:'undo', v:2, i:'#svg-undo'}, 
+            {d:7, t:'mega', v:300, i:''}
+        ];
         
         rewards.forEach((r, i) => {
             const div = document.createElement('div');
             let cls = 'daily-item'; if(i < streak) cls += ' claimed'; if(i === streak) cls += ' today'; if(i === 6) cls += ' daily-item-7';
             div.className = cls;
-            if(i === 6) { div.innerHTML = `<div class="daily-day">ДЕНЬ 7</div><div style="display:flex; align-items:center; gap:10px;"><div class="daily-icon">🎁</div><div><div class="daily-val">+300 🪙</div><div class="daily-val">+1 ❤️</div></div></div>`; } 
-            else { div.innerHTML = `<div class="daily-day">ДЕНЬ ${r.d}</div><div class="daily-icon" style="display:flex; justify-content:center; align-items:center;">${r.t==='coin'?'<svg viewBox="0 0 24 24" width="24" height="24"><use href="#svg-coin"></use></svg>':r.i}</div><div class="daily-val">+${r.v}</div>`; }
+            if(i === 6) { 
+                div.innerHTML = `<div class="daily-day">ДЕНЬ 7</div><div style="display:flex; align-items:center; gap:10px;"><div class="daily-icon" style="font-size:28px; line-height:28px;">🎁</div><div style="text-align:left;"><div class="daily-val" style="display:flex;align-items:center;gap:4px;">+300 <svg viewBox="0 0 24 24" width="14" height="14"><use href="#svg-coin"></use></svg></div><div class="daily-val" style="display:flex;align-items:center;gap:4px;">+1 <svg viewBox="0 0 24 24" width="14" height="14" style="color:#ff4757"><use href="#svg-life"></use></svg></div></div></div>`; 
+            } else { 
+                div.innerHTML = `<div class="daily-day">ДЕНЬ ${r.d}</div><div class="daily-icon" style="display:flex; justify-content:center; align-items:center; color: var(--text-main);"><svg viewBox="0 0 24 24" width="26" height="26"><use href="${r.i}"></use></svg></div><div class="daily-val">+${r.v}</div>`; 
+            }
             grid.appendChild(div);
         });
         this.showModals('daily');
@@ -630,26 +634,26 @@ const ui = {
             boost.innerHTML = `
                 <div class="booster-item">
                     <div style="display:flex; align-items:center; gap:15px">
-                        <div style="width:30px; height:30px;"><svg viewBox="0 0 24 24"><path fill="var(--accent)" d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg></div>
+                        <div style="width:30px; height:30px; color:var(--accent)"><svg viewBox="0 0 24 24" width="100%" height="100%"><use href="#svg-undo"></use></svg></div>
                         <div style="text-align:left"><div style="font-weight:900; font-size:18px; color:var(--text-main)">Отмена хода</div><div style="font-size:12px; color:var(--text-sec)">В инвентаре: ${dataManager.data.inventory.undos}</div></div>
                     </div>
-                    <div><button class="item-btn" style="width:auto; padding: 10px 20px" onclick="audio.click(); ui.buyBooster('undo', 50)">50 <svg viewBox="0 0 24 24" width="12" height="12" style="vertical-align:middle"><use href="#svg-coin"></use></svg></button></div>
+                    <div><button class="item-btn" style="width:auto; padding: 10px 20px; display:flex; align-items:center; gap:4px;" onclick="audio.click(); ui.buyBooster('undo', 50)">50 <svg viewBox="0 0 24 24" width="14" height="14"><use href="#svg-coin"></use></svg></button></div>
                 </div>
                 <div class="booster-item">
                     <div style="display:flex; align-items:center; gap:15px">
-                        <div style="width:30px; height:30px;"><svg viewBox="0 0 24 24"><path fill="#ff4757" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+                        <div style="width:30px; height:30px; color:#ff4757"><svg viewBox="0 0 24 24" width="100%" height="100%"><use href="#svg-life"></use></svg></div>
                         <div style="text-align:left"><div style="font-weight:900; font-size:18px; color:var(--text-main)">Жизнь</div><div style="font-size:12px; color:var(--text-sec)">Для хардкора: ${dataManager.data.inventory.lives}</div></div>
                     </div>
-                    <div><button class="item-btn" style="width:auto; padding: 10px 20px" onclick="audio.click(); ui.buyBooster('life', 150)">150 <svg viewBox="0 0 24 24" width="12" height="12" style="vertical-align:middle"><use href="#svg-coin"></use></svg></button></div>
+                    <div><button class="item-btn" style="width:auto; padding: 10px 20px; display:flex; align-items:center; gap:4px;" onclick="audio.click(); ui.buyBooster('life', 150)">150 <svg viewBox="0 0 24 24" width="14" height="14"><use href="#svg-coin"></use></svg></button></div>
                 </div>
                 <div class="booster-item" style="border: 2px solid var(--accent)">
                     <div style="display:flex; align-items:center; gap:15px">
-                        <div style="font-size:30px">📺</div>
+                        <div style="width:34px; height:34px; background:var(--badge-ad); color:#2d3436; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:14px;">AD</div>
                         <div style="text-align:left"><div style="font-weight:900; font-size:18px; color:var(--text-main)">Халява</div><div style="font-size:12px; color:var(--text-sec)">За рекламу</div></div>
                     </div>
                     <div style="display:flex; flex-direction:column; gap:5px">
-                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0" onclick="audio.click(); ui.adBooster('undo')">+3 Отмены</button>
-                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0; background:#ff4757" onclick="audio.click(); ui.adBooster('life')">+1 Жизнь</button>
+                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0; display:flex; align-items:center; gap:5px; justify-content:center;" onclick="audio.click(); ui.adBooster('undo')">+3 <svg viewBox="0 0 24 24" width="14" height="14" style="color:#fff"><use href="#svg-undo"></use></svg></button>
+                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0; background:#ff4757; display:flex; align-items:center; gap:5px; justify-content:center;" onclick="audio.click(); ui.adBooster('life')">+1 <svg viewBox="0 0 24 24" width="14" height="14" style="color:#fff"><use href="#svg-life"></use></svg></button>
                     </div>
                 </div>
             `;
@@ -665,7 +669,6 @@ const ui = {
                 
                 let previewHtml = '';
                 if(tab === 'themes') {
-                    // Генерируем мини-превью темы создавая локальный класс
                     const tmpClass = `theme-${item.id}`;
                     previewHtml = `<div class="${tmpClass}" style="width:100%; height:100%; border-radius:10px; background: linear-gradient(135deg, var(--bg-grad-1), var(--bg-grad-2))"></div>`;
                 } else { previewHtml = `<canvas id="prev-${item.id}" width="60" height="60"></canvas>`; }
@@ -723,7 +726,6 @@ const ui = {
             const div = document.createElement('div');
             let isLocked = false, winsPrev = 0, unlockText = "";
             
-            // Проверка блокировки уровней (кроме Хардкора)
             if (this.gameMode !== 'hardcore' && idx > 0) {
                 const prevLvl = LEVELS_CONFIG[idx-1];
                 const prevLvlWins = dataManager.getLevelNum(this.gameMode, idx-1) - 1; 
@@ -744,36 +746,23 @@ const ui = {
         this.switchScreen('levels');
     },
     
+    // Исправлено: больше не пытается искать удаленные DOM-элементы
     showVictoryModal(coinsEarned, isHardcore, unlockedNextDiff) {
         document.getElementById('vic-coins').innerText = coinsEarned;
-        const norm = document.getElementById('vic-normal-content'), unl = document.getElementById('vic-unlock-content');
-        
-        if(isHardcore) {
-            norm.style.display = 'block'; unl.style.display = 'none';
-        } else {
-            if (unlockedNextDiff !== false && LEVELS_CONFIG[unlockedNextDiff]) {
-                norm.style.display = 'none'; unl.style.display = 'block';
-                document.getElementById('vic-unlock-name').innerText = LEVELS_CONFIG[unlockedNextDiff].name;
-                document.getElementById('vic-btn-go-next').onclick = () => { audio.click(); ui.hideModals(); game.startLevel(unlockedNextDiff); };
-            } else {
-                norm.style.display = 'block'; unl.style.display = 'none';
-            }
-        }
         this.showModals('victory');
     }
 };
-
 /* --- HIGH QUALITY SKINS RENDERER --- */
 function drawDetailedCoin(ctx, x, y, r, h, cHex, isHidden, skinId = dataManager.data.currentSkin, cIdx = 0) {
-    if(isHidden) { cHex = '#7f8c8d'; skinId = 0; } // Скрытые всегда дефолтные
-    const s = shadeColor(cHex, -40), l = shadeColor(cHex, 20);
+    if(isHidden) { cHex = '#7f8c8d'; skinId = 0; } 
+    const s = shadeColor(cHex, -40), l = shadeColor(cHex, 40);
     ctx.save();
     
-    // БАЗОВЫЙ ЦИЛИНДР
-    if (skinId !== 5) { // Пончик рисуется иначе
+    // БАЗОВЫЙ ЦИЛИНДР (Для всех, кроме Пончика и Стеклянного)
+    if (skinId !== 5 && skinId !== 8) { 
         const g = ctx.createLinearGradient(x-r, y, x+r, y);
         g.addColorStop(0, s); g.addColorStop(0.5, cHex); g.addColorStop(1, s);
-        ctx.fillStyle = (skinId === 1) ? cHex : g; // Модерн плоский
+        ctx.fillStyle = (skinId === 1) ? cHex : g; 
         ctx.beginPath(); ctx.ellipse(x, y, r, r*0.35, 0, 0, Math.PI); ctx.ellipse(x, y-h, r, r*0.35, 0, Math.PI, 0); ctx.fill();
         ctx.fillRect(x-r, y-h, r*2, h);
         
@@ -781,7 +770,7 @@ function drawDetailedCoin(ctx, x, y, r, h, cHex, isHidden, skinId = dataManager.
         ctx.strokeStyle = (skinId === 1) ? s : 'rgba(255,255,255,0.3)'; 
         ctx.lineWidth = 1.5; ctx.stroke();
     }
-
+    
     switch(skinId) {
         case 0: // Классика
             const gt = ctx.createRadialGradient(x, y-h-r*0.1, 0, x, y-h, r); gt.addColorStop(0, l); gt.addColorStop(1, cHex);
@@ -811,53 +800,80 @@ function drawDetailedCoin(ctx, x, y, r, h, cHex, isHidden, skinId = dataManager.
             if(dots===6) { ctx.beginPath(); ctx.ellipse(x-r*0.4, y-h, dW, dH, 0, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(x+r*0.4, y-h, dW, dH, 0, 0, Math.PI*2); ctx.fill(); }
             break;
             
-        case 4: // Металлик
-            const mg = ctx.createLinearGradient(x-r, y-h, x+r, y-h);
-            mg.addColorStop(0, s); mg.addColorStop(0.3, '#fff'); mg.addColorStop(0.5, cHex); mg.addColorStop(0.8, s); mg.addColorStop(1, '#fff');
-            ctx.fillStyle = mg; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
-            ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.8, r*0.28, 0, 0, Math.PI*2); ctx.stroke();
-            break;
-            
-        case 5: // Пончик
-            ctx.fillStyle = cHex; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
+        case 4: // Металлик (Реалистичный)
+            const mg = ctx.createLinearGradient(x-r, y, x+r, y);
+            mg.addColorStop(0, shadeColor(cHex, -60)); mg.addColorStop(0.2, l); mg.addColorStop(0.5, cHex); mg.addColorStop(0.8, shadeColor(cHex, -50)); mg.addColorStop(1, shadeColor(cHex, -20));
+            ctx.fillStyle = mg; 
+            ctx.beginPath(); ctx.ellipse(x, y, r, r*0.35, 0, 0, Math.PI); ctx.ellipse(x, y-h, r, r*0.35, 0, Math.PI, 0); ctx.fill();
             ctx.fillRect(x-r, y-h, r*2, h);
-            ctx.fillStyle = s; ctx.beginPath(); ctx.ellipse(x, y, r, r*0.35, 0, 0, Math.PI); ctx.fill();
+            const topMg = ctx.createLinearGradient(x-r, y-h, x+r, y-h+r*0.7);
+            topMg.addColorStop(0, l); topMg.addColorStop(0.5, cHex); topMg.addColorStop(1, s);
+            ctx.fillStyle = topMg; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.7)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.85, r*0.3, 0, 0, Math.PI*2); ctx.stroke();
+            break;
+            
+        case 5: // Пончик (Тор с отверстием)
+            ctx.fillStyle = shadeColor(cHex, -20);
+            ctx.beginPath(); ctx.ellipse(x, y, r, r*0.35, 0, 0, Math.PI); ctx.ellipse(x, y-h, r, r*0.35, 0, Math.PI, 0); ctx.fill();
+            ctx.fillRect(x-r, y-h, r*2, h);
             ctx.fillStyle = cHex; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
-            ctx.strokeStyle = l; ctx.lineWidth=2; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.stroke();
-            ctx.globalCompositeOperation = 'destination-out'; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.3, r*0.1, 0, 0, Math.PI*2); ctx.fill();
+            const hr = r*0.4;
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath(); ctx.ellipse(x, y-h, hr, hr*0.35, 0, 0, Math.PI*2); ctx.fill();
+            ctx.fillRect(x-hr, y-h, hr*2, h);
+            ctx.beginPath(); ctx.ellipse(x, y, hr, hr*0.35, 0, 0, Math.PI*2); ctx.fill();
             ctx.globalCompositeOperation = 'source-over';
-            ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.3, r*0.1, 0, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'rgba(0,0,0,0.4)';
+            ctx.beginPath(); ctx.ellipse(x, y, hr, hr*0.35, 0, 0, Math.PI); ctx.ellipse(x, y-h, hr, hr*0.35, 0, Math.PI, 0); ctx.fill();
+            ctx.fillRect(x-hr, y-h, hr*2, h);
+            ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(x-r*0.5, y-h, 2, 1, 0, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#f1c40f'; ctx.beginPath(); ctx.ellipse(x+r*0.4, y-h+r*0.1, 2, 1, Math.PI/4, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#3498db'; ctx.beginPath(); ctx.ellipse(x, y-h-r*0.15, 2, 1, -Math.PI/4, 0, Math.PI*2); ctx.fill();
             break;
             
-        case 6: // Шахматы
+        case 6: // Шахматы (Корректная маска)
             ctx.fillStyle = cHex; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
-            ctx.save(); ctx.clip();
-            ctx.fillStyle = 'rgba(0,0,0,0.2)';
-            for(let i=-2; i<=2; i++) { for(let j=-2; j<=2; j++) { if((i+j)%2===0) { ctx.beginPath(); ctx.ellipse(x + i*r*0.4, y-h + j*r*0.15, r*0.22, r*0.08, 0, 0, Math.PI*2); ctx.fill(); } } }
+            ctx.save(); 
+            ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.clip();
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            const sq = r*0.5;
+            for(let i=-3; i<=3; i++) { for(let j=-3; j<=3; j++) { if((i+j)%2 === 0) { ctx.fillRect(x + i*sq, y-h + j*(sq*0.35), sq, sq*0.35); } } }
             ctx.restore();
+            ctx.strokeStyle = s; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.stroke();
             break;
             
-        case 7: // Алмаз
+        case 7: // Алмаз (Граненый кристалл)
             ctx.fillStyle = cHex; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
-            ctx.strokeStyle = l; ctx.lineWidth = 1.5;
-            ctx.beginPath(); ctx.ellipse(x, y-h, r*0.5, r*0.18, 0, 0, Math.PI*2); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(x-r*0.5, y-h); ctx.lineTo(x-r, y-h); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(x+r*0.5, y-h); ctx.lineTo(x+r, y-h); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(x, y-h-r*0.18); ctx.lineTo(x, y-h-r*0.35); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(x, y-h+r*0.18); ctx.lineTo(x, y-h+r*0.35); ctx.stroke();
-            ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.5, r*0.18, 0, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(x - r*0.4, y-h - r*0.15); ctx.lineTo(x + r*0.4, y-h - r*0.15); ctx.lineTo(x + r*0.6, y-h); ctx.lineTo(x + r*0.4, y-h + r*0.15); ctx.lineTo(x - r*0.4, y-h + r*0.15); ctx.lineTo(x - r*0.6, y-h); ctx.closePath(); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(x - r*0.4, y-h - r*0.15); ctx.lineTo(x - r*0.8, y-h - r*0.25); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(x + r*0.4, y-h - r*0.15); ctx.lineTo(x + r*0.8, y-h - r*0.25); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(x + r*0.6, y-h); ctx.lineTo(x + r, y-h); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(x + r*0.4, y-h + r*0.15); ctx.lineTo(x + r*0.8, y-h + r*0.25); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(x - r*0.4, y-h + r*0.15); ctx.lineTo(x - r*0.8, y-h + r*0.25); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(x - r*0.6, y-h); ctx.lineTo(x - r, y-h); ctx.stroke();
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';
+            ctx.beginPath(); ctx.moveTo(x - r*0.4, y-h - r*0.15); ctx.lineTo(x + r*0.4, y-h - r*0.15); ctx.lineTo(x + r*0.6, y-h); ctx.lineTo(x - r*0.6, y-h); ctx.fill();
             break;
             
-        case 8: // Неон
-            ctx.fillStyle = '#2f3542'; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
-            ctx.strokeStyle = cHex; ctx.lineWidth = 3; ctx.shadowColor = cHex; ctx.shadowBlur = 10;
-            ctx.beginPath(); ctx.ellipse(x, y-h, r*0.8, r*0.28, 0, 0, Math.PI*2); ctx.stroke(); ctx.shadowBlur = 0;
+        case 8: // Стекло (Полупрозрачный с бликами)
+            ctx.globalAlpha = 0.7;
+            ctx.fillStyle = shadeColor(cHex, -40); ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
+            const glg = ctx.createLinearGradient(x-r, y, x+r, y);
+            glg.addColorStop(0, 'rgba(255,255,255,0.4)'); glg.addColorStop(0.2, cHex); glg.addColorStop(0.8, cHex); glg.addColorStop(1, 'rgba(255,255,255,0.2)');
+            ctx.fillStyle = glg;
+            ctx.beginPath(); ctx.ellipse(x, y, r, r*0.35, 0, 0, Math.PI); ctx.ellipse(x, y-h, r, r*0.35, 0, Math.PI, 0); ctx.fill();
+            ctx.fillRect(x-r, y-h, r*2, h);
+            ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
+            ctx.globalAlpha = 0.9; ctx.fillStyle = '#fff';
+            ctx.beginPath(); ctx.ellipse(x - r*0.5, y-h, r*0.2, r*0.05, Math.PI/6, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.8)'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.stroke();
             break;
     }
     ctx.restore();
 }
 function shadeColor(c, a) { return '#' + c.replace(/^#/, '').replace(/../g, c => ('0'+Math.min(255, Math.max(0, parseInt(c, 16) + a)).toString(16)).substr(-2)); }
-
 const rulesDemo = {
     canvas: null, ctx: null, running: false, t: 0,
     start() { this.canvas = document.getElementById('rules-canvas'); this.ctx = this.canvas.getContext('2d'); const r = this.canvas.parentElement.getBoundingClientRect(); this.canvas.width = r.width; this.canvas.height = r.height; this.running = true; this.loop(); },
@@ -876,7 +892,6 @@ const rulesDemo = {
         drawDetailedCoin(ctx, cx, cy, 22, 10, PALETTE[1], false, 0, 1);
     }
 };
-
 /* --- GAME LOGIC --- */
 class Game {
     constructor() {
@@ -962,7 +977,6 @@ class Game {
         }
         return tempStacks.map(stack => stack.map((c, idx) => ({ c: c, rev: !isBlind ? true : (idx === stack.length - 1) })));
     }
-
     startLevel(idx) {
         this.isDaily = false;
         this.isHardcore = (ui.gameMode === 'hardcore');
@@ -1072,7 +1086,7 @@ class Game {
         for(let s of this.stacks){ if(s.length===0){e++;continue;} if(s.length===cfg.size && s.every(x=>x.c===s[0].c))c++; }
         
         if(c === this.stacks.length-e && this.stacks.length-e > 0){
-            this.state = 'GAMEOVER'; // Блокируем клики
+            this.state = 'GAMEOVER'; 
             setTimeout(()=>{ 
                 audio.play('win'); fireConfetti(); 
                 let coinsEarned = 0; let unlockedDiff = false;
@@ -1162,7 +1176,6 @@ class Game {
         }
     }
 }
-
 // Confetti
 const cC=document.getElementById('confetti-canvas'), cX=cC.getContext('2d'); let confs=[];
 function fireConfetti(){
@@ -1180,7 +1193,6 @@ function loopC(){
     }
     requestAnimationFrame(loopC);
 }
-
 // Init
 const game=new Game(); dataManager.init();
 </script>
