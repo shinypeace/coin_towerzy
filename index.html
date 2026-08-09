@@ -9,32 +9,114 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Themes Basics */
+            /* Базовые UI-цвета */
             --ui-bg: #FFFFFF; --text-main: #2D3436; --text-sec: #636E72; --card-bg: #FFFFFF;
-            --accent: #6C5CE7; --accent-hover: #5649c0; --blind-accent: #9b59b6; --blind-hover: #8e44ad;
-            --shadow-color: rgba(0,0,0,0.1); --slot-base: rgba(0,0,0,0.1); --badge-bg: #FF7675; --badge-ad: #fdcb6e;
-            --lock-overlay: rgba(255,255,255,0.85); --icon-bg: rgba(108, 92, 231, 0.15);
-            --bg-grad-1: #f5f7fa; --bg-grad-2: #c3cfe2; --card-border: none;
+            --shadow-color: rgba(0,0,0,0.1); --slot-base: rgba(0,0,0,0.1); 
+            --badge-bg: #FF7675; --badge-ad: #fdcb6e; --lock-overlay: rgba(255,255,255,0.85); 
+            --icon-bg: rgba(108, 92, 231, 0.15); --card-border: none; --btn-text: #fff;
+            
+            /* Дефолтные цвета кнопок (Theme 0 - Светлая) */
+            --bg-grad-1: #f5f7fa; --bg-grad-2: #c3cfe2;
+            --accent: #6C5CE7;
+            --btn-classic-bg: #6C5CE7; --btn-classic-sh: #5649c0;
+            --btn-blind-bg: #9b59b6; --btn-blind-sh: #8e44ad;
+            --btn-daily-bg: #f39c12; --btn-daily-sh: #e67e22;
+            --btn-hard-bg: #ff4757; --btn-hard-sh: #d63031;
+            --btn-soft-bg: rgba(0,0,0,0.05); --btn-soft-sh: rgba(0,0,0,0.1); --btn-soft-border: transparent;
+            --danger-color: #ff4757;
         }
         
-        /* ИДЕАЛЬНЫЙ БАЛАНС ЦВЕТОВ ДЛЯ КАЖДОЙ ТЕМЫ */
-        .theme-0 { --bg-grad-1: #f5f7fa; --bg-grad-2: #c3cfe2; } 
+        .theme-1 { 
+            --bg-grad-1: #1B1B2F; --bg-grad-2: #0F0F1A; --ui-bg: #1B1B2F; --text-main: #F8F9FA; --text-sec: #ADB5BD; 
+            --card-bg: #2A2A40; --shadow-color: rgba(0,0,0,0.6); --slot-base: rgba(255,255,255,0.1); --lock-overlay: rgba(0,0,0,0.7); 
+            --accent: #8C7AE6;
+            --btn-classic-bg: #8C7AE6; --btn-classic-sh: #7158E2;
+            --btn-blind-bg: #273c75; --btn-blind-sh: #192a56;
+            --btn-daily-bg: #E1B12C; --btn-daily-sh: #c09420;
+            --btn-hard-bg: #c23616; --btn-hard-sh: #9e2a11;
+            --btn-soft-bg: rgba(255,255,255,0.08); --btn-soft-sh: rgba(255,255,255,0.15);
+        } 
         
-        .theme-1 { --bg-grad-1: #1B1B2F; --bg-grad-2: #0F0F1A; --ui-bg: #1B1B2F; --text-main: #F8F9FA; --text-sec: #ADB5BD; --card-bg: #2A2A40; --shadow-color: rgba(0,0,0,0.6); --slot-base: rgba(255,255,255,0.1); --lock-overlay: rgba(0,0,0,0.7); } 
+        .theme-2 { 
+            --bg-grad-1: #ff9a9e; --bg-grad-2: #fecfef; --ui-bg: #ff9a9e; --text-main: #2D3436; --text-sec: #636E72; 
+            --card-bg: rgba(255, 255, 255, 0.9); --shadow-color: rgba(255, 100, 150, 0.2); --slot-base: rgba(255,255,255,0.4); 
+            --accent: #ff4757;
+            --btn-classic-bg: #ff4757; --btn-classic-sh: #ff6b81;
+            --btn-blind-bg: #e056fd; --btn-blind-sh: #be2edd;
+            --btn-daily-bg: #ffa502; --btn-daily-sh: #e58e00;
+            --btn-hard-bg: #c23616; --btn-hard-sh: #8c2510;
+            --btn-soft-bg: rgba(255,255,255,0.5); --btn-soft-sh: rgba(255,255,255,0.7); --btn-soft-border: rgba(255,255,255,0.8);
+        } 
         
-        .theme-2 { --bg-grad-1: #ff9a9e; --bg-grad-2: #fecfef; --ui-bg: #ff9a9e; --text-main: #2D3436; --text-sec: #636E72; --card-bg: rgba(255, 255, 255, 0.9); --shadow-color: rgba(255, 100, 150, 0.2); --accent: #ff4757; --accent-hover: #ff6b81; --slot-base: rgba(255,255,255,0.4); --icon-bg: rgba(255, 71, 87, 0.15); } 
+        .theme-3 { 
+            --bg-grad-1: #0ba360; --bg-grad-2: #3cba92; --ui-bg: #0ba360; --text-main: #FFFFFF; --text-sec: #C8E6C9; 
+            --card-bg: #074D2B; --shadow-color: rgba(0,0,0,0.4); --slot-base: rgba(0,0,0,0.2); 
+            --accent: #F1C40F;
+            --btn-classic-bg: #F1C40F; --btn-classic-sh: #F39C12; --btn-classic-text: #2D3436;
+            --btn-blind-bg: #d35400; --btn-blind-sh: #a64200;
+            --btn-daily-bg: #e67e22; --btn-daily-sh: #d35400;
+            --btn-hard-bg: #c0392b; --btn-hard-sh: #e74c3c;
+            --btn-soft-bg: rgba(0,0,0,0.25); --btn-soft-sh: rgba(0,0,0,0.4);
+            --danger-color: #F1C40F;
+        } 
         
-        .theme-3 { --bg-grad-1: #0ba360; --bg-grad-2: #3cba92; --ui-bg: #0ba360; --text-main: #FFFFFF; --text-sec: #C8E6C9; --card-bg: #074D2B; --shadow-color: rgba(0,0,0,0.4); --slot-base: rgba(0,0,0,0.2); --accent: #F1C40F; --accent-hover: #F39C12; --icon-bg: rgba(241, 196, 15, 0.15); } 
+        .theme-4 { 
+            --bg-grad-1: #09203f; --bg-grad-2: #537895; --ui-bg: #09203f; --text-main: #FFFFFF; --text-sec: #A9C2EB; 
+            --card-bg: #041224; --shadow-color: rgba(0,0,0,0.5); --slot-base: rgba(0,0,0,0.3); 
+            --accent: #00d2d3;
+            --btn-classic-bg: #00d2d3; --btn-classic-sh: #01a3a4;
+            --btn-blind-bg: #0984e3; --btn-blind-sh: #74b9ff;
+            --btn-daily-bg: #fdcb6e; --btn-daily-sh: #f39c12; --btn-daily-text: #2D3436;
+            --btn-hard-bg: #d63031; --btn-hard-sh: #b02728;
+            --btn-soft-bg: rgba(255,255,255,0.15); --btn-soft-sh: rgba(255,255,255,0.25);
+        } 
         
-        .theme-4 { --bg-grad-1: #09203f; --bg-grad-2: #537895; --ui-bg: #09203f; --text-main: #FFFFFF; --text-sec: #A9C2EB; --card-bg: #041224; --shadow-color: rgba(0,0,0,0.5); --slot-base: rgba(0,0,0,0.3); --accent: #00d2d3; --accent-hover: #01a3a4; --icon-bg: rgba(0, 210, 211, 0.15); } 
+        .theme-5 { 
+            --bg-grad-1: #21003c; --bg-grad-2: #ff007f; --ui-bg: #21003c; --text-main: #FFFFFF; --text-sec: #ff99cc; 
+            --card-bg: #150026; --shadow-color: rgba(0,0,0,0.6); --slot-base: rgba(255,255,255,0.15); 
+            --accent: #00e5ff;
+            --btn-classic-bg: #00e5ff; --btn-classic-sh: #00b3cc; --btn-classic-text: #2D3436;
+            --btn-blind-bg: #9d00ff; --btn-blind-sh: #7a00cc;
+            --btn-daily-bg: #ff007f; --btn-daily-sh: #cc0066;
+            --btn-hard-bg: #ff003c; --btn-hard-sh: #cc0030;
+            --btn-soft-bg: rgba(0, 229, 255, 0.15); --btn-soft-sh: rgba(0, 229, 255, 0.3); --btn-soft-border: rgba(0, 229, 255, 0.4);
+            --danger-color: #ff007f;
+        } 
         
-        .theme-5 { --bg-grad-1: #21003c; --bg-grad-2: #ff007f; --ui-bg: #21003c; --text-main: #FFFFFF; --text-sec: #ff99cc; --card-bg: #150026; --shadow-color: rgba(0,0,0,0.6); --slot-base: rgba(255,255,255,0.15); --accent: #00e5ff; --accent-hover: #00b3cc; --icon-bg: rgba(0, 229, 255, 0.15); } 
+        .theme-6 { 
+            --bg-grad-1: #D4B499; --bg-grad-2: #9F7A59; --ui-bg: #D4B499; --text-main: #F5E6D3; --text-sec: #BCAAA4; 
+            --card-bg: #4E342E; --shadow-color: rgba(0,0,0,0.4); --slot-base: rgba(0,0,0,0.2); 
+            --accent: #EDC4A1;
+            --btn-classic-bg: #EDC4A1; --btn-classic-sh: #D4B499; --btn-classic-text: #2D3436;
+            --btn-blind-bg: #A0522D; --btn-blind-sh: #8B4513;
+            --btn-daily-bg: #D2B48C; --btn-daily-sh: #C19A6B; --btn-daily-text: #2D3436;
+            --btn-hard-bg: #8B0000; --btn-hard-sh: #660000;
+            --btn-soft-bg: rgba(0,0,0,0.15); --btn-soft-sh: rgba(0,0,0,0.25);
+        } 
         
-        .theme-6 { --bg-grad-1: #D4B499; --bg-grad-2: #9F7A59; --ui-bg: #D4B499; --text-main: #F5E6D3; --text-sec: #BCAAA4; --card-bg: #4E342E; --shadow-color: rgba(0,0,0,0.4); --slot-base: rgba(0,0,0,0.2); --accent: #EDC4A1; --accent-hover: #D4B499; --icon-bg: rgba(237, 196, 161, 0.15); } 
+        .theme-7 { 
+            --bg-grad-1: #2c0001; --bg-grad-2: #8a0306; --ui-bg: #2c0001; --text-main: #FFD700; --text-sec: #ffb3b3; 
+            --card-bg: #1A0000; --shadow-color: rgba(0,0,0,0.6); --slot-base: rgba(255,215,0,0.1); 
+            --accent: #FFD700;
+            --btn-classic-bg: #FFD700; --btn-classic-sh: #E6C200; --btn-classic-text: #2D3436;
+            --btn-blind-bg: #B8860B; --btn-blind-sh: #8B6508;
+            --btn-daily-bg: #DAA520; --btn-daily-sh: #B8860B; --btn-daily-text: #2D3436;
+            --btn-hard-bg: #4A0000; --btn-hard-sh: #2A0000;
+            --btn-soft-bg: rgba(255,215,0,0.15); --btn-soft-sh: rgba(255,215,0,0.3); --btn-soft-border: rgba(255,215,0,0.4);
+            --danger-color: #FFD700;
+        } 
         
-        .theme-7 { --bg-grad-1: #2c0001; --bg-grad-2: #8a0306; --ui-bg: #2c0001; --text-main: #FFD700; --text-sec: #ffb3b3; --card-bg: #1A0000; --accent: #FFD700; --accent-hover: #E6C200; --shadow-color: rgba(0,0,0,0.6); --slot-base: rgba(255,215,0,0.1); --icon-bg: rgba(255, 215, 0, 0.15); } 
-        
-        .theme-8 { --bg-grad-1: #000000; --bg-grad-2: #001a00; --ui-bg: #000000; --text-main: #00ff00; --text-sec: #008800; --card-bg: #001500; --accent: #00ff00; --accent-hover: #00cc00; --slot-base: rgba(0,255,0,0.15); --icon-bg: rgba(0, 255, 0, 0.15); --card-border: 1px solid rgba(0,255,0,0.4); } 
+        .theme-8 { 
+            --bg-grad-1: #000000; --bg-grad-2: #001a00; --ui-bg: #000000; --text-main: #00ff00; --text-sec: #008800; 
+            --card-bg: #001500; --slot-base: rgba(0,255,0,0.15); --card-border: 1px solid rgba(0,255,0,0.4); 
+            --accent: #00ff00; --btn-text: #000000;
+            --btn-classic-bg: #00ff00; --btn-classic-sh: #00cc00;
+            --btn-blind-bg: #00cc00; --btn-blind-sh: #009900;
+            --btn-daily-bg: #009900; --btn-daily-sh: #006600;
+            --btn-hard-bg: #00ff00; --btn-hard-sh: #00cc00;
+            --btn-soft-bg: rgba(0,255,0,0.15); --btn-soft-sh: rgba(0,255,0,0.3); --btn-soft-border: rgba(0,255,0,0.4);
+            --danger-color: #00ff00;
+        } 
         
         /* ANTI-SELECTION */
         * { box-sizing: border-box; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Nunito', sans-serif; }
@@ -65,17 +147,24 @@
         .logo-main { font-size: 56px; font-weight: 900; color: var(--text-main); line-height: 0.9; text-shadow: 2px 2px 0px rgba(128,128,128,0.2); }
         .logo-sub { font-size: 20px; color: var(--accent); font-weight: 700; letter-spacing: 4px; text-transform: uppercase; margin-top: 10px; }
         
-        /* BUTTONS */
-        .btn-main { background: var(--accent); color: #fff; width: 80%; padding: 20px; border-radius: 20px; border: none; font-size: 22px; font-weight: 800; box-shadow: 0 8px 0 var(--accent-hover), 0 15px 25px rgba(0,0,0,0.2); margin-bottom: 15px; cursor: pointer; transition: transform 0.1s; display: flex; justify-content: center; align-items: center; gap: 10px;}
+        /* DYNAMIC THEMED MAIN BUTTONS */
+        .btn-main { width: 80%; padding: 20px; border-radius: 20px; border: none; font-size: 22px; font-weight: 800; margin-bottom: 15px; cursor: pointer; transition: transform 0.1s; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .btn-main:active { transform: translateY(8px); box-shadow: 0 0 0 transparent !important; }
-        .btn-hardcore { background: #ff4757; box-shadow: 0 8px 0 #d63031, 0 15px 25px rgba(0,0,0,0.2); }
         
-        /* НОВЫЙ СТИЛЬ Ghost-кнопок */
-        .btn-soft { background: var(--slot-base); color: var(--text-main); width: 100%; padding: 16px; border-radius: 18px; border: none; font-size: 16px; font-weight: 800; margin-bottom: 15px; cursor: pointer; transition: transform 0.1s, background 0.2s; }
-        .btn-soft:active { transform: translateY(3px); background: rgba(128, 128, 128, 0.3); }
+        .btn-classic { background: var(--btn-classic-bg); box-shadow: 0 8px 0 var(--btn-classic-sh), 0 15px 25px rgba(0,0,0,0.2); color: var(--btn-classic-text, var(--btn-text)); }
+        .btn-blind { background: var(--btn-blind-bg); box-shadow: 0 8px 0 var(--btn-blind-sh), 0 15px 25px rgba(0,0,0,0.2); color: var(--btn-blind-text, var(--btn-text)); }
+        .btn-daily { background: var(--btn-daily-bg); box-shadow: 0 8px 0 var(--btn-daily-sh), 0 15px 25px rgba(0,0,0,0.2); color: var(--btn-daily-text, var(--btn-text)); }
+        .btn-hardcore { background: var(--btn-hard-bg); box-shadow: 0 8px 0 var(--btn-hard-sh), 0 15px 25px rgba(0,0,0,0.2); color: var(--btn-hard-text, var(--btn-text)); }
         
-        /* Текстовая кнопка (Сдаться) */
-        .btn-text { background: transparent; color: var(--text-sec); width: 100%; padding: 10px; border: none; font-size: 16px; font-weight: 800; text-decoration: underline; cursor: pointer; margin-bottom: 15px; }
+        /* SOFT 3D BUTTONS (Элегантные второстепенные) */
+        .btn-soft {
+            background: var(--btn-soft-bg); color: var(--text-main); width: 100%; padding: 18px; border-radius: 20px; 
+            border: 2px solid var(--btn-soft-border); font-size: 16px; font-weight: 800; 
+            box-shadow: 0 6px 0 var(--btn-soft-sh), 0 10px 15px rgba(0,0,0,0.1); margin-bottom: 15px; cursor: pointer; 
+            transition: transform 0.1s; display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+        .btn-soft:active { transform: translateY(6px); box-shadow: 0 0 0 transparent !important; }
+        .btn-danger-soft { color: var(--danger-color) !important; }
         
         .btn-icon-round { position: relative; width: 50px; height: 50px; border-radius: 50%; background: var(--card-bg); border: var(--card-border); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 var(--shadow-color); cursor: pointer; color: var(--text-main); }
         .btn-icon-round:active { transform: translateY(4px); box-shadow: none; }
@@ -95,7 +184,7 @@
         
         .shop-tabs { display: flex; width: 100%; gap: 10px; padding: 0 20px 10px 20px; margin-bottom: 10px; flex-shrink: 0; box-sizing: border-box;}
         .shop-tab { flex: 1; padding: 12px 0; text-align: center; background: var(--slot-base); color: var(--text-sec); border-radius: 15px; font-weight: 800; cursor: pointer; }
-        .shop-tab.active { background: var(--accent); color: #fff; }
+        .shop-tab.active { background: var(--btn-classic-bg); color: var(--btn-classic-text, var(--btn-text)); }
         
         .shop-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; width: 100%; padding: 0; box-sizing: border-box; }
         .shop-item { background: var(--card-bg); border-radius: 16px; border: var(--card-border); padding: 15px 10px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 10px var(--shadow-color); position: relative; }
@@ -103,7 +192,7 @@
         .shop-item.active-item { border: 3px solid var(--accent); }
         .item-preview { width: 60px; height: 60px; border-radius: 12px; background: var(--bg-grad-1); margin-bottom: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;}
         .item-price { font-size: 12px; font-weight: 800; color: #FFD700; display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 10px;}
-        .item-btn { margin-top: 10px; width: 100%; padding: 8px; border-radius: 10px; font-weight: 800; font-size: 12px; border: none; cursor: pointer; background: var(--accent); color: #fff; }
+        .item-btn { margin-top: 10px; width: 100%; padding: 8px; border-radius: 10px; font-weight: 800; font-size: 12px; border: none; cursor: pointer; background: var(--btn-classic-bg); color: var(--btn-classic-text, var(--btn-text)); }
         .item-btn.equipped { background: var(--slot-base); color: var(--text-sec); }
         .booster-item { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border: var(--card-border); padding: 15px 20px; border-radius: 18px; margin: 0 0 15px 0; box-shadow: 0 4px 10px var(--shadow-color); width: 100%; box-sizing: border-box;}
         
@@ -118,7 +207,7 @@
         .daily-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;}
         .daily-item { background: var(--slot-base); border-radius: 15px; padding: 10px 5px; display: flex; flex-direction: column; align-items: center; position: relative;}
         .daily-item.claimed { opacity: 0.5; }
-        .daily-item.today { background: rgba(108, 92, 231, 0.2); border: 2px solid var(--accent); transform: scale(1.05); }
+        .daily-item.today { background: var(--icon-bg); border: 2px solid var(--accent); transform: scale(1.05); }
         .daily-day { font-size: 11px; font-weight: 800; color: var(--text-sec); margin-bottom: 5px; }
         .daily-icon { width:28px; height:28px; margin-bottom:5px; }
         .daily-val { font-size: 14px; font-weight: 900; color: var(--text-main); }
@@ -129,7 +218,7 @@
         .setting-row:last-child { border-bottom: none; }
         .setting-label { font-size: 18px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
         .toggle-switch { position: relative; width: 50px; height: 28px; background: #ccc; border-radius: 14px; cursor: pointer; transition: background 0.3s; }
-        .toggle-switch.active { background: var(--accent); }
+        .toggle-switch.active { background: var(--btn-classic-bg); }
         .toggle-knob { position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; background: white; border-radius: 50%; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .toggle-switch.active .toggle-knob { transform: translateX(22px); }
         
@@ -137,7 +226,7 @@
     </style>
 </head>
 <body>
-<!-- ИНТЕГРАЦИЯ SVG (Цвета прокидываются через currentColor) -->
+<!-- ИНТЕГРАЦИЯ SVG -->
 <svg style="display:none;">
     <defs>
         <g id="svg-coin">
@@ -183,7 +272,7 @@
         <div style="text-align: center; margin-top: 5px;">
             <div style="font-size: 11px; color: var(--text-sec); font-weight: 800; letter-spacing: 1px;" id="hud-mode">КЛАССИКА — НОВИЧОК</div>
             <div style="font-size: 22px; color: var(--text-main); font-weight: 900;" id="hud-lvl">УРОВЕНЬ 1</div>
-            <div id="hud-hardcore-moves" style="display:none; color: #ff4757; font-weight: 900; font-size: 18px; margin-top: 5px;">Ходы: <span id="hud-moves-val">0</span></div>
+            <div id="hud-hardcore-moves" style="display:none; color: var(--danger-color); font-weight: 900; font-size: 18px; margin-top: 5px;">Ходы: <span id="hud-moves-val">0</span></div>
         </div>
         <button class="btn-icon-round" style="color:var(--text-main)" onclick="audio.click(); game.requestUndo()">
             <svg viewBox="0 0 24 24" width="24" height="24"><use href="#svg-undo"></use></svg>
@@ -197,9 +286,9 @@
             <div class="logo-main">Coin<br>Sort</div>
             <div class="logo-sub">Logic Game</div>
         </div>
-        <button class="btn-main" style="width: 80%;" onclick="audio.click(); ui.switchScreen('mode')">ИГРАТЬ</button>
-        <button class="btn-main" style="background: #f39c12; width: 80%;" onclick="audio.click(); game.startDaily()">ЕЖЕДНЕВНЫЙ ⭐</button>
-        <button class="btn-main" style="background: var(--blind-accent); width: 80%;" onclick="audio.click(); ui.showShop('themes')">МАГАЗИН 🛒</button>
+        <button class="btn-main btn-classic" onclick="audio.click(); ui.switchScreen('mode')">ИГРАТЬ</button>
+        <button class="btn-main btn-daily" onclick="audio.click(); game.startDaily()">ЕЖЕДНЕВНЫЙ ⭐</button>
+        <button class="btn-main btn-blind" onclick="audio.click(); ui.showShop('themes')">МАГАЗИН 🛒</button>
     </div>
     
     <!-- MODE SELECT SCREEN -->
@@ -207,9 +296,9 @@
         <div class="logo-box" style="margin-bottom: 40px; margin-top: 40px;">
             <div class="logo-main" style="font-size: 40px;">Режим</div>
         </div>
-        <button class="btn-main" style="width: 80%;" onclick="audio.click(); ui.selectMode('classic')">КЛАССИКА</button>
-        <button class="btn-main" style="background: var(--blind-accent); width: 80%;" onclick="audio.click(); ui.selectMode('blind')">ВСЛЕПУЮ</button>
-        <button class="btn-main btn-hardcore" style="width: 80%;" onclick="audio.click(); ui.selectMode('hardcore')">ХАРДКОР ☠️</button>
+        <button class="btn-main btn-classic" onclick="audio.click(); ui.selectMode('classic')">КЛАССИКА</button>
+        <button class="btn-main btn-blind" onclick="audio.click(); ui.selectMode('blind')">ВСЛЕПУЮ</button>
+        <button class="btn-main btn-hardcore" onclick="audio.click(); ui.selectMode('hardcore')">ХАРДКОР ☠️</button>
     </div>
     
     <!-- LEVELS SCREEN -->
@@ -243,7 +332,7 @@
             <h2>Ежедневная награда</h2>
             <p style="color:var(--text-sec); margin-bottom:20px;">Заходи каждый день!</p>
             <div class="daily-grid" id="daily-grid"></div>
-            <button class="btn-main" style="width:100%; margin-top:10px;" onclick="audio.click(); ui.claimDaily()">ЗАБРАТЬ</button>
+            <button class="btn-main btn-classic" style="width:100%; margin-top:10px;" onclick="audio.click(); ui.claimDaily()">ЗАБРАТЬ</button>
         </div>
     </div>
     
@@ -252,7 +341,7 @@
             <div style="font-size: 60px; margin-bottom: 10px;">⏳</div>
             <h2>Уже пройдено!</h2>
             <p style="color:var(--text-sec); margin-bottom:25px;">Ты уже забрал супер-приз за сегодняшний день. Возвращайся завтра за новой наградой!</p>
-            <button class="btn-main" style="width:100%;" onclick="audio.click(); ui.hideModals()">ПОНЯТНО</button>
+            <button class="btn-main btn-classic" style="width:100%;" onclick="audio.click(); ui.hideModals()">ПОНЯТНО</button>
         </div>
     </div>
 
@@ -269,43 +358,43 @@
             </div>
             
             <button class="btn-soft" style="margin-top:20px; margin-bottom: 0;" onclick="audio.click(); ui.hideModals(); ui.showRules()">Как играть</button>
-            <button class="btn-main" style="width:100%; margin-top:15px;" onclick="audio.click(); ui.hideModals()">ЗАКРЫТЬ</button>
+            <button class="btn-main btn-classic" style="width:100%; margin-top:15px; margin-bottom:0;" onclick="audio.click(); ui.hideModals()">ЗАКРЫТЬ</button>
         </div>
     </div>
     <div id="modal-rules" class="modal-overlay">
         <div class="modal">
             <h2>Правила</h2>
-            <div style="width: 100%; height: 120px; background: var(--bg-grad-1); border-radius: 16px; margin-bottom: 20px; border: 2px solid var(--slot-base);">
+            <div style="width: 100%; height: 120px; background: var(--bg-grad-1); border-radius: 16px; margin-bottom: 20px; border: var(--card-border); border-color: var(--slot-base);">
                 <canvas id="rules-canvas" style="width:100%; height:100%"></canvas>
             </div>
             <div style="text-align: left; font-size: 15px; color: var(--text-main); margin-bottom: 10px;">1. Нажми на стопку, чтобы <b>взять</b> монеты.</div>
             <div style="text-align: left; font-size: 15px; color: var(--text-main); margin-bottom: 10px;">2. Нажми на другую, чтобы <b>положить</b>.</div>
             <div style="text-align: left; font-size: 15px; color: var(--text-main); margin-bottom: 15px;">3. Класть можно только на <b>тот же цвет</b>.</div>
-            <button class="btn-main" style="width:100%;" onclick="audio.click(); ui.hideModals()">ПОНЯТНО</button>
+            <button class="btn-main btn-classic" style="width:100%; margin-bottom:0;" onclick="audio.click(); ui.hideModals()">ПОНЯТНО</button>
         </div>
     </div>
     <div id="modal-pause" class="modal-overlay">
         <div class="modal">
             <h2>Пауза</h2>
-            <button class="btn-main" style="width:100%; margin-bottom:15px" onclick="audio.click(); game.resume()">ПРОДОЛЖИТЬ</button>
-            <button class="btn-soft" style="margin-bottom:15px" onclick="audio.click(); game.restartLevel()">НАЧАТЬ ЗАНОВО</button>
-            <button class="btn-soft" style="color:#ff4757; margin-bottom:0;" onclick="audio.click(); game.quitToMenu()">В МЕНЮ</button>
+            <button class="btn-main btn-classic" style="width:100%;" onclick="audio.click(); game.resume()">ПРОДОЛЖИТЬ</button>
+            <button class="btn-soft" onclick="audio.click(); game.restartLevel()">НАЧАТЬ ЗАНОВО</button>
+            <button class="btn-soft btn-danger-soft" style="margin-bottom:0;" onclick="audio.click(); game.quitToMenu()">В МЕНЮ</button>
         </div>
     </div>
     
     <div id="modal-out-of-moves" class="modal-overlay">
         <div class="modal">
-            <h2 style="color:#ff4757">Ходы кончились!</h2>
+            <h2 style="color: var(--danger-color)">Ходы кончились!</h2>
             <p style="margin-bottom:20px; color:var(--text-sec)">Используй жизнь, чтобы получить +5 ходов.</p>
-            <button class="btn-main" style="width:100%; margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="audio.click(); game.useLife()">
-                <svg viewBox="0 0 24 24" width="20" height="20" style="color: #fff"><use href="#svg-life"></use></svg>
+            <button class="btn-main btn-classic" style="width:100%;" onclick="audio.click(); game.useLife()">
+                <svg viewBox="0 0 24 24" width="20" height="20" style="color: currentColor"><use href="#svg-life"></use></svg>
                 Использовать (<span id="oom-lives"></span>)
             </button>
-            <button class="btn-soft" style="margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="audio.click(); game.adLife()">
-                <svg viewBox="0 0 24 24" width="22" height="22" style="color:var(--text-main)"><use href="#svg-play"></use></svg>
+            <button class="btn-soft" onclick="audio.click(); game.adLife()">
+                <svg viewBox="0 0 24 24" width="22" height="22" style="color: currentColor"><use href="#svg-play"></use></svg>
                 Бесплатно за рекламу
             </button>
-            <button class="btn-text" onclick="audio.click(); game.quitToMenu()">Сдаться</button>
+            <button class="btn-soft btn-danger-soft" style="margin-bottom:0;" onclick="audio.click(); game.quitToMenu()">Сдаться</button>
         </div>
     </div>
     
@@ -326,8 +415,8 @@
                     </span>
                 </div>
             </div>
-            <button class="btn-main" style="width:100%; margin-bottom:15px" onclick="audio.click(); game.nextLevel()">СЛЕДУЮЩИЙ</button>
-            <button class="btn-soft" style="margin-bottom:0;" onclick="audio.click(); game.quitToMenu()">В МЕНЮ</button>
+            <button class="btn-main btn-classic" style="width:100%;" onclick="audio.click(); game.nextLevel()">СЛЕДУЮЩИЙ</button>
+            <button class="btn-soft btn-danger-soft" style="margin-bottom:0;" onclick="audio.click(); game.quitToMenu()">В МЕНЮ</button>
         </div>
     </div>
 </div>
@@ -691,8 +780,8 @@ const ui = {
                         <div style="text-align:left"><div style="font-weight:900; font-size:18px; color:var(--text-main)">Халява</div><div style="font-size:12px; color:var(--text-sec)">За рекламу</div></div>
                     </div>
                     <div style="display:flex; flex-direction:column; gap:5px">
-                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0; display:flex; align-items:center; gap:5px; justify-content:center;" onclick="audio.click(); ui.adBooster('undo')">+3 <svg viewBox="0 0 24 24" width="14" height="14" style="color:#fff"><use href="#svg-undo"></use></svg></button>
-                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0; background:#ff4757; display:flex; align-items:center; gap:5px; justify-content:center;" onclick="audio.click(); ui.adBooster('life')">+1 <svg viewBox="0 0 24 24" width="14" height="14" style="color:#fff"><use href="#svg-life"></use></svg></button>
+                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0; display:flex; align-items:center; gap:5px; justify-content:center;" onclick="audio.click(); ui.adBooster('undo')">+3 <svg viewBox="0 0 24 24" width="14" height="14" style="color:var(--btn-classic-text, var(--btn-text))"><use href="#svg-undo"></use></svg></button>
+                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0; background:var(--danger-color); display:flex; align-items:center; gap:5px; justify-content:center;" onclick="audio.click(); ui.adBooster('life')">+1 <svg viewBox="0 0 24 24" width="14" height="14" style="color:var(--btn-classic-text, var(--btn-text))"><use href="#svg-life"></use></svg></button>
                     </div>
                 </div>
             `;
@@ -846,10 +935,10 @@ function drawDetailedCoin(ctx, x, y, r, h, cHex, isHidden, skinId = dataManager.
             ctx.strokeStyle = 'rgba(255,255,255,0.7)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.85, r*0.3, 0, 0, Math.PI*2); ctx.stroke();
             break;
             
-        case 5: // Неон
+        case 5: // Неон (максимум свечения)
             ctx.fillStyle = '#2f3542'; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
             ctx.strokeStyle = cHex; ctx.lineWidth = 3; 
-            ctx.shadowColor = cHex; ctx.shadowBlur = 30; // Экстра-свечение
+            ctx.shadowColor = cHex; ctx.shadowBlur = 30; // Очень сильное свечение
             ctx.beginPath(); ctx.ellipse(x, y-h, r*0.8, r*0.28, 0, 0, Math.PI*2); ctx.stroke();
             
             // Внутренний яркий блик для эффекта лампы
@@ -904,7 +993,7 @@ function drawDetailedCoin(ctx, x, y, r, h, cHex, isHidden, skinId = dataManager.
             ctx.beginPath(); ctx.moveTo(x+dBtn, y-h+r*0.05-dyBtn); ctx.lineTo(x-dBtn, y-h+r*0.05+dyBtn); ctx.stroke();
             break;
             
-        case 8: // Стекло
+        case 8: // Стекло (Без белого блика сверху)
             ctx.globalAlpha = 0.85;
             ctx.fillStyle = shadeColor(cHex, -30); 
             ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
@@ -1099,7 +1188,6 @@ class Game {
         this.state = 'IDLE'; this.selectedStack = -1; this.moves = 0; this.history = []; this.animations = [];
         ui.updateEconomy();
         
-        // НОВАЯ СТРОГАЯ ФОРМУЛА ХОДОВ ДЛЯ ХАРДКОРА
         this.movesLeft = (cfg.colors * cfg.size) + Math.floor(cfg.colors * 1.5) + (isBlind ? 5 : 0);
         
         const modeName = isBlind ? "ХАРДКОР (ВСЛЕПУЮ)" : "ХАРДКОР";
