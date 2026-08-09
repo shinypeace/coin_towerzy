@@ -13,63 +13,122 @@
             --ui-bg: #FFFFFF; --text-main: #2D3436; --text-sec: #636E72; --card-bg: #FFFFFF;
             --shadow-color: rgba(0,0,0,0.1); --slot-base: rgba(0,0,0,0.1); 
             --badge-bg: #FF7675; --badge-ad: #fdcb6e; --lock-overlay: rgba(255,255,255,0.85); 
-            --icon-bg: rgba(108, 92, 231, 0.15); --card-border: none; 
-        }
-        
-        /* === ИДЕАЛЬНО СБАЛАНСИРОВАННЫЕ ПАЛИТРЫ ТЕМ === */
-        .theme-0 { 
+            --icon-bg: rgba(108, 92, 231, 0.15); --card-border: none;
+            
+            /* T0 Light */
             --bg-grad-1: #f5f7fa; --bg-grad-2: #c3cfe2;
             --accent: #6C5CE7; --accent-hover: #5649c0;
-            --btn-text: #FFFFFF; --btn-soft-bg: rgba(108, 92, 231, 0.1); 
-        } 
+            --btn-classic-bg: #6C5CE7; --btn-classic-sh: #5649c0; --btn-classic-text: #fff;
+            --btn-blind-bg: #9b59b6; --btn-blind-sh: #8e44ad; --btn-blind-text: #fff;
+            --btn-daily-bg: #f39c12; --btn-daily-sh: #e67e22; --btn-daily-text: #fff;
+            --btn-hard-bg: #ff4757; --btn-hard-sh: #d63031; --btn-hard-text: #fff;
+            --btn-info-bg: #00d2d3; --btn-info-sh: #01a3a4; --btn-info-text: #fff;
+            --btn-danger-bg: #ff4757; --btn-danger-sh: #d63031; --btn-danger-text: #fff;
+        }
+        
+        /* T1 Dark */
         .theme-1 { 
             --bg-grad-1: #1B1B2F; --bg-grad-2: #0F0F1A; --ui-bg: #1B1B2F; --text-main: #F8F9FA; --text-sec: #ADB5BD; 
             --card-bg: #2A2A40; --shadow-color: rgba(0,0,0,0.6); --slot-base: rgba(255,255,255,0.1); --lock-overlay: rgba(0,0,0,0.7); 
             --accent: #8C7AE6; --accent-hover: #7158E2;
-            --btn-text: #FFFFFF; --btn-soft-bg: rgba(140, 122, 230, 0.15);
-        } 
+            --btn-classic-bg: #8C7AE6; --btn-classic-sh: #7158E2; --btn-classic-text: #fff;
+            --btn-blind-bg: #9b59b6; --btn-blind-sh: #8e44ad; --btn-blind-text: #fff;
+            --btn-daily-bg: #e1b12c; --btn-daily-sh: #c09420; --btn-daily-text: #fff;
+            --btn-hard-bg: #c23616; --btn-hard-sh: #9e2a11; --btn-hard-text: #fff;
+            --btn-info-bg: #0097e6; --btn-info-sh: #0081c2; --btn-info-text: #fff;
+            --btn-danger-bg: #c23616; --btn-danger-sh: #9e2a11; --btn-danger-text: #fff;
+        }
+        
+        /* T2 Sunset */
         .theme-2 { 
             --bg-grad-1: #ff9a9e; --bg-grad-2: #fecfef; --ui-bg: #ff9a9e; --text-main: #2D3436; --text-sec: #636E72; 
             --card-bg: rgba(255, 255, 255, 0.9); --shadow-color: rgba(255, 100, 150, 0.2); --slot-base: rgba(255,255,255,0.4); 
             --accent: #ff4757; --accent-hover: #ff6b81;
-            --btn-text: #FFFFFF; --btn-soft-bg: rgba(255, 71, 87, 0.15);
-        } 
+            --btn-classic-bg: #ff4757; --btn-classic-sh: #e84150; --btn-classic-text: #fff;
+            --btn-blind-bg: #e056fd; --btn-blind-sh: #be2edd; --btn-blind-text: #fff;
+            --btn-daily-bg: #f39c12; --btn-daily-sh: #e67e22; --btn-daily-text: #fff;
+            --btn-hard-bg: #eb2f06; --btn-hard-sh: #b71500; --btn-hard-text: #fff;
+            --btn-info-bg: #00d2d3; --btn-info-sh: #01a3a4; --btn-info-text: #fff;
+            --btn-danger-bg: #eb2f06; --btn-danger-sh: #b71500; --btn-danger-text: #fff;
+        }
+        
+        /* T3 Forest */
         .theme-3 { 
             --bg-grad-1: #0ba360; --bg-grad-2: #3cba92; --ui-bg: #0ba360; --text-main: #FFFFFF; --text-sec: #C8E6C9; 
             --card-bg: #074D2B; --shadow-color: rgba(0,0,0,0.4); --slot-base: rgba(0,0,0,0.2); 
-            --accent: #F1C40F; --accent-hover: #F39C12;
-            --btn-text: #074D2B; --btn-soft-bg: rgba(241, 196, 15, 0.2);
-        } 
+            --accent: #2ed573; --accent-hover: #2bad5f;
+            --btn-classic-bg: #2ed573; --btn-classic-sh: #2bad5f; --btn-classic-text: #074D2B;
+            --btn-blind-bg: #8e44ad; --btn-blind-sh: #732d91; --btn-blind-text: #fff;
+            --btn-daily-bg: #f1c40f; --btn-daily-sh: #f39c12; --btn-daily-text: #074D2B;
+            --btn-hard-bg: #d35400; --btn-hard-sh: #b84700; --btn-hard-text: #fff;
+            --btn-info-bg: #1abc9c; --btn-info-sh: #16a085; --btn-info-text: #fff;
+            --btn-danger-bg: #c0392b; --btn-danger-sh: #a52b21; --btn-danger-text: #fff;
+        }
+        
+        /* T4 Ocean */
         .theme-4 { 
             --bg-grad-1: #09203f; --bg-grad-2: #537895; --ui-bg: #09203f; --text-main: #FFFFFF; --text-sec: #A9C2EB; 
             --card-bg: #041224; --shadow-color: rgba(0,0,0,0.5); --slot-base: rgba(0,0,0,0.3); 
             --accent: #00d2d3; --accent-hover: #01a3a4;
-            --btn-text: #041224; --btn-soft-bg: rgba(0, 210, 211, 0.2);
-        } 
+            --btn-classic-bg: #00d2d3; --btn-classic-sh: #01a3a4; --btn-classic-text: #041224;
+            --btn-blind-bg: #5f27cd; --btn-blind-sh: #4b1fa1; --btn-blind-text: #fff;
+            --btn-daily-bg: #f39c12; --btn-daily-sh: #e67e22; --btn-daily-text: #041224;
+            --btn-hard-bg: #ff4757; --btn-hard-sh: #d63031; --btn-hard-text: #fff;
+            --btn-info-bg: #0984e3; --btn-info-sh: #076aba; --btn-info-text: #fff;
+            --btn-danger-bg: #d63031; --btn-danger-sh: #b02728; --btn-danger-text: #fff;
+        }
+        
+        /* T5 Cyberpunk (Уникальные неоновые оттенки) */
         .theme-5 { 
             --bg-grad-1: #21003c; --bg-grad-2: #ff007f; --ui-bg: #21003c; --text-main: #FFFFFF; --text-sec: #ff99cc; 
             --card-bg: #150026; --shadow-color: rgba(0,0,0,0.6); --slot-base: rgba(255,255,255,0.15); 
             --accent: #00e5ff; --accent-hover: #00b3cc;
-            --btn-text: #150026; --btn-soft-bg: rgba(0, 229, 255, 0.15);
-        } 
+            --btn-classic-bg: #00e5ff; --btn-classic-sh: #00b3cc; --btn-classic-text: #150026;
+            --btn-blind-bg: #9d00ff; --btn-blind-sh: #7a00cc; --btn-blind-text: #fff;
+            --btn-daily-bg: #ff007f; --btn-daily-sh: #cc0066; --btn-daily-text: #fff;
+            --btn-hard-bg: #ff003c; --btn-hard-sh: #cc0030; --btn-hard-text: #fff;
+            --btn-info-bg: #9d00ff; --btn-info-sh: #7a00cc; --btn-info-text: #fff;
+            --btn-danger-bg: #ff003c; --btn-danger-sh: #cc0030; --btn-danger-text: #fff;
+        }
+        
+        /* T6 Coffee (Шоколад, Латте, Мокко - никаких белых кнопок) */
         .theme-6 { 
             --bg-grad-1: #D4B499; --bg-grad-2: #9F7A59; --ui-bg: #D4B499; --text-main: #F5E6D3; --text-sec: #BCAAA4; 
             --card-bg: #4E342E; --shadow-color: rgba(0,0,0,0.4); --slot-base: rgba(0,0,0,0.2); 
-            --accent: #EDC4A1; --accent-hover: #D4B499;
-            --btn-text: #4E342E; --btn-soft-bg: rgba(237, 196, 161, 0.15);
-        } 
+            --accent: #8D6E63; --accent-hover: #795548;
+            --btn-classic-bg: #8D6E63; --btn-classic-sh: #795548; --btn-classic-text: #F5E6D3;
+            --btn-blind-bg: #5D4037; --btn-blind-sh: #4E342E; --btn-blind-text: #D4B499;
+            --btn-daily-bg: #D4B499; --btn-daily-sh: #BCAAA4; --btn-daily-text: #4E342E;
+            --btn-hard-bg: #3E2723; --btn-hard-sh: #261714; --btn-hard-text: #F5E6D3;
+            --btn-info-bg: #A1887F; --btn-info-sh: #8D6E63; --btn-info-text: #F5E6D3;
+            --btn-danger-bg: #3E2723; --btn-danger-sh: #261714; --btn-danger-text: #D4B499;
+        }
+        
+        /* T7 King (Роскошные королевские цвета) */
         .theme-7 { 
             --bg-grad-1: #2c0001; --bg-grad-2: #8a0306; --ui-bg: #2c0001; --text-main: #FFD700; --text-sec: #ffb3b3; 
             --card-bg: #1A0000; --shadow-color: rgba(0,0,0,0.6); --slot-base: rgba(255,215,0,0.1); 
             --accent: #FFD700; --accent-hover: #E6C200;
-            --btn-text: #1A0000; --btn-soft-bg: rgba(255, 215, 0, 0.15);
-        } 
+            --btn-classic-bg: #B22222; --btn-classic-sh: #8B0000; --btn-classic-text: #FFD700;
+            --btn-blind-bg: #4B0082; --btn-blind-sh: #300052; --btn-blind-text: #FFD700;
+            --btn-daily-bg: #FFD700; --btn-daily-sh: #DAA520; --btn-daily-text: #1A0000;
+            --btn-hard-bg: #000000; --btn-hard-sh: #111111; --btn-hard-text: #FFD700;
+            --btn-info-bg: #DAA520; --btn-info-sh: #B8860B; --btn-info-text: #1A0000;
+            --btn-danger-bg: #4A0000; --btn-danger-sh: #2A0000; --btn-danger-text: #FFD700;
+        }
+        
+        /* T8 Matrix (Только хакерский Зеленый и Черный!) */
         .theme-8 { 
-            --bg-grad-1: #000000; --bg-grad-2: #001a00; --ui-bg: #000000; --text-main: #00ff00; --text-sec: #008800; 
+            --bg-grad-1: #000000; --bg-grad-2: #001a00; --ui-bg: #000000; --text-main: #00ff00; --text-sec: #00aa00; 
             --card-bg: #001500; --slot-base: rgba(0,255,0,0.15); --card-border: 1px solid rgba(0,255,0,0.4); 
             --accent: #00ff00; --accent-hover: #00cc00;
-            --btn-text: #001500; --btn-soft-bg: rgba(0, 255, 0, 0.15);
-        } 
+            --btn-classic-bg: #00ff00; --btn-classic-sh: #00cc00; --btn-classic-text: #001500;
+            --btn-blind-bg: #00aa00; --btn-blind-sh: #008800; --btn-blind-text: #001500;
+            --btn-daily-bg: #00cc00; --btn-daily-sh: #009900; --btn-daily-text: #001500;
+            --btn-hard-bg: #008800; --btn-hard-sh: #005500; --btn-hard-text: #00ff00;
+            --btn-info-bg: #00cc00; --btn-info-sh: #009900; --btn-info-text: #001500;
+            --btn-danger-bg: #005500; --btn-danger-sh: #003300; --btn-danger-text: #00ff00;
+        }
         
         /* ANTI-SELECTION */
         * { box-sizing: border-box; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Nunito', sans-serif; }
@@ -100,18 +159,21 @@
         .logo-main { font-size: 56px; font-weight: 900; color: var(--text-main); line-height: 0.9; text-shadow: 2px 2px 0px rgba(128,128,128,0.2); }
         .logo-sub { font-size: 20px; color: var(--accent); font-weight: 700; letter-spacing: 4px; text-transform: uppercase; margin-top: 10px; }
         
-        /* MAIN BUTTONS (Единый цвет темы) */
-        .btn-main { background: var(--accent); color: var(--btn-text); width: 80%; padding: 20px; border-radius: 20px; border: none; font-size: 22px; font-weight: 800; box-shadow: 0 8px 0 var(--accent-hover), 0 15px 25px rgba(0,0,0,0.2); margin-bottom: 15px; cursor: pointer; transition: transform 0.1s; display: flex; justify-content: center; align-items: center; gap: 10px;}
+        /* MAIN 3D BUTTONS */
+        .btn-main { width: 80%; padding: 20px; border-radius: 20px; border: none; font-size: 22px; font-weight: 800; margin-bottom: 15px; cursor: pointer; transition: transform 0.1s; display: flex; justify-content: center; align-items: center; gap: 10px;}
         .btn-main:active { transform: translateY(8px); box-shadow: 0 0 0 transparent !important; }
         
-        /* SOFT 3D BUTTONS (Элегантные второстепенные) */
-        .btn-soft {
-            background: var(--btn-soft-bg); color: var(--accent); 
-            width: 100%; padding: 18px; border-radius: 20px; border: none; 
-            font-size: 16px; font-weight: 800; margin-bottom: 15px; cursor: pointer; 
-            transition: transform 0.1s; display: flex; justify-content: center; align-items: center; gap: 8px;
-        }
-        .btn-soft:active { transform: translateY(4px); opacity: 0.8; }
+        .btn-classic { background: var(--btn-classic-bg); box-shadow: 0 8px 0 var(--btn-classic-sh), 0 15px 25px rgba(0,0,0,0.2); color: var(--btn-classic-text); }
+        .btn-blind { background: var(--btn-blind-bg); box-shadow: 0 8px 0 var(--btn-blind-sh), 0 15px 25px rgba(0,0,0,0.2); color: var(--btn-blind-text); }
+        .btn-daily { background: var(--btn-daily-bg); box-shadow: 0 8px 0 var(--btn-daily-sh), 0 15px 25px rgba(0,0,0,0.2); color: var(--btn-daily-text); }
+        .btn-hardcore { background: var(--btn-hard-bg); box-shadow: 0 8px 0 var(--btn-hard-sh), 0 15px 25px rgba(0,0,0,0.2); color: var(--btn-hard-text); }
+        
+        /* SECONDARY 3D BUTTONS (Замена бывшим серым кнопкам) */
+        .btn-action { width: 100%; padding: 18px; border-radius: 20px; border: none; font-size: 16px; font-weight: 800; margin-bottom: 15px; cursor: pointer; transition: transform 0.1s; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn-action:active { transform: translateY(6px); box-shadow: 0 0 0 transparent !important; }
+        
+        .btn-info { background: var(--btn-info-bg); box-shadow: 0 6px 0 var(--btn-info-sh), 0 10px 15px rgba(0,0,0,0.2); color: var(--btn-info-text); }
+        .btn-danger { background: var(--btn-danger-bg); box-shadow: 0 6px 0 var(--btn-danger-sh), 0 10px 15px rgba(0,0,0,0.2); color: var(--btn-danger-text); }
         
         .btn-icon-round { position: relative; width: 50px; height: 50px; border-radius: 50%; background: var(--card-bg); border: var(--card-border); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 var(--shadow-color); cursor: pointer; color: var(--text-main); }
         .btn-icon-round:active { transform: translateY(4px); box-shadow: none; }
@@ -119,7 +181,7 @@
         .badge { position: absolute; bottom: -5px; right: -5px; background-color: var(--badge-bg); color: white; font-size: 11px; font-weight: 900; padding: 4px 6px; border-radius: 10px; min-width: 22px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 2px solid var(--card-bg); }
         .badge.ad { background-color: var(--badge-ad); color: #2d3436; padding: 4px 4px; }
         
-        /* LEVELS TAB (Стильный Редизайн) */
+        /* LEVELS & SHOP GRID */
         .scroll-list { width: 100%; flex: 1; overflow-y: auto; padding: 10px 20px 40px 20px; display: flex; flex-direction: column; gap: 14px; box-sizing: border-box; -ms-overflow-style: none; scrollbar-width: none; mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);}
         .scroll-list::-webkit-scrollbar { display: none; }
         
@@ -131,7 +193,7 @@
         }
         .level-card:active { transform: scale(0.96); box-shadow: 0 2px 8px var(--shadow-color); }
         .level-icon-wrapper { 
-            width: 50px; height: 50px; background: var(--accent); color: var(--btn-text); 
+            width: 50px; height: 50px; background: var(--btn-classic-bg); color: var(--btn-classic-text); 
             border-radius: 16px; display: flex; align-items: center; justify-content: center; 
             font-size: 24px; font-weight: 900; box-shadow: 0 4px 10px rgba(0,0,0,0.2); flex-shrink: 0;
         }
@@ -139,11 +201,10 @@
         .level-title { font-size: 18px; font-weight: 900; color: var(--text-main); margin-bottom: 2px; }
         .level-desc { font-size: 13px; font-weight: 700; color: var(--text-sec); opacity: 0.8; }
         .level-play-btn { 
-            width: 40px; height: 40px; background: var(--btn-soft-bg); color: var(--accent); 
+            width: 40px; height: 40px; background: var(--slot-base); color: var(--btn-classic-bg); 
             border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
         
-        /* Заблокированный уровень */
         .level-card.locked { opacity: 0.6; background: var(--slot-base); box-shadow: none; cursor: default; pointer-events: none;}
         .level-card.locked .level-icon-wrapper { background: var(--text-sec); color: var(--card-bg); box-shadow: none; }
         .level-card.locked .level-play-btn { background: transparent; color: var(--text-sec); }
@@ -151,7 +212,7 @@
         /* SHOP GRID */
         .shop-tabs { display: flex; width: 100%; gap: 10px; padding: 0 20px 10px 20px; margin-bottom: 10px; flex-shrink: 0; box-sizing: border-box;}
         .shop-tab { flex: 1; padding: 12px 0; text-align: center; background: var(--slot-base); color: var(--text-sec); border-radius: 15px; font-weight: 800; cursor: pointer; }
-        .shop-tab.active { background: var(--accent); color: var(--btn-text); }
+        .shop-tab.active { background: var(--btn-classic-bg); color: var(--btn-classic-text); }
         
         .shop-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; width: 100%; padding: 0; box-sizing: border-box; }
         .shop-item { background: var(--card-bg); border-radius: 16px; border: var(--card-border); padding: 15px 10px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 10px var(--shadow-color); position: relative; }
@@ -159,7 +220,7 @@
         .shop-item.active-item { border: 3px solid var(--accent); }
         .item-preview { width: 60px; height: 60px; border-radius: 12px; background: var(--bg-grad-1); margin-bottom: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;}
         .item-price { font-size: 12px; font-weight: 800; color: #FFD700; display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 10px;}
-        .item-btn { margin-top: 10px; width: 100%; padding: 8px; border-radius: 10px; font-weight: 800; font-size: 12px; border: none; cursor: pointer; background: var(--accent); color: var(--btn-text); }
+        .item-btn { margin-top: 10px; width: 100%; padding: 8px; border-radius: 10px; font-weight: 800; font-size: 12px; border: none; cursor: pointer; background: var(--btn-classic-bg); color: var(--btn-classic-text); }
         .item-btn.equipped { background: var(--slot-base); color: var(--text-sec); }
         .booster-item { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border: var(--card-border); padding: 15px 20px; border-radius: 18px; margin: 0 0 15px 0; box-shadow: 0 4px 10px var(--shadow-color); width: 100%; box-sizing: border-box;}
         
@@ -185,7 +246,7 @@
         .setting-row:last-child { border-bottom: none; }
         .setting-label { font-size: 18px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
         .toggle-switch { position: relative; width: 50px; height: 28px; background: #ccc; border-radius: 14px; cursor: pointer; transition: background 0.3s; }
-        .toggle-switch.active { background: var(--accent); }
+        .toggle-switch.active { background: var(--btn-classic-bg); }
         .toggle-knob { position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; background: white; border-radius: 50%; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .toggle-switch.active .toggle-knob { transform: translateX(22px); }
         
@@ -245,7 +306,7 @@
         <div style="text-align: center; margin-top: 5px;">
             <div style="font-size: 11px; color: var(--text-sec); font-weight: 800; letter-spacing: 1px;" id="hud-mode">КЛАССИКА — НОВИЧОК</div>
             <div style="font-size: 22px; color: var(--text-main); font-weight: 900;" id="hud-lvl">УРОВЕНЬ 1</div>
-            <div id="hud-hardcore-moves" style="display:none; color: var(--accent); font-weight: 900; font-size: 18px; margin-top: 5px;">Ходы: <span id="hud-moves-val">0</span></div>
+            <div id="hud-hardcore-moves" style="display:none; color: var(--btn-hard-bg); font-weight: 900; font-size: 18px; margin-top: 5px;">Ходы: <span id="hud-moves-val">0</span></div>
         </div>
         <button class="btn-icon-round" style="color:var(--text-main)" onclick="audio.click(); game.requestUndo()">
             <svg viewBox="0 0 24 24" width="24" height="24"><use href="#svg-undo"></use></svg>
@@ -259,9 +320,9 @@
             <div class="logo-main">Coin<br>Sort</div>
             <div class="logo-sub">Logic Game</div>
         </div>
-        <button class="btn-main" onclick="audio.click(); ui.switchScreen('mode')">ИГРАТЬ</button>
-        <button class="btn-main" onclick="audio.click(); game.startDaily()">ЕЖЕДНЕВНЫЙ ⭐</button>
-        <button class="btn-main" onclick="audio.click(); ui.showShop('themes')">МАГАЗИН 🛒</button>
+        <button class="btn-main btn-classic" onclick="audio.click(); ui.switchScreen('mode')">ИГРАТЬ</button>
+        <button class="btn-main btn-daily" onclick="audio.click(); game.startDaily()">ЕЖЕДНЕВНЫЙ ⭐</button>
+        <button class="btn-main btn-blind" onclick="audio.click(); ui.showShop('themes')">МАГАЗИН 🛒</button>
     </div>
     
     <!-- MODE SELECT SCREEN -->
@@ -269,9 +330,9 @@
         <div class="logo-box" style="margin-bottom: 40px; margin-top: 40px;">
             <div class="logo-main" style="font-size: 40px;">Режим</div>
         </div>
-        <button class="btn-main" onclick="audio.click(); ui.selectMode('classic')">КЛАССИКА</button>
-        <button class="btn-main" onclick="audio.click(); ui.selectMode('blind')">ВСЛЕПУЮ</button>
-        <button class="btn-main" onclick="audio.click(); ui.selectMode('hardcore')">ХАРДКОР ☠️</button>
+        <button class="btn-main btn-classic" onclick="audio.click(); ui.selectMode('classic')">КЛАССИКА</button>
+        <button class="btn-main btn-blind" onclick="audio.click(); ui.selectMode('blind')">ВСЛЕПУЮ</button>
+        <button class="btn-main btn-hardcore" onclick="audio.click(); ui.selectMode('hardcore')">ХАРДКОР ☠️</button>
     </div>
     
     <!-- LEVELS SCREEN -->
@@ -305,7 +366,7 @@
             <h2>Ежедневная награда</h2>
             <p style="color:var(--text-sec); margin-bottom:20px;">Заходи каждый день!</p>
             <div class="daily-grid" id="daily-grid"></div>
-            <button class="btn-main" style="width:100%; margin-top:10px; margin-bottom: 0;" onclick="audio.click(); ui.claimDaily()">ЗАБРАТЬ</button>
+            <button class="btn-main btn-classic" style="width:100%; margin-top:10px; margin-bottom: 0;" onclick="audio.click(); ui.claimDaily()">ЗАБРАТЬ</button>
         </div>
     </div>
     
@@ -314,7 +375,7 @@
             <div style="font-size: 60px; margin-bottom: 10px;">⏳</div>
             <h2>Уже пройдено!</h2>
             <p style="color:var(--text-sec); margin-bottom:25px;">Ты уже забрал супер-приз за сегодняшний день. Возвращайся завтра за новой наградой!</p>
-            <button class="btn-main" style="width:100%; margin-bottom: 0;" onclick="audio.click(); ui.hideModals()">ПОНЯТНО</button>
+            <button class="btn-main btn-classic" style="width:100%; margin-bottom: 0;" onclick="audio.click(); ui.hideModals()">ПОНЯТНО</button>
         </div>
     </div>
 
@@ -330,8 +391,8 @@
                 <div class="toggle-switch active" id="toggle-vibro" onclick="audio.click(); settings.toggleVibration()"><div class="toggle-knob"></div></div>
             </div>
             
-            <button class="btn-soft" style="margin-top:20px; margin-bottom: 15px;" onclick="audio.click(); ui.hideModals(); ui.showRules()">Как играть</button>
-            <button class="btn-main" style="width:100%; margin-bottom:0;" onclick="audio.click(); ui.hideModals()">ЗАКРЫТЬ</button>
+            <button class="btn-action btn-info" style="margin-top:20px;" onclick="audio.click(); ui.hideModals(); ui.showRules()">Как играть</button>
+            <button class="btn-action btn-danger" style="margin-bottom:0;" onclick="audio.click(); ui.hideModals()">ЗАКРЫТЬ</button>
         </div>
     </div>
     
@@ -344,32 +405,32 @@
             <div style="text-align: left; font-size: 15px; color: var(--text-main); margin-bottom: 10px;">1. Нажми на стопку, чтобы <b>взять</b> монеты.</div>
             <div style="text-align: left; font-size: 15px; color: var(--text-main); margin-bottom: 10px;">2. Нажми на другую, чтобы <b>положить</b>.</div>
             <div style="text-align: left; font-size: 15px; color: var(--text-main); margin-bottom: 15px;">3. Класть можно только на <b>тот же цвет</b>.</div>
-            <button class="btn-main" style="width:100%; margin-bottom:0;" onclick="audio.click(); ui.hideModals()">ПОНЯТНО</button>
+            <button class="btn-main btn-classic" style="width:100%; margin-bottom:0;" onclick="audio.click(); ui.hideModals()">ПОНЯТНО</button>
         </div>
     </div>
     
     <div id="modal-pause" class="modal-overlay">
         <div class="modal">
             <h2>Пауза</h2>
-            <button class="btn-main" style="width:100%;" onclick="audio.click(); game.resume()">ПРОДОЛЖИТЬ</button>
-            <button class="btn-soft" onclick="audio.click(); game.restartLevel()">НАЧАТЬ ЗАНОВО</button>
-            <button class="btn-soft" style="margin-bottom:0;" onclick="audio.click(); game.quitToMenu()">В МЕНЮ</button>
+            <button class="btn-main btn-classic" style="width:100%;" onclick="audio.click(); game.resume()">ПРОДОЛЖИТЬ</button>
+            <button class="btn-action btn-info" onclick="audio.click(); game.restartLevel()">НАЧАТЬ ЗАНОВО</button>
+            <button class="btn-action btn-danger" style="margin-bottom:0;" onclick="audio.click(); game.quitToMenu()">В МЕНЮ</button>
         </div>
     </div>
     
     <div id="modal-out-of-moves" class="modal-overlay">
         <div class="modal">
-            <h2 style="color: var(--accent)">Ходы кончились!</h2>
+            <h2 style="color: var(--btn-hard-bg)">Ходы кончились!</h2>
             <p style="margin-bottom:20px; color:var(--text-sec)">Используй жизнь, чтобы получить +5 ходов.</p>
-            <button class="btn-main" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="audio.click(); game.useLife()">
+            <button class="btn-main btn-classic" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="audio.click(); game.useLife()">
                 <svg viewBox="0 0 24 24" width="20" height="20" style="color: currentColor"><use href="#svg-life"></use></svg>
                 Использовать (<span id="oom-lives"></span>)
             </button>
-            <button class="btn-soft" style="display:flex; align-items:center; justify-content:center; gap:8px;" onclick="audio.click(); game.adLife()">
+            <button class="btn-action btn-info" style="display:flex; align-items:center; justify-content:center; gap:8px;" onclick="audio.click(); game.adLife()">
                 <svg viewBox="0 0 24 24" width="22" height="22" style="color: currentColor"><use href="#svg-play"></use></svg>
                 Бесплатно за рекламу
             </button>
-            <button class="btn-soft" style="margin-bottom:0;" onclick="audio.click(); game.quitToMenu()">В МЕНЮ</button>
+            <button class="btn-action btn-danger" style="margin-bottom:0;" onclick="audio.click(); game.quitToMenu()">Сдаться</button>
         </div>
     </div>
     
@@ -390,8 +451,8 @@
                     </span>
                 </div>
             </div>
-            <button class="btn-main" style="width:100%;" onclick="audio.click(); game.nextLevel()">СЛЕДУЮЩИЙ</button>
-            <button class="btn-soft" style="margin-bottom:0;" onclick="audio.click(); game.quitToMenu()">В МЕНЮ</button>
+            <button class="btn-main btn-classic" style="width:100%;" onclick="audio.click(); game.nextLevel()">СЛЕДУЮЩИЙ</button>
+            <button class="btn-action btn-danger" style="margin-bottom:0;" onclick="audio.click(); game.quitToMenu()">В МЕНЮ</button>
         </div>
     </div>
 </div>
@@ -565,7 +626,7 @@ const LEVELS_CONFIG = [
 
 const PALETTE = ['#ff4757', '#1e90ff', '#2ed573', '#f39c12', '#f1c40f', '#ff9ff3', '#9c88ff', '#00d2d3', '#5f27cd', '#006266', '#833471', '#d35400'];
 
-// Строки градиентов для точной отрисовки превью в магазине без конфликта CSS
+// Жестко заданные градиенты для превью магазина (чтобы не было багов с CSS)
 const THEME_BGS = [
     'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
     'linear-gradient(135deg, #1B1B2F 0%, #0F0F1A 100%)',
@@ -717,11 +778,11 @@ const ui = {
         const streak = dataManager.data.dailyReward.streak;
         const rewards = [
             {d:1, t:'coin', v:50, i:'#svg-coin', c:'#FFD700'}, 
-            {d:2, t:'undo', v:1, i:'#svg-undo', c:'var(--text-main)'}, 
+            {d:2, t:'undo', v:1, i:'#svg-undo', c:'currentColor'}, 
             {d:3, t:'coin', v:100, i:'#svg-coin', c:'#FFD700'}, 
             {d:4, t:'life', v:1, i:'#svg-life', c:'#ff4757'}, 
             {d:5, t:'coin', v:150, i:'#svg-coin', c:'#FFD700'}, 
-            {d:6, t:'undo', v:2, i:'#svg-undo', c:'var(--text-main)'}, 
+            {d:6, t:'undo', v:2, i:'#svg-undo', c:'currentColor'}, 
             {d:7, t:'mega', v:300, i:''}
         ];
         
@@ -751,14 +812,14 @@ const ui = {
             boost.innerHTML = `
                 <div class="booster-item">
                     <div style="display:flex; align-items:center; gap:15px">
-                        <div style="width:30px; height:30px; color:var(--accent)"><svg viewBox="0 0 24 24" width="100%" height="100%"><use href="#svg-undo"></use></svg></div>
+                        <div style="width:30px; height:30px; color:var(--btn-classic-bg)"><svg viewBox="0 0 24 24" width="100%" height="100%"><use href="#svg-undo"></use></svg></div>
                         <div style="text-align:left"><div style="font-weight:900; font-size:18px; color:var(--text-main)">Отмена хода</div><div style="font-size:12px; color:var(--text-sec)">В инвентаре: ${dataManager.data.inventory.undos}</div></div>
                     </div>
                     <div><button class="item-btn" style="width:auto; padding: 10px 20px; display:flex; align-items:center; gap:4px;" onclick="audio.click(); ui.buyBooster('undo', 50)">50 <svg viewBox="0 0 24 24" width="14" height="14" style="color:#FFD700"><use href="#svg-coin"></use></svg></button></div>
                 </div>
                 <div class="booster-item">
                     <div style="display:flex; align-items:center; gap:15px">
-                        <div style="width:30px; height:30px; color:#ff4757"><svg viewBox="0 0 24 24" width="100%" height="100%"><use href="#svg-life"></use></svg></div>
+                        <div style="width:30px; height:30px; color:var(--btn-hard-bg)"><svg viewBox="0 0 24 24" width="100%" height="100%"><use href="#svg-life"></use></svg></div>
                         <div style="text-align:left"><div style="font-weight:900; font-size:18px; color:var(--text-main)">Жизнь</div><div style="font-size:12px; color:var(--text-sec)">Для хардкора: ${dataManager.data.inventory.lives}</div></div>
                     </div>
                     <div><button class="item-btn" style="width:auto; padding: 10px 20px; display:flex; align-items:center; gap:4px;" onclick="audio.click(); ui.buyBooster('life', 150)">150 <svg viewBox="0 0 24 24" width="14" height="14" style="color:#FFD700"><use href="#svg-coin"></use></svg></button></div>
@@ -769,8 +830,8 @@ const ui = {
                         <div style="text-align:left"><div style="font-weight:900; font-size:18px; color:var(--text-main)">Халява</div><div style="font-size:12px; color:var(--text-sec)">За рекламу</div></div>
                     </div>
                     <div style="display:flex; flex-direction:column; gap:5px">
-                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0; display:flex; align-items:center; gap:5px; justify-content:center;" onclick="audio.click(); ui.adBooster('undo')">+3 <svg viewBox="0 0 24 24" width="14" height="14" style="color:var(--btn-text)"><use href="#svg-undo"></use></svg></button>
-                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0; display:flex; align-items:center; gap:5px; justify-content:center;" onclick="audio.click(); ui.adBooster('life')">+1 <svg viewBox="0 0 24 24" width="14" height="14" style="color:var(--btn-text)"><use href="#svg-life"></use></svg></button>
+                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0; display:flex; align-items:center; gap:5px; justify-content:center; background:var(--btn-classic-bg); color:var(--btn-classic-text);" onclick="audio.click(); ui.adBooster('undo')">+3 <svg viewBox="0 0 24 24" width="14" height="14" style="color:currentColor"><use href="#svg-undo"></use></svg></button>
+                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0; display:flex; align-items:center; gap:5px; justify-content:center; background:var(--btn-hard-bg); color:var(--btn-hard-text);" onclick="audio.click(); ui.adBooster('life')">+1 <svg viewBox="0 0 24 24" width="14" height="14" style="color:currentColor"><use href="#svg-life"></use></svg></button>
                     </div>
                 </div>
             `;
@@ -786,7 +847,6 @@ const ui = {
                 
                 let previewHtml = '';
                 if(tab === 'themes') {
-                    // Используем константу градиента напрямую - 100% гарантия правильного цвета превью
                     previewHtml = `<div style="width:100%; height:100%; border-radius:10px; background: ${THEME_BGS[item.id]};"></div>`;
                 } else { previewHtml = `<canvas id="prev-${item.id}" width="60" height="60"></canvas>`; }
                 
