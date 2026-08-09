@@ -69,7 +69,7 @@
         .badge { position: absolute; bottom: -5px; right: -5px; background-color: var(--badge-bg); color: white; font-size: 11px; font-weight: 900; padding: 4px 6px; border-radius: 10px; min-width: 22px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 2px solid var(--card-bg); }
         .badge.ad { background-color: var(--badge-ad); color: #2d3436; padding: 4px 4px; }
         
-        /* LEVELS & SHOP GRID (Идеальное выравнивание) */
+        /* LEVELS & SHOP GRID */
         .scroll-list { width: 100%; flex: 1; overflow-y: auto; padding: 10px 20px 40px 20px; display: flex; flex-direction: column; gap: 14px; box-sizing: border-box; -ms-overflow-style: none; scrollbar-width: none; mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);}
         .scroll-list::-webkit-scrollbar { display: none; }
         
@@ -83,7 +83,8 @@
         .shop-tab { flex: 1; padding: 12px 0; text-align: center; background: var(--slot-base); color: var(--text-sec); border-radius: 15px; font-weight: 800; cursor: pointer; }
         .shop-tab.active { background: var(--accent); color: #fff; }
         
-        .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; padding: 0; box-sizing: border-box; }
+        /* ИСПРАВЛЕННАЯ СЕТКА: minmax(0, 1fr) гарантирует идеально ровные столбцы */
+        .shop-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; width: 100%; padding: 0; box-sizing: border-box; }
         .shop-item { background: var(--card-bg); border-radius: 16px; padding: 15px 10px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 10px var(--shadow-color); position: relative; }
         .shop-item.locked { opacity: 0.7; }
         .shop-item.active-item { border: 3px solid var(--accent); }
@@ -123,7 +124,7 @@
     </style>
 </head>
 <body>
-<!-- ИНТЕГРАЦИЯ SVG (Цвета прокидываются через currentColor где нужно) -->
+<!-- ИНТЕГРАЦИЯ SVG (Цвета прокидываются через currentColor) -->
 <svg style="display:none;">
     <defs>
         <g id="svg-coin">
@@ -230,7 +231,6 @@
         </div>
     </div>
     
-    <!-- НОВОЕ ОКНО: Ежедневный пройден -->
     <div id="modal-daily-done" class="modal-overlay">
         <div class="modal">
             <div style="font-size: 60px; margin-bottom: 10px;">⏳</div>
@@ -470,7 +470,7 @@ const settings = {
 
 /** CONFIG */
 const LEVELS_CONFIG = [
-    { id: 0, name: "Новичок",   colors: 3, slots: 5,  size: 4, reqWins: 10 }, /* Нужно 10 побед, чтобы открыть Ученика */
+    { id: 0, name: "Новичок",   colors: 3, slots: 5,  size: 4, reqWins: 10 },
     { id: 1, name: "Ученик",    colors: 4, slots: 6,  size: 4, reqWins: 10 },
     { id: 2, name: "Любитель",  colors: 5, slots: 7,  size: 4, reqWins: 10 },
     { id: 3, name: "Спец",      colors: 6, slots: 8,  size: 4, reqWins: 10 },
@@ -764,6 +764,12 @@ const ui = {
             list.appendChild(div);
         });
         this.switchScreen('levels');
+    },
+
+    // ВОССТАНОВЛЕННАЯ ФУНКЦИЯ ДЛЯ ВЫЗОВА ОКНА ПОБЕДЫ
+    showVictoryModal(coinsEarned, isHardcore, unlockedNextDiff) {
+        document.getElementById('vic-coins').innerText = coinsEarned;
+        this.showModals('victory');
     }
 };
 
@@ -822,10 +828,16 @@ function drawDetailedCoin(ctx, x, y, r, h, cHex, isHidden, skinId = dataManager.
             ctx.strokeStyle = 'rgba(255,255,255,0.7)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.85, r*0.3, 0, 0, Math.PI*2); ctx.stroke();
             break;
             
-        case 5: // Неон
+        case 5: // Неон (максимум свечения)
             ctx.fillStyle = '#2f3542'; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
-            ctx.strokeStyle = cHex; ctx.lineWidth = 3; ctx.shadowColor = cHex; ctx.shadowBlur = 25; // Усиленное свечение
-            ctx.beginPath(); ctx.ellipse(x, y-h, r*0.8, r*0.28, 0, 0, Math.PI*2); ctx.stroke(); ctx.shadowBlur = 0;
+            ctx.strokeStyle = cHex; ctx.lineWidth = 3; 
+            ctx.shadowColor = cHex; ctx.shadowBlur = 30; // Очень сильное свечение
+            ctx.beginPath(); ctx.ellipse(x, y-h, r*0.8, r*0.28, 0, 0, Math.PI*2); ctx.stroke();
+            
+            // Внутренний яркий блик для эффекта лампы
+            ctx.shadowBlur = 10; ctx.lineWidth = 1; ctx.strokeStyle = '#fff';
+            ctx.beginPath(); ctx.ellipse(x, y-h, r*0.8, r*0.28, 0, 0, Math.PI*2); ctx.stroke();
+            ctx.shadowBlur = 0;
             break;
             
         case 6: // Шахматы
@@ -839,41 +851,46 @@ function drawDetailedCoin(ctx, x, y, r, h, cHex, isHidden, skinId = dataManager.
             ctx.strokeStyle = s; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.stroke();
             break;
             
-        case 7: // Пуговица (Новый дизайн)
+        case 7: // Пуговица с мягкими краями (фаской)
             const bgBtn = ctx.createLinearGradient(x-r, y, x+r, y);
-            bgBtn.addColorStop(0, s); bgBtn.addColorStop(0.5, cHex); bgBtn.addColorStop(1, s);
+            bgBtn.addColorStop(0, shadeColor(cHex, -40)); bgBtn.addColorStop(0.5, cHex); bgBtn.addColorStop(1, shadeColor(cHex, -40));
             
-            // Основной цилиндр
             ctx.fillStyle = bgBtn;
             ctx.beginPath(); ctx.ellipse(x, y, r, r*0.35, 0, 0, Math.PI); ctx.ellipse(x, y-h, r, r*0.35, 0, Math.PI, 0); ctx.fill();
             ctx.fillRect(x-r, y-h, r*2, h);
             
-            // Верхняя часть с фаской (скруглением)
-            ctx.fillStyle = l; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = cHex; ctx.beginPath(); ctx.ellipse(x, y-h-1, r*0.9, r*0.31, 0, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = cHex; 
+            ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
+            
+            // Скругление грани (многослойное для мягкости)
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = shadeColor(cHex, 20);
+            ctx.beginPath(); ctx.ellipse(x, y-h, r-1, (r-1)*0.35, 0, 0, Math.PI*2); ctx.stroke();
+            ctx.strokeStyle = shadeColor(cHex, -20);
+            ctx.beginPath(); ctx.ellipse(x, y-h, r-2, (r-2)*0.35, 0, 0, Math.PI*2); ctx.stroke();
             
             // Внутреннее углубление
-            ctx.fillStyle = shadeColor(cHex, -20);
-            ctx.beginPath(); ctx.ellipse(x, y-h-1, r*0.7, r*0.24, 0, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = cHex;
-            ctx.beginPath(); ctx.ellipse(x, y-h, r*0.6, r*0.2, 0, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = shadeColor(cHex, -30);
+            ctx.beginPath(); ctx.ellipse(x, y-h, r*0.65, r*0.23, 0, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = shadeColor(cHex, -10);
+            ctx.beginPath(); ctx.ellipse(x, y-h+r*0.05, r*0.55, r*0.2, 0, 0, Math.PI*2); ctx.fill();
             
             // Дырочки
             ctx.fillStyle = shadeColor(cHex, -60);
-            let d = r*0.2, dy = r*0.07;
-            ctx.beginPath(); ctx.ellipse(x-d, y-h-dy, r*0.07, r*0.035, 0, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.ellipse(x+d, y-h-dy, r*0.07, r*0.035, 0, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.ellipse(x-d, y-h+dy, r*0.07, r*0.035, 0, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.ellipse(x+d, y-h+dy, r*0.07, r*0.035, 0, 0, Math.PI*2); ctx.fill();
+            let dBtn = r*0.2, dyBtn = r*0.06;
+            ctx.beginPath(); ctx.ellipse(x-dBtn, y-h+r*0.05-dyBtn, r*0.07, r*0.035, 0, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(x+dBtn, y-h+r*0.05-dyBtn, r*0.07, r*0.035, 0, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(x-dBtn, y-h+r*0.05+dyBtn, r*0.07, r*0.035, 0, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(x+dBtn, y-h+r*0.05+dyBtn, r*0.07, r*0.035, 0, 0, Math.PI*2); ctx.fill();
             
-            // Нитки
+            // Нитки (крестик)
             ctx.strokeStyle = shadeColor(cHex, 40);
-            ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.moveTo(x-d, y-h-dy); ctx.lineTo(x+d, y-h+dy); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(x+d, y-h-dy); ctx.lineTo(x-d, y-h+dy); ctx.stroke();
+            ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.moveTo(x-dBtn, y-h+r*0.05-dyBtn); ctx.lineTo(x+dBtn, y-h+r*0.05+dyBtn); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(x+dBtn, y-h+r*0.05-dyBtn); ctx.lineTo(x-dBtn, y-h+r*0.05+dyBtn); ctx.stroke();
             break;
             
-        case 8: // Стекло (Без блика)
+        case 8: // Стекло (Без белого блика сверху)
             ctx.globalAlpha = 0.85;
             ctx.fillStyle = shadeColor(cHex, -30); 
             ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
@@ -1068,8 +1085,9 @@ class Game {
         this.state = 'IDLE'; this.selectedStack = -1; this.moves = 0; this.history = []; this.animations = [];
         ui.updateEconomy();
         
-        // Новая формула ходов (строгая и честная)
-        this.movesLeft = (cfg.colors * cfg.size) + (cfg.colors * 2) + (isBlind ? 5 : 0);
+        // НОВАЯ СТРОГАЯ ФОРМУЛА: (Цвета * Высота) + Бонус за сложность.
+        // Для первого уровня (3 цвета) -> 12 + 4 = 16 ходов!
+        this.movesLeft = (cfg.colors * cfg.size) + Math.floor(cfg.colors * 1.5) + (isBlind ? 5 : 0);
         
         const modeName = isBlind ? "ХАРДКОР (ВСЛЕПУЮ)" : "ХАРДКОР";
         document.getElementById('hud-mode').innerText = modeName;
