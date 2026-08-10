@@ -122,7 +122,6 @@
             --btn-danger-bg: #005500; --btn-danger-sh: #003300; --btn-danger-text: #00ff00;
         }
         
-        /* ANTI-SELECTION */
         * { box-sizing: border-box; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Nunito', sans-serif; }
         
         body { margin: 0; padding: 0; background: #1e272e; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
@@ -136,13 +135,11 @@
         .screen.hidden { transform: translateX(100%); pointer-events: none; }
         .screen.active { transform: translateX(0); }
         
-        /* UNIFIED TOP BAR */
         .top-bar-economy { position: absolute; top: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; align-items: center; z-index: 15; pointer-events: none; }
         .currency-pill { background: rgba(0,0,0,0.4); color: #FFF; padding: 8px 15px; border-radius: 20px; font-weight: 900; display: flex; align-items: center; gap: 8px; font-size: 16px; backdrop-filter: blur(5px); pointer-events: auto; cursor: pointer; }
         .btn-settings-main { width: 44px; height: 44px; border-radius: 14px; background: rgba(0,0,0,0.4); border: none; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; pointer-events: auto; backdrop-filter: blur(5px);}
         .btn-back { width: 44px; height: 44px; border-radius: 14px; background: rgba(0,0,0,0.4); border: none; display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; pointer-events: auto; backdrop-filter: blur(5px);}
         
-        /* GAME HUD */
         #hud { position: absolute; top: 0; left: 0; width: 100%; padding: 15px 20px; display: flex; justify-content: space-between; align-items: flex-start; z-index: 5; pointer-events: none; height: 100px; }
         #hud button { pointer-events: auto; }
         
@@ -151,7 +148,6 @@
         .logo-main { font-size: 56px; font-weight: 900; color: var(--text-main); line-height: 0.9; text-shadow: 2px 2px 0px rgba(128,128,128,0.2); }
         .logo-sub { font-size: 20px; color: var(--accent); font-weight: 700; letter-spacing: 4px; text-transform: uppercase; margin-top: 10px; }
         
-        /* MAIN 3D BUTTONS */
         .btn-main { width: 80%; padding: 20px; border-radius: 20px; border: none; font-size: 22px; font-weight: 800; margin-bottom: 15px; cursor: pointer; transition: transform 0.1s; display: flex; justify-content: center; align-items: center; gap: 10px;}
         .btn-main:active { transform: translateY(8px); box-shadow: 0 0 0 transparent !important; }
         
@@ -160,7 +156,6 @@
         .btn-daily { background: var(--btn-daily-bg); box-shadow: 0 8px 0 var(--btn-daily-sh), 0 15px 25px rgba(0,0,0,0.2); color: var(--btn-daily-text); }
         .btn-hardcore { background: var(--btn-hard-bg); box-shadow: 0 8px 0 var(--btn-hard-sh), 0 15px 25px rgba(0,0,0,0.2); color: var(--btn-hard-text); }
         
-        /* SECONDARY 3D BUTTONS */
         .btn-action { width: 100%; padding: 18px; border-radius: 20px; border: none; font-size: 16px; font-weight: 800; margin-bottom: 15px; cursor: pointer; transition: transform 0.1s; display: flex; justify-content: center; align-items: center; gap: 8px; }
         .btn-action:active { transform: translateY(6px); box-shadow: 0 0 0 transparent !important; }
         
@@ -173,7 +168,6 @@
         .badge { position: absolute; bottom: -5px; right: -5px; background-color: var(--badge-bg); color: white; font-size: 11px; font-weight: 900; padding: 4px 6px; border-radius: 10px; min-width: 22px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 2px solid var(--card-bg); }
         .badge.ad { background-color: var(--badge-ad); color: #2d3436; padding: 4px 4px; }
         
-        /* LEVELS & SHOP GRID */
         .scroll-list { width: 100%; flex: 1; overflow-y: auto; padding: 10px 20px 40px 20px; display: flex; flex-direction: column; gap: 14px; box-sizing: border-box; -ms-overflow-style: none; scrollbar-width: none; mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);}
         .scroll-list::-webkit-scrollbar { display: none; }
         
@@ -201,7 +195,6 @@
         .level-card.locked .level-icon-wrapper { background: var(--text-sec); color: var(--card-bg); box-shadow: none; }
         .level-card.locked .level-play-btn { background: transparent; color: var(--text-sec); }
         
-        /* SHOP GRID */
         .shop-tabs { display: flex; width: 100%; gap: 10px; padding: 0 20px 10px 20px; margin-bottom: 10px; flex-shrink: 0; box-sizing: border-box;}
         .shop-tab { flex: 1; padding: 12px 0; text-align: center; background: var(--slot-base); color: var(--text-sec); border-radius: 15px; font-weight: 800; cursor: pointer; }
         .shop-tab.active { background: var(--btn-classic-bg); color: var(--btn-classic-text); }
@@ -212,7 +205,6 @@
         .shop-item.active-item { border: 3px solid var(--accent); }
         .item-preview { width: 60px; height: 60px; border-radius: 12px; background: var(--bg-grad-1); margin-bottom: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;}
         
-        /* MYSTERY BOX */
         .mystery-box {
             width: 100%; height: 100%; border-radius: 10px;
             background: linear-gradient(135deg, rgba(0,0,0,0.05), rgba(0,0,0,0.15));
@@ -223,17 +215,15 @@
         
         .item-price { font-size: 12px; font-weight: 800; color: #FFD700; display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 10px;}
         .item-btn { margin-top: 10px; width: 100%; padding: 8px; border-radius: 10px; font-weight: 800; font-size: 12px; border: none; cursor: pointer; background: var(--btn-classic-bg); color: var(--btn-classic-text); }
-        .item-btn.equipped { background: var(--slot-base); color: var(--text-sec); }
+        .item-btn.equipped { background: var(--slot-base); color: var(--text-sec); display: flex; justify-content: center; align-items: center;}
         .booster-item { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border: var(--card-border); padding: 15px 20px; border-radius: 18px; margin: 0 0 15px 0; box-shadow: 0 4px 10px var(--shadow-color); width: 100%; box-sizing: border-box;}
         
-        /* MODALS */
         .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .modal-overlay.visible { opacity: 1; pointer-events: auto; }
         .modal { background: var(--card-bg); border: var(--card-border); width: 85%; max-height: 80vh; overflow-y: auto; padding: 25px; border-radius: 28px; text-align: center; transform: scale(0.9); transition: transform 0.3s; box-shadow: 0 20px 40px rgba(0,0,0,0.4); color: var(--text-main); -ms-overflow-style: none; scrollbar-width: none;}
         .modal::-webkit-scrollbar { display: none; }
         .modal h2 { margin: 0 0 15px; font-size: 26px; color: var(--text-main); font-weight: 900;}
         
-        /* Daily Modal */
         .daily-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;}
         .daily-item { background: var(--slot-base); border-radius: 15px; padding: 10px 5px; display: flex; flex-direction: column; align-items: center; position: relative;}
         .daily-item.claimed { opacity: 0.5; }
@@ -243,7 +233,6 @@
         .daily-val { font-size: 14px; font-weight: 900; color: var(--text-main); }
         .daily-item-7 { grid-column: span 3; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 20px; padding: 15px; }
         
-        /* Form Toggles */
         .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--shadow-color); }
         .setting-row:last-child { border-bottom: none; }
         .setting-label { font-size: 18px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
@@ -278,6 +267,9 @@
         </g>
         <g id="svg-question">
             <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+        </g>
+        <g id="svg-check">
+            <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
         </g>
     </defs>
 </svg>
@@ -471,7 +463,7 @@ const dataManager = {
     data: { 
         progress: { hardcore_lvl: 1 }, settings: { sound: true, vibration: true }, initialLevels: {}, levelsSinceAd: 0,
         coins: 100, inventory: { undos: 5, lives: 3 },
-        unlockedThemes: [0], unlockedSkins: [0], // МАГАЗИН СБРОШЕН (ОТКРЫТА ТОЛЬКО КЛАССИКА)
+        unlockedThemes: [0], unlockedSkins: [0],
         currentTheme: 0, currentSkin: 0,
         dailyLevelState: { date: "", completed: false }, dailyReward: { lastClaim: 0, streak: 0 }
     },
@@ -533,7 +525,6 @@ const dataManager = {
         ui.updateEconomy();
     },
     
-    // АЛГОРИТМ РАСЧЕТА УРОВНЯ ИГРОКА ДЛЯ НАГРАД
     getPlayerLevel() {
         let maxDiff = 0;
         for(let i=0; i<8; i++) {
@@ -612,8 +603,10 @@ const dataManager = {
         try { 
             const r = await vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'reward' }); 
             if(r.result) {
-                if(rewardType === 'undo') this.data.inventory.undos += 3;
-                if(rewardType === 'life') this.data.inventory.lives += 1;
+                if(rewardType === 'combo') {
+                    this.data.inventory.undos += 3;
+                    this.data.inventory.lives += 1;
+                }
                 this.save(); return true;
             }
             return false;
@@ -854,8 +847,11 @@ const ui = {
                         <div style="text-align:left"><div style="font-weight:900; font-size:18px; color:var(--text-main)">Халява</div><div style="font-size:12px; color:var(--text-sec)">За рекламу</div></div>
                     </div>
                     <div style="display:flex; flex-direction:column; gap:5px">
-                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0; display:flex; align-items:center; gap:5px; justify-content:center; background:var(--btn-classic-bg); color:var(--btn-classic-text);" onclick="audio.click(); ui.adBooster('undo')">+3 <svg viewBox="0 0 24 24" width="14" height="14" style="color:currentColor"><use href="#svg-undo"></use></svg></button>
-                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0; display:flex; align-items:center; gap:5px; justify-content:center; background:var(--danger-color); color:var(--btn-classic-text);" onclick="audio.click(); ui.adBooster('life')">+1 <svg viewBox="0 0 24 24" width="14" height="14" style="color:currentColor"><use href="#svg-life"></use></svg></button>
+                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0; display:flex; align-items:center; gap:5px; justify-content:center; background:var(--btn-classic-bg); color:var(--btn-classic-text);" onclick="audio.click(); ui.adBooster('combo')">
+                            СМОТРЕТЬ
+                            <div style="display:flex; align-items:center; gap:2px"><span style="font-size:14px">+3</span><svg viewBox="0 0 24 24" width="14" height="14" style="color:currentColor"><use href="#svg-undo"></use></svg></div>
+                            <div style="display:flex; align-items:center; gap:2px"><span style="font-size:14px">+1</span><svg viewBox="0 0 24 24" width="14" height="14" style="color:currentColor"><use href="#svg-life"></use></svg></div>
+                        </button>
                     </div>
                 </div>
             `;
@@ -870,11 +866,11 @@ const ui = {
                 const div = document.createElement('div'); div.className = `shop-item ${!isUnlocked ? 'locked' : ''} ${isEq ? 'active-item' : ''}`;
                 
                 let previewHtml = '';
-                let itemName = item.name;
+                let titleHtml = `<div style="font-size:13px; font-weight:800; color:var(--text-main); margin-bottom:5px; text-align:center; line-height:1">${item.name}</div>`;
                 
                 if(!isUnlocked) {
                     previewHtml = `<div class="mystery-box"><svg viewBox="0 0 24 24" width="30" height="30"><use href="#svg-question"></use></svg></div>`;
-                    itemName = "Секрет";
+                    titleHtml = '';
                 } else {
                     if(tab === 'themes') {
                         previewHtml = `<div style="width:100%; height:100%; border-radius:10px; background: ${THEME_BGS[item.id]};"></div>`;
@@ -883,12 +879,14 @@ const ui = {
                     }
                 }
                 
+                const btnContent = isEq ? `<svg viewBox="0 0 24 24" width="20" height="20" style="color:currentColor"><use href="#svg-check"></use></svg>` : (isUnlocked ? 'ВЫБРАТЬ' : 'КУПИТЬ');
+                
                 div.innerHTML = `
                     <div class="item-preview">${previewHtml}</div>
-                    <div style="font-size:13px; font-weight:800; color:var(--text-main); margin-bottom:5px; text-align:center; line-height:1">${itemName}</div>
+                    ${titleHtml}
                     ${!isUnlocked ? `<div class="item-price">${item.price} <svg viewBox="0 0 24 24" width="12" height="12" style="color:#FFD700"><use href="#svg-coin"></use></svg></div>` : ''}
                     <button class="item-btn ${isEq ? 'equipped' : ''}" onclick="audio.click(); ui.buyOrEquip('${tab}', ${item.id}, ${item.price}, ${isUnlocked})">
-                        ${isEq ? 'ВЫБРАНО' : (isUnlocked ? 'ВЫБРАТЬ' : 'КУПИТЬ')}
+                        ${btnContent}
                     </button>
                 `;
                 grid.appendChild(div);
@@ -1140,12 +1138,34 @@ const rulesDemo = {
         if(!this.canvas) return; const ctx = this.ctx, w = this.canvas.width, h = this.canvas.height;
         ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--ui-bg'); ctx.clearRect(0,0,w,h);
         const s1x = w/2-40, s2x = w/2+40, by = h-30;
-        ctx.fillStyle = 'rgba(0,0,0,0.1)'; [s1x, s2x].forEach(x => { ctx.beginPath(); ctx.ellipse(x, by, 25, 8, 0, 0, Math.PI*2); ctx.fill(); });
-        const c = this.t%4; drawDetailedCoin(ctx, s1x, by, 22, 10, PALETTE[1], false, 0, 1); drawDetailedCoin(ctx, s1x, by-12, 22, 10, PALETTE[1], false, 0, 1);
-        let cx = s1x, cy = by-24;
-        if(c>=1 && c<2) { const p=c-1, e=p<0.5?2*p*p:-1+(4-2*p)*p; cx=s1x+(s2x-s1x)*e; cy=(by-24)-Math.sin(p*Math.PI)*40; }
-        else if(c>=2 && c<3) { cx=s2x; cy=by; }
-        else if(c>=3) { const p=c-3, e=p<0.5?2*p*p:-1+(4-2*p)*p; cx=s2x+(s1x-s2x)*e; cy=by-Math.sin(p*Math.PI)*40; cy-=(24*p); }
+        
+        ctx.fillStyle = 'rgba(0,0,0,0.1)'; 
+        [s1x, s2x].forEach(x => { ctx.beginPath(); ctx.ellipse(x, by, 25, 8, 0, 0, Math.PI*2); ctx.fill(); });
+        
+        const c = this.t%4; 
+        
+        drawDetailedCoin(ctx, s1x, by, 22, 10, PALETTE[0], false, 0, 1); 
+        drawDetailedCoin(ctx, s1x, by-10, 22, 10, PALETTE[2], false, 0, 1);
+        
+        drawDetailedCoin(ctx, s2x, by, 22, 10, PALETTE[3], false, 0, 1);
+        drawDetailedCoin(ctx, s2x, by-10, 22, 10, PALETTE[5], false, 0, 1);
+        drawDetailedCoin(ctx, s2x, by-20, 22, 10, PALETTE[1], false, 0, 1);
+        
+        let cx = s1x, cy = by-20;
+        if(c>=1 && c<2) { 
+            const p=c-1, e=p<0.5?2*p*p:-1+(4-2*p)*p; 
+            cx=s1x+(s2x-s1x)*e; 
+            cy=(by-20)-Math.sin(p*Math.PI)*40; 
+            cy -= 10*p; 
+        }
+        else if(c>=2 && c<3) { cx=s2x; cy=by-30; }
+        else if(c>=3) { 
+            const p=c-3, e=p<0.5?2*p*p:-1+(4-2*p)*p; 
+            cx=s2x+(s1x-s2x)*e; 
+            cy=(by-30)-Math.sin(p*Math.PI)*40; 
+            cy += 10*p; 
+        }
+        
         drawDetailedCoin(ctx, cx, cy, 22, 10, PALETTE[1], false, 0, 1);
     }
 };
@@ -1400,7 +1420,7 @@ class Game {
     async requestUndo() {
         audio.click(); if (this.state==='ANIMATING' || this.state==='GAMEOVER' || this.history.length===0) return;
         if (dataManager.useUndo()) { this.performUndo(); ui.updateEconomy(); } 
-        else { const ok = await dataManager.showRewardAd('undo'); if(ok) ui.updateEconomy(); }
+        else { const ok = await dataManager.showRewardAd('combo'); if(ok) ui.updateEconomy(); }
     }
     performUndo() {
         this.stacks = this.history.pop(); this.selectedStack = -1; audio.play('pop');
@@ -1461,7 +1481,7 @@ class Game {
     }
     
     useLife() { if(dataManager.useLife()) { ui.hideModals(); this.movesLeft += 5; document.getElementById('hud-moves-val').innerText = this.movesLeft; this.state='IDLE'; ui.updateEconomy(); } else audio.play('error'); }
-    async adLife() { const ok = await dataManager.showRewardAd('life'); if(ok) { dataManager.useLife(); ui.hideModals(); this.movesLeft += 5; document.getElementById('hud-moves-val').innerText = this.movesLeft; this.state='IDLE'; ui.updateEconomy(); } }
+    async adLife() { const ok = await dataManager.showRewardAd('combo'); if(ok) { dataManager.useLife(); ui.hideModals(); this.movesLeft += 5; document.getElementById('hud-moves-val').innerText = this.movesLeft; this.state='IDLE'; ui.updateEconomy(); } }
     
     pause() { this.state='PAUSED'; ui.showModals('pause'); }
     resume() { this.state='IDLE'; ui.hideModals(); this.triggerDraw(); }
