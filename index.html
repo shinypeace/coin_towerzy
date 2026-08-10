@@ -122,6 +122,7 @@
             --btn-danger-bg: #005500; --btn-danger-sh: #003300; --btn-danger-text: #00ff00;
         }
         
+        /* ANTI-SELECTION */
         * { box-sizing: border-box; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Nunito', sans-serif; }
         
         body { margin: 0; padding: 0; background: #1e272e; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
@@ -420,10 +421,22 @@
                 <svg viewBox="0 0 24 24" width="20" height="20" style="color: currentColor"><use href="#svg-life"></use></svg>
                 Использовать (<span id="oom-lives"></span>)
             </button>
-            <button class="btn-action btn-info" style="display:flex; align-items:center; justify-content:center; gap:8px;" onclick="audio.click(); game.adLife()">
-                <svg viewBox="0 0 24 24" width="22" height="22" style="color: currentColor"><use href="#svg-play"></use></svg>
-                Бесплатно за рекламу
-            </button>
+            
+            <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 15px; gap:10px;">
+                <div style="text-align:left; flex:1;">
+                    <div style="font-weight:900; font-size:16px; color:var(--text-main)">Халява</div>
+                    <div style="font-size:12px; color:var(--text-sec); display:flex; align-items:center; gap:6px;">
+                        Награда: 
+                        <span style="display:flex; align-items:center; gap:2px; font-weight:800; color:var(--text-main)">3<svg viewBox="0 0 24 24" width="12" height="12"><use href="#svg-undo"></use></svg></span>
+                        <span style="display:flex; align-items:center; gap:2px; font-weight:800; color:var(--danger-color)">1<svg viewBox="0 0 24 24" width="12" height="12"><use href="#svg-life"></use></svg></span>
+                    </div>
+                </div>
+                <button class="btn-action btn-info" style="width:auto; padding: 12px 20px; margin:0; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="audio.click(); game.adLife()">
+                    <svg viewBox="0 0 24 24" width="18" height="18" style="color: currentColor"><use href="#svg-play"></use></svg>
+                    СМОТРЕТЬ
+                </button>
+            </div>
+            
             <button class="btn-action btn-danger" style="margin-bottom:0;" onclick="audio.click(); game.quitToMenu()">Сдаться</button>
         </div>
     </div>
@@ -491,9 +504,9 @@ const dataManager = {
     async load() {
         let rawData = null;
         if (this.vkUserId) {
-            try { const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_v3_${this.vkUserId}`] }); if (res.keys[0]?.value) rawData = res.keys[0].value; } catch(e){}
+            try { const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_v4_${this.vkUserId}`] }); if (res.keys[0]?.value) rawData = res.keys[0].value; } catch(e){}
         }
-        if(!rawData) rawData = localStorage.getItem('ct_data_v3_local');
+        if(!rawData) rawData = localStorage.getItem('ct_data_v4_local');
         if (rawData) {
             const parsed = Obfuscator.decode(rawData);
             if(parsed) this.mergeData(parsed); else { try { this.mergeData(JSON.parse(rawData)); } catch(e){} }
@@ -520,8 +533,8 @@ const dataManager = {
         this.data.settings.sound = settings.sound;
         this.data.settings.vibration = settings.vibration;
         const str = Obfuscator.encode(this.data);
-        localStorage.setItem('ct_data_v3_local', str);
-        if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_v3_${this.vkUserId}`, value: str }).catch(()=>{});
+        localStorage.setItem('ct_data_v4_local', str);
+        if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_v4_${this.vkUserId}`, value: str }).catch(()=>{});
         ui.updateEconomy();
     },
     
@@ -570,13 +583,13 @@ const dataManager = {
     claimDaily() {
         const pl = this.getPlayerLevel();
         const rewards = [
-            { t: 'coin', v: 50 + pl*5 }, 
+            { t: 'coin', v: Math.floor(125 + pl*10) }, 
             { t: 'undo', v: 3 }, 
-            { t: 'coin', v: 100 + pl*10 }, 
+            { t: 'coin', v: Math.floor(200 + pl*15) }, 
             { t: 'life', v: 1 }, 
-            { t: 'coin', v: 150 + pl*15 }, 
+            { t: 'coin', v: Math.floor(300 + pl*20) }, 
             { t: 'undo', v: 3 }, 
-            { t: 'mega', v: 300 + pl*30 }
+            { t: 'mega', v: Math.floor(600 + pl*50) }
         ];
         const r = rewards[this.data.dailyReward.streak];
         if(r.t === 'coin' || r.t === 'mega') this.data.coins += r.v;
@@ -653,7 +666,6 @@ const THEME_BGS = [
     'linear-gradient(135deg, #000000 0%, #001a00 100%)'
 ];
 
-// Цены на Скины и Темы
 const SHOP_THEMES = [{id:0, name:"Светлая", price:0}, {id:1, name:"Темная", price:500}, {id:2, name:"Закат", price:1200}, {id:3, name:"Лес", price:2500}, {id:4, name:"Океан", price:5000}, {id:5, name:"Киберпанк", price:9000}, {id:6, name:"Кофе", price:15000}, {id:7, name:"Король", price:25000}, {id:8, name:"Матрица", price:40000}];
 const SHOP_SKINS = [{id:0, name:"Классика", price:0}, {id:1, name:"Модерн", price:500}, {id:2, name:"Мишень", price:1200}, {id:3, name:"Кости", price:2500}, {id:4, name:"Металлик", price:5000}, {id:5, name:"Неон", price:9000}, {id:6, name:"Шахматы", price:15000}, {id:7, name:"Пуговица", price:25000}, {id:8, name:"Стекло", price:40000}];
 
@@ -794,13 +806,13 @@ const ui = {
         const pl = dataManager.getPlayerLevel();
         
         const rewards = [
-            {d:1, t:'coin', v: 50 + pl*5, i:'#svg-coin', c:'#FFD700'}, 
+            {d:1, t:'coin', v: Math.floor(125 + pl*10), i:'#svg-coin', c:'#FFD700'}, 
             {d:2, t:'undo', v: 3, i:'#svg-undo', c:'currentColor'}, 
-            {d:3, t:'coin', v: 100 + pl*10, i:'#svg-coin', c:'#FFD700'}, 
+            {d:3, t:'coin', v: Math.floor(200 + pl*15), i:'#svg-coin', c:'#FFD700'}, 
             {d:4, t:'life', v: 1, i:'#svg-life', c:'var(--danger-color)'}, 
-            {d:5, t:'coin', v: 150 + pl*15, i:'#svg-coin', c:'#FFD700'}, 
+            {d:5, t:'coin', v: Math.floor(300 + pl*20), i:'#svg-coin', c:'#FFD700'}, 
             {d:6, t:'undo', v: 3, i:'#svg-undo', c:'currentColor'}, 
-            {d:7, t:'mega', v: 300 + pl*30, i:''}
+            {d:7, t:'mega', v: Math.floor(600 + pl*50), i:''}
         ];
         
         rewards.forEach((r, i) => {
@@ -826,6 +838,7 @@ const ui = {
         
         if (tab === 'boosters') {
             grid.style.display = 'none'; boost.style.display = 'block';
+            
             boost.innerHTML = `
                 <div class="booster-item">
                     <div style="display:flex; align-items:center; gap:15px">
@@ -844,13 +857,19 @@ const ui = {
                 <div class="booster-item" style="border: 2px solid var(--accent)">
                     <div style="display:flex; align-items:center; gap:15px">
                         <div style="width:34px; height:34px; background:var(--badge-ad); color:#2d3436; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:14px;">AD</div>
-                        <div style="text-align:left"><div style="font-weight:900; font-size:18px; color:var(--text-main)">Халява</div><div style="font-size:12px; color:var(--text-sec)">За рекламу</div></div>
+                        <div style="text-align:left">
+                            <div style="font-weight:900; font-size:16px; color:var(--text-main)">Халява</div>
+                            <div style="font-size:12px; color:var(--text-sec); display:flex; align-items:center; gap:6px;">
+                                Награда: 
+                                <span style="display:flex; align-items:center; gap:2px; font-weight:800; color:var(--text-main)">3<svg viewBox="0 0 24 24" width="12" height="12"><use href="#svg-undo"></use></svg></span>
+                                <span style="display:flex; align-items:center; gap:2px; font-weight:800; color:var(--danger-color)">1<svg viewBox="0 0 24 24" width="12" height="12"><use href="#svg-life"></use></svg></span>
+                            </div>
+                        </div>
                     </div>
-                    <div style="display:flex; flex-direction:column; gap:5px">
-                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0; display:flex; align-items:center; gap:5px; justify-content:center; background:var(--btn-classic-bg); color:var(--btn-classic-text);" onclick="audio.click(); ui.adBooster('combo')">
+                    <div>
+                        <button class="item-btn" style="width:auto; padding: 10px 15px; display:flex; align-items:center; justify-content:center; gap:6px; background:var(--btn-classic-bg); color:var(--btn-classic-text);" onclick="audio.click(); ui.adBooster('combo')">
+                            <svg viewBox="0 0 24 24" width="16" height="16" style="color:currentColor"><use href="#svg-play"></use></svg>
                             СМОТРЕТЬ
-                            <div style="display:flex; align-items:center; gap:2px"><span style="font-size:14px">+3</span><svg viewBox="0 0 24 24" width="14" height="14" style="color:currentColor"><use href="#svg-undo"></use></svg></div>
-                            <div style="display:flex; align-items:center; gap:2px"><span style="font-size:14px">+1</span><svg viewBox="0 0 24 24" width="14" height="14" style="color:currentColor"><use href="#svg-life"></use></svg></div>
                         </button>
                     </div>
                 </div>
@@ -1144,12 +1163,12 @@ const rulesDemo = {
         
         const c = this.t%4; 
         
-        drawDetailedCoin(ctx, s1x, by, 22, 10, PALETTE[0], false, 0, 1); 
-        drawDetailedCoin(ctx, s1x, by-10, 22, 10, PALETTE[2], false, 0, 1);
+        drawDetailedCoin(ctx, s1x, by, 22, 10, PALETTE[2], false, 0, 1); 
+        drawDetailedCoin(ctx, s1x, by-10, 22, 10, PALETTE[1], false, 0, 1); // Синяя на верху 1-й
         
         drawDetailedCoin(ctx, s2x, by, 22, 10, PALETTE[3], false, 0, 1);
         drawDetailedCoin(ctx, s2x, by-10, 22, 10, PALETTE[5], false, 0, 1);
-        drawDetailedCoin(ctx, s2x, by-20, 22, 10, PALETTE[1], false, 0, 1);
+        drawDetailedCoin(ctx, s2x, by-20, 22, 10, PALETTE[1], false, 0, 1); // Синяя на верху 2-й
         
         let cx = s1x, cy = by-20;
         if(c>=1 && c<2) { 
@@ -1166,7 +1185,7 @@ const rulesDemo = {
             cy += 10*p; 
         }
         
-        drawDetailedCoin(ctx, cx, cy, 22, 10, PALETTE[1], false, 0, 1);
+        drawDetailedCoin(ctx, cx, cy, 22, 10, PALETTE[1], false, 0, 1); // Летит тоже синяя
     }
 };
 
@@ -1453,19 +1472,18 @@ class Game {
                 
                 if(this.isDaily) {
                     const pl = dataManager.getPlayerLevel();
-                    coinsEarned = 250 + pl * 20; 
+                    coinsEarned = Math.floor(125 + pl * 10); 
                     dataManager.data.dailyLevelState.date = new Date().toISOString().split('T')[0]; 
                     dataManager.data.dailyLevelState.completed = true;
                 } else if(this.isHardcore) {
-                    coinsEarned = 20 + (this.hardcoreLvl * 10);
+                    coinsEarned = Math.floor(7 + this.hardcoreLvl * 2.5);
                     dataManager.data.progress['hardcore_lvl'] = this.hardcoreLvl + 1;
                     dataManager.save();
                 } else {
                     const idealMoves = cfg.colors * cfg.size;
-                    const base = idealMoves * 3 * diffMult;
-                    const penalty = Math.max(0, this.moves - idealMoves) * diffMult;
-                    coinsEarned = Math.max(10 * diffMult, base - penalty);
-                    if (ui.gameMode === 'blind') coinsEarned = Math.floor(coinsEarned * 1.5);
+                    const base = idealMoves * 1.5 * diffMult;
+                    const penalty = Math.max(0, this.moves - idealMoves) * 0.5 * diffMult;
+                    coinsEarned = Math.floor(Math.max(5 * diffMult, base - penalty));
                     unlockedDiff = dataManager.incrementLevel(ui.gameMode, this.currentLevelIdx);
                 }
                 
