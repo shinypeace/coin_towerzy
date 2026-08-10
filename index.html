@@ -26,7 +26,6 @@
             --btn-danger-bg: #ff4757; --btn-danger-sh: #d63031; --btn-danger-text: #fff;
         }
         
-        /* T1 Dark */
         .theme-1 { 
             --bg-grad-1: #1B1B2F; --bg-grad-2: #0F0F1A; --ui-bg: #1B1B2F; --text-main: #F8F9FA; --text-sec: #ADB5BD; 
             --card-bg: #2A2A40; --shadow-color: rgba(0,0,0,0.6); --slot-base: rgba(255,255,255,0.1); --lock-overlay: rgba(0,0,0,0.7); 
@@ -39,7 +38,6 @@
             --btn-danger-bg: #c23616; --btn-danger-sh: #9e2a11; --btn-danger-text: #fff;
         }
         
-        /* T2 Sunset */
         .theme-2 { 
             --bg-grad-1: #ff9a9e; --bg-grad-2: #fecfef; --ui-bg: #ff9a9e; --text-main: #2D3436; --text-sec: #636E72; 
             --card-bg: rgba(255, 255, 255, 0.9); --shadow-color: rgba(255, 100, 150, 0.2); --slot-base: rgba(255,255,255,0.4); 
@@ -52,7 +50,6 @@
             --btn-danger-bg: #eb2f06; --btn-danger-sh: #b71500; --btn-danger-text: #fff;
         }
         
-        /* T3 Forest */
         .theme-3 { 
             --bg-grad-1: #0ba360; --bg-grad-2: #3cba92; --ui-bg: #0ba360; --text-main: #FFFFFF; --text-sec: #C8E6C9; 
             --card-bg: #074D2B; --shadow-color: rgba(0,0,0,0.4); --slot-base: rgba(0,0,0,0.2); 
@@ -65,7 +62,6 @@
             --btn-danger-bg: #c0392b; --btn-danger-sh: #a52b21; --btn-danger-text: #fff;
         }
         
-        /* T4 Ocean */
         .theme-4 { 
             --bg-grad-1: #09203f; --bg-grad-2: #537895; --ui-bg: #09203f; --text-main: #FFFFFF; --text-sec: #A9C2EB; 
             --card-bg: #041224; --shadow-color: rgba(0,0,0,0.5); --slot-base: rgba(0,0,0,0.3); 
@@ -78,7 +74,6 @@
             --btn-danger-bg: #d63031; --btn-danger-sh: #b02728; --btn-danger-text: #fff;
         }
         
-        /* T5 Cyberpunk (Уникальные неоновые оттенки) */
         .theme-5 { 
             --bg-grad-1: #21003c; --bg-grad-2: #ff007f; --ui-bg: #21003c; --text-main: #FFFFFF; --text-sec: #ff99cc; 
             --card-bg: #150026; --shadow-color: rgba(0,0,0,0.6); --slot-base: rgba(255,255,255,0.15); 
@@ -91,7 +86,6 @@
             --btn-danger-bg: #ff003c; --btn-danger-sh: #cc0030; --btn-danger-text: #fff;
         }
         
-        /* T6 Coffee */
         .theme-6 { 
             --bg-grad-1: #D4B499; --bg-grad-2: #9F7A59; --ui-bg: #D4B499; --text-main: #F5E6D3; --text-sec: #BCAAA4; 
             --card-bg: #4E342E; --shadow-color: rgba(0,0,0,0.4); --slot-base: rgba(0,0,0,0.2); 
@@ -104,7 +98,6 @@
             --btn-danger-bg: #3E2723; --btn-danger-sh: #261714; --btn-danger-text: #D4B499;
         }
         
-        /* T7 King */
         .theme-7 { 
             --bg-grad-1: #2c0001; --bg-grad-2: #8a0306; --ui-bg: #2c0001; --text-main: #FFD700; --text-sec: #ffb3b3; 
             --card-bg: #1A0000; --shadow-color: rgba(0,0,0,0.6); --slot-base: rgba(255,215,0,0.1); 
@@ -117,7 +110,6 @@
             --btn-danger-bg: #4A0000; --btn-danger-sh: #2A0000; --btn-danger-text: #FFD700;
         }
         
-        /* T8 Matrix (Только хакерский Зеленый и Черный!) */
         .theme-8 { 
             --bg-grad-1: #000000; --bg-grad-2: #001a00; --ui-bg: #000000; --text-main: #00ff00; --text-sec: #00aa00; 
             --card-bg: #001500; --slot-base: rgba(0,255,0,0.15); --card-border: 1px solid rgba(0,255,0,0.4); 
@@ -216,9 +208,19 @@
         
         .shop-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; width: 100%; padding: 0; box-sizing: border-box; }
         .shop-item { background: var(--card-bg); border-radius: 16px; border: var(--card-border); padding: 15px 10px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 10px var(--shadow-color); position: relative; }
-        .shop-item.locked { opacity: 0.7; }
+        .shop-item.locked { opacity: 0.9; }
         .shop-item.active-item { border: 3px solid var(--accent); }
         .item-preview { width: 60px; height: 60px; border-radius: 12px; background: var(--bg-grad-1); margin-bottom: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;}
+        
+        /* MYSTERY BOX */
+        .mystery-box {
+            width: 100%; height: 100%; border-radius: 10px;
+            background: linear-gradient(135deg, rgba(0,0,0,0.05), rgba(0,0,0,0.15));
+            border: 2px dashed var(--text-sec); display: flex; align-items: center; justify-content: center;
+            color: var(--text-sec); animation: pulseLock 2s infinite alternate;
+        }
+        @keyframes pulseLock { 0% { opacity: 0.6; } 100% { opacity: 1; } }
+        
         .item-price { font-size: 12px; font-weight: 800; color: #FFD700; display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 10px;}
         .item-btn { margin-top: 10px; width: 100%; padding: 8px; border-radius: 10px; font-weight: 800; font-size: 12px; border: none; cursor: pointer; background: var(--btn-classic-bg); color: var(--btn-classic-text); }
         .item-btn.equipped { background: var(--slot-base); color: var(--text-sec); }
@@ -274,8 +276,8 @@
         <g id="svg-lock">
             <path fill="currentColor" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
         </g>
-        <g id="svg-arrow">
-            <path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+        <g id="svg-question">
+            <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
         </g>
     </defs>
 </svg>
@@ -469,7 +471,7 @@ const dataManager = {
     data: { 
         progress: { hardcore_lvl: 1 }, settings: { sound: true, vibration: true }, initialLevels: {}, levelsSinceAd: 0,
         coins: 100, inventory: { undos: 5, lives: 3 },
-        unlockedThemes: [0,1,2,3,4,5,6,7,8], unlockedSkins: [0,1,2,3,4,5,6,7,8],
+        unlockedThemes: [0], unlockedSkins: [0], // МАГАЗИН СБРОШЕН (ОТКРЫТА ТОЛЬКО КЛАССИКА)
         currentTheme: 0, currentSkin: 0,
         dailyLevelState: { date: "", completed: false }, dailyReward: { lastClaim: 0, streak: 0 }
     },
@@ -497,9 +499,9 @@ const dataManager = {
     async load() {
         let rawData = null;
         if (this.vkUserId) {
-            try { const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_${this.vkUserId}`] }); if (res.keys[0]?.value) rawData = res.keys[0].value; } catch(e){}
+            try { const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_v3_${this.vkUserId}`] }); if (res.keys[0]?.value) rawData = res.keys[0].value; } catch(e){}
         }
-        if(!rawData) rawData = localStorage.getItem('ct_data_local');
+        if(!rawData) rawData = localStorage.getItem('ct_data_v3_local');
         if (rawData) {
             const parsed = Obfuscator.decode(rawData);
             if(parsed) this.mergeData(parsed); else { try { this.mergeData(JSON.parse(rawData)); } catch(e){} }
@@ -526,10 +528,21 @@ const dataManager = {
         this.data.settings.sound = settings.sound;
         this.data.settings.vibration = settings.vibration;
         const str = Obfuscator.encode(this.data);
-        localStorage.setItem('ct_data_local', str);
-        if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_${this.vkUserId}`, value: str }).catch(()=>{});
+        localStorage.setItem('ct_data_v3_local', str);
+        if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_v3_${this.vkUserId}`, value: str }).catch(()=>{});
         ui.updateEconomy();
     },
+    
+    // АЛГОРИТМ РАСЧЕТА УРОВНЯ ИГРОКА ДЛЯ НАГРАД
+    getPlayerLevel() {
+        let maxDiff = 0;
+        for(let i=0; i<8; i++) {
+            if ((this.data.progress[`classic_${i}`] > 1) || (this.data.progress[`blind_${i}`] > 1)) maxDiff = i;
+        }
+        let hardcoreLvl = this.data.progress.hardcore_lvl || 1;
+        return (maxDiff * 2) + hardcoreLvl;
+    },
+    
     getLevelNum(mode, diffIdx) { return this.data.progress[`${mode}_${diffIdx}`] || 1; },
     incrementLevel(mode, diffIdx) {
         const key = `${mode}_${diffIdx}`;
@@ -564,7 +577,16 @@ const dataManager = {
         }
     },
     claimDaily() {
-        const rewards = [{ t: 'coin', v: 50 }, { t: 'undo', v: 3 }, { t: 'coin', v: 100 }, { t: 'life', v: 1 }, { t: 'coin', v: 150 }, { t: 'undo', v: 3 }, { t: 'mega', v: 300 }];
+        const pl = this.getPlayerLevel();
+        const rewards = [
+            { t: 'coin', v: 50 + pl*5 }, 
+            { t: 'undo', v: 3 }, 
+            { t: 'coin', v: 100 + pl*10 }, 
+            { t: 'life', v: 1 }, 
+            { t: 'coin', v: 150 + pl*15 }, 
+            { t: 'undo', v: 3 }, 
+            { t: 'mega', v: 300 + pl*30 }
+        ];
         const r = rewards[this.data.dailyReward.streak];
         if(r.t === 'coin' || r.t === 'mega') this.data.coins += r.v;
         if(r.t === 'undo') this.data.inventory.undos += r.v;
@@ -638,8 +660,9 @@ const THEME_BGS = [
     'linear-gradient(135deg, #000000 0%, #001a00 100%)'
 ];
 
-const SHOP_THEMES = [{id:0, name:"Светлая"}, {id:1, name:"Темная"}, {id:2, name:"Закат"}, {id:3, name:"Лес"}, {id:4, name:"Океан"}, {id:5, name:"Киберпанк"}, {id:6, name:"Кофе"}, {id:7, name:"Король"}, {id:8, name:"Матрица"}];
-const SHOP_SKINS = [{id:0, name:"Классика"}, {id:1, name:"Модерн"}, {id:2, name:"Мишень"}, {id:3, name:"Кости"}, {id:4, name:"Металлик"}, {id:5, name:"Неон"}, {id:6, name:"Шахматы"}, {id:7, name:"Пуговица"}, {id:8, name:"Стекло"}];
+// Цены на Скины и Темы
+const SHOP_THEMES = [{id:0, name:"Светлая", price:0}, {id:1, name:"Темная", price:500}, {id:2, name:"Закат", price:1200}, {id:3, name:"Лес", price:2500}, {id:4, name:"Океан", price:5000}, {id:5, name:"Киберпанк", price:9000}, {id:6, name:"Кофе", price:15000}, {id:7, name:"Король", price:25000}, {id:8, name:"Матрица", price:40000}];
+const SHOP_SKINS = [{id:0, name:"Классика", price:0}, {id:1, name:"Модерн", price:500}, {id:2, name:"Мишень", price:1200}, {id:3, name:"Кости", price:2500}, {id:4, name:"Металлик", price:5000}, {id:5, name:"Неон", price:9000}, {id:6, name:"Шахматы", price:15000}, {id:7, name:"Пуговица", price:25000}, {id:8, name:"Стекло", price:40000}];
 
 /* --- AUDIO MANAGER --- */
 class AudioManager {
@@ -775,14 +798,16 @@ const ui = {
     showDailyModal() {
         const grid = document.getElementById('daily-grid'); grid.innerHTML = '';
         const streak = dataManager.data.dailyReward.streak;
+        const pl = dataManager.getPlayerLevel();
+        
         const rewards = [
-            {d:1, t:'coin', v:50, i:'#svg-coin', c:'#FFD700'}, 
-            {d:2, t:'undo', v:3, i:'#svg-undo', c:'currentColor'}, 
-            {d:3, t:'coin', v:100, i:'#svg-coin', c:'#FFD700'}, 
-            {d:4, t:'life', v:1, i:'#svg-life', c:'currentColor'}, 
-            {d:5, t:'coin', v:150, i:'#svg-coin', c:'#FFD700'}, 
-            {d:6, t:'undo', v:3, i:'#svg-undo', c:'currentColor'}, 
-            {d:7, t:'mega', v:300, i:''}
+            {d:1, t:'coin', v: 50 + pl*5, i:'#svg-coin', c:'#FFD700'}, 
+            {d:2, t:'undo', v: 3, i:'#svg-undo', c:'currentColor'}, 
+            {d:3, t:'coin', v: 100 + pl*10, i:'#svg-coin', c:'#FFD700'}, 
+            {d:4, t:'life', v: 1, i:'#svg-life', c:'var(--danger-color)'}, 
+            {d:5, t:'coin', v: 150 + pl*15, i:'#svg-coin', c:'#FFD700'}, 
+            {d:6, t:'undo', v: 3, i:'#svg-undo', c:'currentColor'}, 
+            {d:7, t:'mega', v: 300 + pl*30, i:''}
         ];
         
         rewards.forEach((r, i) => {
@@ -790,7 +815,7 @@ const ui = {
             let cls = 'daily-item'; if(i < streak) cls += ' claimed'; if(i === streak) cls += ' today'; if(i === 6) cls += ' daily-item-7';
             div.className = cls;
             if(i === 6) { 
-                div.innerHTML = `<div class="daily-day">ДЕНЬ 7</div><div style="display:flex; align-items:center; gap:10px;"><div class="daily-icon" style="font-size:28px; line-height:28px;">🎁</div><div style="text-align:left;"><div class="daily-val" style="display:flex;align-items:center;gap:4px;">+300 <svg viewBox="0 0 24 24" width="14" height="14" style="color:#FFD700"><use href="#svg-coin"></use></svg></div><div class="daily-val" style="display:flex;align-items:center;gap:4px;">+1 <svg viewBox="0 0 24 24" width="14" height="14" style="color:currentColor"><use href="#svg-life"></use></svg></div></div></div>`; 
+                div.innerHTML = `<div class="daily-day">ДЕНЬ 7</div><div style="display:flex; align-items:center; gap:10px;"><div class="daily-icon" style="font-size:28px; line-height:28px;">🎁</div><div style="text-align:left;"><div class="daily-val" style="display:flex;align-items:center;gap:4px;">+${r.v} <svg viewBox="0 0 24 24" width="14" height="14" style="color:#FFD700"><use href="#svg-coin"></use></svg></div><div class="daily-val" style="display:flex;align-items:center;gap:4px;">+1 <svg viewBox="0 0 24 24" width="14" height="14" style="color:var(--danger-color)"><use href="#svg-life"></use></svg></div></div></div>`; 
             } else { 
                 div.innerHTML = `<div class="daily-day">ДЕНЬ ${r.d}</div><div class="daily-icon" style="display:flex; justify-content:center; align-items:center; color: ${r.c};"><svg viewBox="0 0 24 24" width="26" height="26"><use href="${r.i}"></use></svg></div><div class="daily-val">+${r.v}</div>`; 
             }
@@ -814,14 +839,14 @@ const ui = {
                         <div style="width:30px; height:30px; color:var(--btn-classic-bg)"><svg viewBox="0 0 24 24" width="100%" height="100%"><use href="#svg-undo"></use></svg></div>
                         <div style="text-align:left"><div style="font-weight:900; font-size:18px; color:var(--text-main)">Отмена хода</div><div style="font-size:12px; color:var(--text-sec)">В инвентаре: ${dataManager.data.inventory.undos}</div></div>
                     </div>
-                    <div><button class="item-btn" style="width:auto; padding: 10px 20px; display:flex; align-items:center; gap:4px;" onclick="audio.click(); ui.buyBooster('undo', 50)">50 <svg viewBox="0 0 24 24" width="14" height="14" style="color:#FFD700"><use href="#svg-coin"></use></svg></button></div>
+                    <div><button class="item-btn" style="width:auto; padding: 10px 20px; display:flex; align-items:center; gap:4px;" onclick="audio.click(); ui.buyBooster('undo', 200)">200 <svg viewBox="0 0 24 24" width="14" height="14" style="color:#FFD700"><use href="#svg-coin"></use></svg></button></div>
                 </div>
                 <div class="booster-item">
                     <div style="display:flex; align-items:center; gap:15px">
-                        <div style="width:30px; height:30px; color:var(--btn-hard-bg)"><svg viewBox="0 0 24 24" width="100%" height="100%"><use href="#svg-life"></use></svg></div>
+                        <div style="width:30px; height:30px; color:var(--danger-color)"><svg viewBox="0 0 24 24" width="100%" height="100%"><use href="#svg-life"></use></svg></div>
                         <div style="text-align:left"><div style="font-weight:900; font-size:18px; color:var(--text-main)">Жизнь</div><div style="font-size:12px; color:var(--text-sec)">Для хардкора: ${dataManager.data.inventory.lives}</div></div>
                     </div>
-                    <div><button class="item-btn" style="width:auto; padding: 10px 20px; display:flex; align-items:center; gap:4px;" onclick="audio.click(); ui.buyBooster('life', 150)">150 <svg viewBox="0 0 24 24" width="14" height="14" style="color:#FFD700"><use href="#svg-coin"></use></svg></button></div>
+                    <div><button class="item-btn" style="width:auto; padding: 10px 20px; display:flex; align-items:center; gap:4px;" onclick="audio.click(); ui.buyBooster('life', 500)">500 <svg viewBox="0 0 24 24" width="14" height="14" style="color:#FFD700"><use href="#svg-coin"></use></svg></button></div>
                 </div>
                 <div class="booster-item" style="border: 2px solid var(--accent)">
                     <div style="display:flex; align-items:center; gap:15px">
@@ -830,7 +855,7 @@ const ui = {
                     </div>
                     <div style="display:flex; flex-direction:column; gap:5px">
                         <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0; display:flex; align-items:center; gap:5px; justify-content:center; background:var(--btn-classic-bg); color:var(--btn-classic-text);" onclick="audio.click(); ui.adBooster('undo')">+3 <svg viewBox="0 0 24 24" width="14" height="14" style="color:currentColor"><use href="#svg-undo"></use></svg></button>
-                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0; display:flex; align-items:center; gap:5px; justify-content:center; background:var(--btn-hard-bg); color:var(--btn-hard-text);" onclick="audio.click(); ui.adBooster('life')">+1 <svg viewBox="0 0 24 24" width="14" height="14" style="color:currentColor"><use href="#svg-life"></use></svg></button>
+                        <button class="item-btn" style="width:auto; padding: 5px 15px; margin:0; display:flex; align-items:center; gap:5px; justify-content:center; background:var(--danger-color); color:var(--btn-classic-text);" onclick="audio.click(); ui.adBooster('life')">+1 <svg viewBox="0 0 24 24" width="14" height="14" style="color:currentColor"><use href="#svg-life"></use></svg></button>
                     </div>
                 </div>
             `;
@@ -845,21 +870,30 @@ const ui = {
                 const div = document.createElement('div'); div.className = `shop-item ${!isUnlocked ? 'locked' : ''} ${isEq ? 'active-item' : ''}`;
                 
                 let previewHtml = '';
-                if(tab === 'themes') {
-                    previewHtml = `<div style="width:100%; height:100%; border-radius:10px; background: ${THEME_BGS[item.id]};"></div>`;
-                } else { previewHtml = `<canvas id="prev-${item.id}" width="60" height="60"></canvas>`; }
+                let itemName = item.name;
+                
+                if(!isUnlocked) {
+                    previewHtml = `<div class="mystery-box"><svg viewBox="0 0 24 24" width="30" height="30"><use href="#svg-question"></use></svg></div>`;
+                    itemName = "Секрет";
+                } else {
+                    if(tab === 'themes') {
+                        previewHtml = `<div style="width:100%; height:100%; border-radius:10px; background: ${THEME_BGS[item.id]};"></div>`;
+                    } else { 
+                        previewHtml = `<canvas id="prev-${item.id}" width="60" height="60"></canvas>`; 
+                    }
+                }
                 
                 div.innerHTML = `
                     <div class="item-preview">${previewHtml}</div>
-                    <div style="font-size:13px; font-weight:800; color:var(--text-main); margin-bottom:5px; text-align:center; line-height:1">${item.name}</div>
-                    ${!isUnlocked ? `<div class="item-price">500 <svg viewBox="0 0 24 24" width="12" height="12" style="color:#FFD700"><use href="#svg-coin"></use></svg></div>` : ''}
-                    <button class="item-btn ${isEq ? 'equipped' : ''}" onclick="audio.click(); ui.buyOrEquip('${tab}', ${item.id}, 500, ${isUnlocked})">
+                    <div style="font-size:13px; font-weight:800; color:var(--text-main); margin-bottom:5px; text-align:center; line-height:1">${itemName}</div>
+                    ${!isUnlocked ? `<div class="item-price">${item.price} <svg viewBox="0 0 24 24" width="12" height="12" style="color:#FFD700"><use href="#svg-coin"></use></svg></div>` : ''}
+                    <button class="item-btn ${isEq ? 'equipped' : ''}" onclick="audio.click(); ui.buyOrEquip('${tab}', ${item.id}, ${item.price}, ${isUnlocked})">
                         ${isEq ? 'ВЫБРАНО' : (isUnlocked ? 'ВЫБРАТЬ' : 'КУПИТЬ')}
                     </button>
                 `;
                 grid.appendChild(div);
                 
-                if(tab === 'skins') {
+                if(tab === 'skins' && isUnlocked) {
                     setTimeout(() => {
                         const pc = document.getElementById(`prev-${item.id}`);
                         if(pc) drawDetailedCoin(pc.getContext('2d'), 30, 45, 22, 12, PALETTE[1], false, item.id, 2);
@@ -1376,6 +1410,7 @@ class Game {
     
     checkWin() {
         let cfg;
+        let diffMult = 1;
         if(this.isHardcore) {
             let cfgIdx = Math.floor((this.hardcoreLvl - 1) / 10);
             if (cfgIdx >= LEVELS_CONFIG.length) cfgIdx = LEVELS_CONFIG.length - 1;
@@ -1384,6 +1419,7 @@ class Game {
             cfg = LEVELS_CONFIG[5]; 
         } else {
             cfg = LEVELS_CONFIG[this.currentLevelIdx];
+            diffMult = this.currentLevelIdx + 1;
         }
         
         let c=0, e=0;
@@ -1396,14 +1432,20 @@ class Game {
                 let coinsEarned = 0; let unlockedDiff = false;
                 
                 if(this.isDaily) {
-                    coinsEarned = 250; dataManager.data.dailyLevelState.date = new Date().toISOString().split('T')[0]; dataManager.data.dailyLevelState.completed = true;
+                    const pl = dataManager.getPlayerLevel();
+                    coinsEarned = 250 + pl * 20; 
+                    dataManager.data.dailyLevelState.date = new Date().toISOString().split('T')[0]; 
+                    dataManager.data.dailyLevelState.completed = true;
                 } else if(this.isHardcore) {
-                    coinsEarned = 15 + (this.hardcoreLvl * 5);
+                    coinsEarned = 20 + (this.hardcoreLvl * 10);
                     dataManager.data.progress['hardcore_lvl'] = this.hardcoreLvl + 1;
                     dataManager.save();
                 } else {
-                    const base = cfg.colors * 15; const penalty = Math.max(0, this.moves - (cfg.colors * 5));
-                    coinsEarned = Math.max(10, base - penalty);
+                    const idealMoves = cfg.colors * cfg.size;
+                    const base = idealMoves * 3 * diffMult;
+                    const penalty = Math.max(0, this.moves - idealMoves) * diffMult;
+                    coinsEarned = Math.max(10 * diffMult, base - penalty);
+                    if (ui.gameMode === 'blind') coinsEarned = Math.floor(coinsEarned * 1.5);
                     unlockedDiff = dataManager.incrementLevel(ui.gameMode, this.currentLevelIdx);
                 }
                 
