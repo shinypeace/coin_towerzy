@@ -424,10 +424,9 @@
             <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 15px; gap:10px;">
                 <div style="text-align:left; flex:1;">
                     <div style="font-weight:900; font-size:16px; color:var(--text-main)">Халява</div>
-                    <div style="font-size:12px; color:var(--text-sec); display:flex; align-items:center; gap:6px;">
-                        Награда: 
-                        <span style="display:flex; align-items:center; gap:2px; font-weight:800; color:var(--text-main)">3<svg viewBox="0 0 24 24" width="12" height="12"><use href="#svg-undo"></use></svg></span>
-                        <span style="display:flex; align-items:center; gap:2px; font-weight:800; color:var(--danger-color)">1<svg viewBox="0 0 24 24" width="12" height="12"><use href="#svg-life"></use></svg></span>
+                    <div style="font-size:14px; display:flex; align-items:center; gap:8px;">
+                        <span style="display:flex; align-items:center; gap:4px; font-weight:900; color:var(--text-main)">3<svg viewBox="0 0 24 24" width="16" height="16"><use href="#svg-undo"></use></svg></span>
+                        <span style="display:flex; align-items:center; gap:4px; font-weight:900; color:var(--danger-color)">1<svg viewBox="0 0 24 24" width="16" height="16"><use href="#svg-life"></use></svg></span>
                     </div>
                 </div>
                 <button class="btn-action btn-info" style="width:auto; padding: 12px 20px; margin:0; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="audio.click(); game.adLife()">
@@ -445,7 +444,7 @@
             <div style="font-size: 60px; margin-bottom: 10px; animation: popIn 0.5s;">🏆</div>
             <h2 id="vic-title">Победа!</h2>
             
-            <div style="background:var(--slot-base); padding:15px; border-radius:15px; margin-bottom:20px;">
+            <div id="vic-normal-content" style="background:var(--slot-base); padding:15px; border-radius:15px; margin-bottom:20px;">
                 <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--text-sec); margin-bottom:5px;">
                     <span>Ходов:</span><span id="vic-moves" style="color:var(--text-main)">0</span>
                 </div>
@@ -456,9 +455,26 @@
                         <svg viewBox="0 0 24 24" width="16" height="16"><use href="#svg-coin"></use></svg>
                     </span>
                 </div>
+                <!-- Бусты только для ежедневного режима -->
+                <div id="vic-daily-boosts" style="display:none; justify-content:space-between; font-weight:bold; color:var(--text-sec); margin-top:5px;">
+                    <span>Бустеры:</span>
+                    <span style="display:flex; align-items:center; gap:8px;">
+                        <span style="color:var(--text-main); font-weight:900; display:flex; align-items:center;">+1<svg viewBox="0 0 24 24" width="14" height="14" style="margin-left:2px;"><use href="#svg-undo"></use></svg></span>
+                        <span style="color:var(--danger-color); font-weight:900; display:flex; align-items:center;">+1<svg viewBox="0 0 24 24" width="14" height="14" style="margin-left:2px;"><use href="#svg-life"></use></svg></span>
+                    </span>
+                </div>
             </div>
-            <button class="btn-main btn-classic" style="width:100%;" onclick="audio.click(); game.nextLevel()">СЛЕДУЮЩИЙ</button>
-            <button class="btn-action btn-danger" style="margin-bottom:0;" onclick="audio.click(); game.quitToMenu()">В МЕНЮ</button>
+            
+            <div id="vic-unlock-content" style="display:none; margin-bottom:20px;">
+                <p style="margin-bottom:10px; color:var(--accent); font-weight:bold;">Открыт новый уровень!</p>
+                <h3 id="vic-unlock-name" style="margin-bottom:15px; color:var(--text-main); font-size: 24px;"></h3>
+                <button id="vic-btn-go-next-unl" class="btn-main btn-classic" style="width:100%; margin-bottom:0;">ПЕРЕЙТИ</button>
+            </div>
+            
+            <div id="vic-buttons">
+                <button id="vic-btn-next" class="btn-main btn-classic" style="width:100%;">СЛЕДУЮЩИЙ</button>
+                <button class="btn-action btn-danger" style="margin-bottom:0;" onclick="audio.click(); game.quitToMenu()">В МЕНЮ</button>
+            </div>
         </div>
     </div>
 </div>
@@ -503,9 +519,9 @@ const dataManager = {
     async load() {
         let rawData = null;
         if (this.vkUserId) {
-            try { const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_v5_${this.vkUserId}`] }); if (res.keys[0]?.value) rawData = res.keys[0].value; } catch(e){}
+            try { const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_v6_${this.vkUserId}`] }); if (res.keys[0]?.value) rawData = res.keys[0].value; } catch(e){}
         }
-        if(!rawData) rawData = localStorage.getItem('ct_data_v5_local');
+        if(!rawData) rawData = localStorage.getItem('ct_data_v6_local');
         if (rawData) {
             const parsed = Obfuscator.decode(rawData);
             if(parsed) this.mergeData(parsed); else { try { this.mergeData(JSON.parse(rawData)); } catch(e){} }
@@ -532,8 +548,8 @@ const dataManager = {
         this.data.settings.sound = settings.sound;
         this.data.settings.vibration = settings.vibration;
         const str = Obfuscator.encode(this.data);
-        localStorage.setItem('ct_data_v5_local', str);
-        if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_v5_${this.vkUserId}`, value: str }).catch(()=>{});
+        localStorage.setItem('ct_data_v6_local', str);
+        if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_v6_${this.vkUserId}`, value: str }).catch(()=>{});
         ui.updateEconomy();
     },
     
@@ -608,7 +624,7 @@ const dataManager = {
     async showInterstitialAd() {
         audio.toggleMusicMute(true);
         try { const r = await vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' }); return r.result; } catch(e) { return false; }
-        finally { audio.toggleMusicMute(false); if(audio.ctx.state === 'suspended') audio.ctx.resume(); }
+        finally { audio.toggleMusicMute(false); if(audio.ctx && audio.ctx.state === 'suspended') audio.ctx.resume(); }
     },
     async showRewardAd(rewardType) {
         audio.toggleMusicMute(true);
@@ -623,7 +639,7 @@ const dataManager = {
             }
             return false;
         } catch(e) { return false; }
-        finally { audio.toggleMusicMute(false); if(audio.ctx.state === 'suspended') audio.ctx.resume(); }
+        finally { audio.toggleMusicMute(false); if(audio.ctx && audio.ctx.state === 'suspended') audio.ctx.resume(); }
     }
 };
 
@@ -639,16 +655,16 @@ const settings = {
     }
 };
 
-/** CONFIG - СЛОЖНАЯ АДАПТАЦИЯ (От 5 до 18 колб, 18 цветов) */
+/** CONFIG - СЛОЖНАЯ АДАПТАЦИЯ */
 const LEVELS_CONFIG = [
-    { id: 0, name: "Новичок",   colors: 3, slots: 5,  size: 4, reqWins: 0 },
-    { id: 1, name: "Ученик",    colors: 5, slots: 7,  size: 4, reqWins: 0 },
-    { id: 2, name: "Любитель",  colors: 7, slots: 9,  size: 4, reqWins: 0 },
-    { id: 3, name: "Спец",      colors: 9, slots: 11, size: 4, reqWins: 0 },
-    { id: 4, name: "Эксперт",   colors: 11, slots: 13, size: 5, reqWins: 0 },
-    { id: 5, name: "Мастер",    colors: 13, slots: 15, size: 5, reqWins: 0 },
-    { id: 6, name: "Легенда",   colors: 7, slots: 16, size: 5, double: true, reqWins: 0 }, // 14 стопок + 2 пустые = 16
-    { id: 7, name: "Гений",     colors: 8, slots: 18, size: 5, double: true, reqWins: 0 }  // 16 стопок + 2 пустые = 18
+    { id: 0, name: "Новичок",   colors: 3, slots: 5,  size: 4, reqWins: 10 },
+    { id: 1, name: "Ученик",    colors: 5, slots: 7,  size: 4, reqWins: 10 },
+    { id: 2, name: "Любитель",  colors: 7, slots: 9,  size: 4, reqWins: 10 },
+    { id: 3, name: "Спец",      colors: 9, slots: 11, size: 4, reqWins: 10 },
+    { id: 4, name: "Эксперт",   colors: 11, slots: 13, size: 5, reqWins: 10 },
+    { id: 5, name: "Мастер",    colors: 13, slots: 15, size: 5, reqWins: 10 },
+    { id: 6, name: "Легенда",   colors: 7, slots: 16, size: 5, double: true, reqWins: 10 }, 
+    { id: 7, name: "Гений",     colors: 8, slots: 18, size: 5, double: true, reqWins: 10 } 
 ];
 
 const PALETTE = [
@@ -688,11 +704,16 @@ class AudioManager {
         
         const unlock = () => {
             if(this.unlocked) return; this.unlocked = true;
-            if(this.ctx.state === 'suspended') this.ctx.resume();
+            if(this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
             if(this.enabled) this.activeBgm.play().catch(()=>{});
-            document.body.removeEventListener('click', unlock); document.body.removeEventListener('touchstart', unlock);
         };
+        
+        const wakeAudio = () => {
+            if(this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+        };
+        
         document.body.addEventListener('click', unlock); document.body.addEventListener('touchstart', unlock);
+        document.body.addEventListener('click', wakeAudio); document.body.addEventListener('touchstart', wakeAudio);
     }
     
     async loadSFX() {
@@ -713,8 +734,15 @@ class AudioManager {
     }
     
     toggleMusicMute(mute) { this.bgmMenu.muted = mute; this.bgmGame.muted = mute; }
-    toggleSound(state) { this.enabled = state; if(state) { if(this.ctx.state === 'suspended') this.ctx.resume(); if(this.unlocked) this.activeBgm.play().catch(()=>{}); } else this.activeBgm.pause(); }
-    handleVisibility(isVisible) { if (!isVisible) { if (!this.activeBgm.paused) { this.wasPlaying = true; this.activeBgm.pause(); } } else { if (this.wasPlaying && this.enabled && this.unlocked) { this.activeBgm.play().catch(()=>{}); this.wasPlaying = false; } } }
+    toggleSound(state) { this.enabled = state; if(state) { if(this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); if(this.unlocked) this.activeBgm.play().catch(()=>{}); } else this.activeBgm.pause(); }
+    handleVisibility(isVisible) { 
+        if (!isVisible) { 
+            if (!this.activeBgm.paused) { this.wasPlaying = true; this.activeBgm.pause(); } 
+        } else { 
+            if (this.wasPlaying && this.enabled && this.unlocked) { this.activeBgm.play().catch(()=>{}); this.wasPlaying = false; } 
+            if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+        } 
+    }
     
     haptic(type) {
         if (!settings.vibration) return;
@@ -725,7 +753,7 @@ class AudioManager {
     play(type) {
         if (!this.enabled) return;
         if(type==='pop') this.haptic('light'); if(type==='land') this.haptic('medium'); if(type==='error') this.haptic('error'); if(type==='win') this.haptic('success');
-        if (this.ctx.state === 'suspended') this.ctx.resume();
+        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
         
         if (this.buffers[type]) { const source = this.ctx.createBufferSource(); source.buffer = this.buffers[type]; source.connect(this.ctx.destination); source.start(0); } 
         else if (this.audioPool[type]) {
@@ -862,10 +890,9 @@ const ui = {
                         <div style="width:34px; height:34px; background:var(--badge-ad); color:#2d3436; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:14px;">AD</div>
                         <div style="text-align:left">
                             <div style="font-weight:900; font-size:16px; color:var(--text-main)">Халява</div>
-                            <div style="font-size:12px; color:var(--text-sec); display:flex; align-items:center; gap:6px;">
-                                Награда: 
-                                <span style="display:flex; align-items:center; gap:2px; font-weight:800; color:var(--text-main)">3<svg viewBox="0 0 24 24" width="12" height="12"><use href="#svg-undo"></use></svg></span>
-                                <span style="display:flex; align-items:center; gap:2px; font-weight:800; color:var(--danger-color)">1<svg viewBox="0 0 24 24" width="12" height="12"><use href="#svg-life"></use></svg></span>
+                            <div style="font-size:14px; display:flex; align-items:center; gap:8px;">
+                                <span style="display:flex; align-items:center; gap:4px; font-weight:900; color:var(--text-main)">3<svg viewBox="0 0 24 24" width="16" height="16"><use href="#svg-undo"></use></svg></span>
+                                <span style="display:flex; align-items:center; gap:4px; font-weight:900; color:var(--danger-color)">1<svg viewBox="0 0 24 24" width="16" height="16"><use href="#svg-life"></use></svg></span>
                             </div>
                         </div>
                     </div>
@@ -998,8 +1025,34 @@ const ui = {
         this.switchScreen('levels');
     },
 
-    showVictoryModal(coinsEarned, isHardcore, unlockedNextDiff) {
+    showVictoryModal(coinsEarned, isHardcore, unlockedNextDiff, isDaily) {
         document.getElementById('vic-coins').innerText = coinsEarned;
+        
+        const norm = document.getElementById('vic-normal-content');
+        const unl = document.getElementById('vic-unlock-content');
+        const btnNext = document.getElementById('vic-btn-next');
+        const dailyBoosts = document.getElementById('vic-daily-boosts');
+        
+        norm.style.display = 'block';
+        unl.style.display = 'none';
+        btnNext.style.display = 'flex';
+        dailyBoosts.style.display = 'none';
+        
+        if (isDaily) {
+            btnNext.style.display = 'none'; 
+            dailyBoosts.style.display = 'flex';
+        } else if (!isHardcore && unlockedNextDiff !== false && LEVELS_CONFIG[unlockedNextDiff]) {
+            norm.style.display = 'none';
+            unl.style.display = 'block';
+            btnNext.style.display = 'none';
+            document.getElementById('vic-unlock-name').innerText = LEVELS_CONFIG[unlockedNextDiff].name;
+            document.getElementById('vic-btn-go-next-unl').onclick = () => { 
+                audio.click(); 
+                ui.hideModals(); 
+                game.startLevel(unlockedNextDiff); 
+            };
+        }
+        
         this.showModals('victory');
     }
 };
@@ -1167,11 +1220,11 @@ const rulesDemo = {
         const c = this.t%4; 
         
         drawDetailedCoin(ctx, s1x, by, 22, 10, PALETTE[2], false, 0, 1); 
-        drawDetailedCoin(ctx, s1x, by-10, 22, 10, PALETTE[1], false, 0, 1);
+        drawDetailedCoin(ctx, s1x, by-10, 22, 10, PALETTE[4], false, 0, 1); // Вторая монета стала желтой
         
         drawDetailedCoin(ctx, s2x, by, 22, 10, PALETTE[3], false, 0, 1);
         drawDetailedCoin(ctx, s2x, by-10, 22, 10, PALETTE[5], false, 0, 1);
-        drawDetailedCoin(ctx, s2x, by-20, 22, 10, PALETTE[1], false, 0, 1);
+        drawDetailedCoin(ctx, s2x, by-20, 22, 10, PALETTE[1], false, 0, 1); 
         
         let cx = s1x, cy = by-20;
         if(c>=1 && c<2) { 
@@ -1188,7 +1241,7 @@ const rulesDemo = {
             cy += 10*p; 
         }
         
-        drawDetailedCoin(ctx, cx, cy, 22, 10, PALETTE[1], false, 0, 1);
+        drawDetailedCoin(ctx, cx, cy, 22, 10, PALETTE[1], false, 0, 1); 
     }
 };
 
@@ -1223,18 +1276,12 @@ class Game {
             if (cfgIdx >= LEVELS_CONFIG.length) cfgIdx = LEVELS_CONFIG.length - 1;
             cfg = LEVELS_CONFIG[cfgIdx];
         } else if(this.isDaily) {
-            cfg = LEVELS_CONFIG[5]; 
+            cfg = LEVELS_CONFIG[3]; 
         } else {
             cfg = LEVELS_CONFIG[this.currentLevelIdx];
         }
         
-        // Умная адаптация колонок
-        let cols;
-        if (count <= 6) cols = 3;
-        else if (count <= 12) cols = 4;
-        else if (count <= 15) cols = 5;
-        else cols = 6;
-        
+        let cols = 3; if(count > 6) cols = 4;
         const hudOffset = 90, padding = 15, gap = count > 12 ? 8 : 16;
         const availH = this.height - hudOffset - padding * 2, availW = this.width - padding * 2;
         const rows = Math.ceil(count / cols);
@@ -1379,7 +1426,7 @@ class Game {
         }
         
         this.isDaily = true; this.isHardcore = false;
-        const cfg = LEVELS_CONFIG[5];
+        const cfg = LEVELS_CONFIG[3];
         this.stacks = this.generateSolvableLevel(cfg, false, true);
         this.state = 'IDLE'; this.selectedStack = -1; this.moves = 0; this.history = []; this.animations = [];
         ui.updateEconomy();
@@ -1403,7 +1450,7 @@ class Game {
             if (cfgIdx >= LEVELS_CONFIG.length) cfgIdx = LEVELS_CONFIG.length - 1;
             cfg = LEVELS_CONFIG[cfgIdx];
         } else if(this.isDaily) {
-            cfg = LEVELS_CONFIG[5]; 
+            cfg = LEVELS_CONFIG[3]; 
         } else {
             cfg = LEVELS_CONFIG[this.currentLevelIdx];
         }
@@ -1426,7 +1473,7 @@ class Game {
             if (cfgIdx >= LEVELS_CONFIG.length) cfgIdx = LEVELS_CONFIG.length - 1;
             cfg = LEVELS_CONFIG[cfgIdx];
         } else if(this.isDaily) {
-            cfg = LEVELS_CONFIG[5]; 
+            cfg = LEVELS_CONFIG[3]; 
         } else {
             cfg = LEVELS_CONFIG[this.currentLevelIdx];
         }
@@ -1475,7 +1522,7 @@ class Game {
             if (cfgIdx >= LEVELS_CONFIG.length) cfgIdx = LEVELS_CONFIG.length - 1;
             cfg = LEVELS_CONFIG[cfgIdx];
         } else if(this.isDaily) {
-            cfg = LEVELS_CONFIG[5]; 
+            cfg = LEVELS_CONFIG[3]; 
         } else {
             cfg = LEVELS_CONFIG[this.currentLevelIdx];
             diffMult = this.currentLevelIdx + 1;
@@ -1493,8 +1540,11 @@ class Game {
                 if(this.isDaily) {
                     const pl = dataManager.getPlayerLevel();
                     coinsEarned = Math.floor(125 + pl * 10); 
+                    dataManager.data.inventory.undos += 1;
+                    dataManager.data.inventory.lives += 1;
                     dataManager.data.dailyLevelState.date = new Date().toISOString().split('T')[0]; 
                     dataManager.data.dailyLevelState.completed = true;
+                    dataManager.save();
                 } else if(this.isHardcore) {
                     coinsEarned = Math.floor(7 + this.hardcoreLvl * 2.5);
                     dataManager.data.progress['hardcore_lvl'] = this.hardcoreLvl + 1;
@@ -1509,7 +1559,7 @@ class Game {
                 
                 dataManager.addCoins(coinsEarned); dataManager.checkAndShowInterstitial();
                 document.getElementById('vic-moves').innerText=this.moves; 
-                ui.showVictoryModal(coinsEarned, this.isHardcore, unlockedDiff); 
+                ui.showVictoryModal(coinsEarned, this.isHardcore, unlockedDiff, this.isDaily); 
                 ui.updateEconomy();
             },300);
         } else if (this.isHardcore && this.movesLeft <= 0) {
