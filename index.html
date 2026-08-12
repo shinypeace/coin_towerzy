@@ -122,7 +122,6 @@
             --btn-danger-bg: #005500; --btn-danger-sh: #003300; --btn-danger-text: #00ff00;
         }
         
-        /* ANTI-SELECTION */
         * { box-sizing: border-box; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Nunito', sans-serif; }
         
         body { margin: 0; padding: 0; background: #1e272e; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
@@ -504,9 +503,9 @@ const dataManager = {
     async load() {
         let rawData = null;
         if (this.vkUserId) {
-            try { const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_v4_${this.vkUserId}`] }); if (res.keys[0]?.value) rawData = res.keys[0].value; } catch(e){}
+            try { const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_v5_${this.vkUserId}`] }); if (res.keys[0]?.value) rawData = res.keys[0].value; } catch(e){}
         }
-        if(!rawData) rawData = localStorage.getItem('ct_data_v4_local');
+        if(!rawData) rawData = localStorage.getItem('ct_data_v5_local');
         if (rawData) {
             const parsed = Obfuscator.decode(rawData);
             if(parsed) this.mergeData(parsed); else { try { this.mergeData(JSON.parse(rawData)); } catch(e){} }
@@ -533,8 +532,8 @@ const dataManager = {
         this.data.settings.sound = settings.sound;
         this.data.settings.vibration = settings.vibration;
         const str = Obfuscator.encode(this.data);
-        localStorage.setItem('ct_data_v4_local', str);
-        if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_v4_${this.vkUserId}`, value: str }).catch(()=>{});
+        localStorage.setItem('ct_data_v5_local', str);
+        if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_v5_${this.vkUserId}`, value: str }).catch(()=>{});
         ui.updateEconomy();
     },
     
@@ -640,19 +639,23 @@ const settings = {
     }
 };
 
-/** CONFIG */
+/** CONFIG - СЛОЖНАЯ АДАПТАЦИЯ (От 5 до 18 колб, 18 цветов) */
 const LEVELS_CONFIG = [
-    { id: 0, name: "Новичок",   colors: 3, slots: 5,  size: 4, reqWins: 10 },
-    { id: 1, name: "Ученик",    colors: 4, slots: 6,  size: 4, reqWins: 10 },
-    { id: 2, name: "Любитель",  colors: 5, slots: 7,  size: 4, reqWins: 10 },
-    { id: 3, name: "Спец",      colors: 6, slots: 8,  size: 4, reqWins: 10 },
-    { id: 4, name: "Эксперт",   colors: 7, slots: 9,  size: 4, reqWins: 10 },
-    { id: 5, name: "Мастер",    colors: 8, slots: 10, size: 4, reqWins: 10 },
-    { id: 6, name: "Легенда",   colors: 9, slots: 11, size: 5, reqWins: 10 },
-    { id: 7, name: "Гений",     colors: 10, slots: 12, size: 5, reqWins: 10 }
+    { id: 0, name: "Новичок",   colors: 3, slots: 5,  size: 4, reqWins: 0 },
+    { id: 1, name: "Ученик",    colors: 5, slots: 7,  size: 4, reqWins: 0 },
+    { id: 2, name: "Любитель",  colors: 7, slots: 9,  size: 4, reqWins: 0 },
+    { id: 3, name: "Спец",      colors: 9, slots: 11, size: 4, reqWins: 0 },
+    { id: 4, name: "Эксперт",   colors: 11, slots: 13, size: 5, reqWins: 0 },
+    { id: 5, name: "Мастер",    colors: 13, slots: 15, size: 5, reqWins: 0 },
+    { id: 6, name: "Легенда",   colors: 7, slots: 16, size: 5, double: true, reqWins: 0 }, // 14 стопок + 2 пустые = 16
+    { id: 7, name: "Гений",     colors: 8, slots: 18, size: 5, double: true, reqWins: 0 }  // 16 стопок + 2 пустые = 18
 ];
 
-const PALETTE = ['#ff4757', '#1e90ff', '#2ed573', '#f39c12', '#f1c40f', '#ff9ff3', '#9c88ff', '#00d2d3', '#5f27cd', '#006266', '#833471', '#d35400'];
+const PALETTE = [
+    '#ff4757', '#1e90ff', '#2ed573', '#f39c12', '#f1c40f', '#ff9ff3', 
+    '#9c88ff', '#00d2d3', '#5f27cd', '#006266', '#833471', '#d35400',
+    '#b33939', '#218c74', '#227093', '#ccae62', '#ffb8b8', '#cf6a87'
+];
 
 const THEME_BGS = [
     'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
@@ -1164,11 +1167,11 @@ const rulesDemo = {
         const c = this.t%4; 
         
         drawDetailedCoin(ctx, s1x, by, 22, 10, PALETTE[2], false, 0, 1); 
-        drawDetailedCoin(ctx, s1x, by-10, 22, 10, PALETTE[1], false, 0, 1); // Синяя на верху 1-й
+        drawDetailedCoin(ctx, s1x, by-10, 22, 10, PALETTE[1], false, 0, 1);
         
         drawDetailedCoin(ctx, s2x, by, 22, 10, PALETTE[3], false, 0, 1);
         drawDetailedCoin(ctx, s2x, by-10, 22, 10, PALETTE[5], false, 0, 1);
-        drawDetailedCoin(ctx, s2x, by-20, 22, 10, PALETTE[1], false, 0, 1); // Синяя на верху 2-й
+        drawDetailedCoin(ctx, s2x, by-20, 22, 10, PALETTE[1], false, 0, 1);
         
         let cx = s1x, cy = by-20;
         if(c>=1 && c<2) { 
@@ -1185,7 +1188,7 @@ const rulesDemo = {
             cy += 10*p; 
         }
         
-        drawDetailedCoin(ctx, cx, cy, 22, 10, PALETTE[1], false, 0, 1); // Летит тоже синяя
+        drawDetailedCoin(ctx, cx, cy, 22, 10, PALETTE[1], false, 0, 1);
     }
 };
 
@@ -1225,21 +1228,28 @@ class Game {
             cfg = LEVELS_CONFIG[this.currentLevelIdx];
         }
         
-        let cols = 3; if(count > 6) cols = 4;
-        const hudOffset = 90, padding = 20, gap = 16;
-        const availH = this.height - hudOffset - padding, availW = this.width - padding*2;
-        const rows = Math.ceil(count/cols);
+        // Умная адаптация колонок
+        let cols;
+        if (count <= 6) cols = 3;
+        else if (count <= 12) cols = 4;
+        else if (count <= 15) cols = 5;
+        else cols = 6;
         
-        let maxR = Math.min(availW/cols/2 - gap/2, 42); 
-        let maxStackH = (maxR*2) + (cfg.size * (maxR*0.4)) + 40;
+        const hudOffset = 90, padding = 15, gap = count > 12 ? 8 : 16;
+        const availH = this.height - hudOffset - padding * 2, availW = this.width - padding * 2;
+        const rows = Math.ceil(count / cols);
+        
+        let maxR = Math.min(availW / cols / 2 - gap / 2, 42); 
+        let maxStackH = (maxR * 2) + (cfg.size * (maxR * 0.4)) + 40;
         if (rows * maxStackH > availH) maxR = maxR * (availH / (rows * maxStackH));
         
-        this.slotRadius = Math.max(15, maxR);
-        this.coinRadius = this.slotRadius - 4; this.coinHeight = Math.min(14, this.slotRadius * 0.4);
+        this.slotRadius = Math.max(12, maxR);
+        this.coinRadius = this.slotRadius - (count > 12 ? 2 : 4); 
+        this.coinHeight = Math.min(14, this.slotRadius * 0.4);
         
-        const rowH = (this.slotRadius*2) + (cfg.size*this.coinHeight) + 40;
+        const rowH = (this.slotRadius * 2) + (cfg.size * this.coinHeight) + 40;
         const totalH = rows * rowH;
-        const startY = hudOffset + (availH - totalH)/2 + (rowH/2);
+        const startY = hudOffset + (availH - totalH) / 2 + (rowH / 2);
         
         this.layout.slots = [];
         for(let i=0; i<count; i++){
@@ -1269,9 +1279,19 @@ class Game {
         };
 
         let tempStacks = Array.from({length: cfg.slots}, () => []);
-        for(let i=0; i<cfg.colors; i++) { for(let k=0; k<cfg.size; k++) tempStacks[i].push(i); } 
+        let stackIdx = 0;
+        let numStacksPerColor = cfg.double ? 2 : 1;
         
-        const passes = 250; 
+        for(let i=0; i<cfg.colors; i++) {
+            for(let j=0; j<numStacksPerColor; j++) {
+                for(let k=0; k<cfg.size; k++) {
+                    tempStacks[stackIdx].push(i);
+                }
+                stackIdx++;
+            }
+        }
+        
+        const passes = cfg.slots * cfg.size * 10; 
         for(let p=0; p<passes; p++) {
             let validSources = [];
             for(let i=0; i<cfg.slots; i++) { if(tempStacks[i].length > 0) validSources.push(i); }
@@ -1339,7 +1359,7 @@ class Game {
         this.state = 'IDLE'; this.selectedStack = -1; this.moves = 0; this.history = []; this.animations = [];
         ui.updateEconomy();
         
-        this.movesLeft = (cfg.colors * cfg.size) + cfg.colors + (isBlind ? 2 : 0);
+        this.movesLeft = (cfg.colors * cfg.size * (cfg.double ? 2 : 1)) + Math.floor(cfg.colors * 2) + (isBlind ? 5 : 0);
         
         const modeName = isBlind ? "ХАРДКОР (ВСЛЕПУЮ)" : "ХАРДКОР";
         document.getElementById('hud-mode').innerText = modeName;
@@ -1480,7 +1500,7 @@ class Game {
                     dataManager.data.progress['hardcore_lvl'] = this.hardcoreLvl + 1;
                     dataManager.save();
                 } else {
-                    const idealMoves = cfg.colors * cfg.size;
+                    const idealMoves = cfg.colors * cfg.size * (cfg.double ? 2 : 1);
                     const base = idealMoves * 1.5 * diffMult;
                     const penalty = Math.max(0, this.moves - idealMoves) * 0.5 * diffMult;
                     coinsEarned = Math.floor(Math.max(5 * diffMult, base - penalty));
