@@ -455,24 +455,26 @@
                         <svg viewBox="0 0 24 24" width="16" height="16"><use href="#svg-coin"></use></svg>
                     </span>
                 </div>
+                
                 <!-- Бусты только для ежедневного режима -->
-                <div id="vic-daily-boosts" style="display:none; justify-content:space-between; font-weight:bold; color:var(--text-sec); margin-top:5px;">
+                <div id="vic-daily-boosts" style="display:none; justify-content:space-between; font-weight:bold; color:var(--text-sec); margin-top:10px; padding-top:10px; border-top:1px solid var(--shadow-color);">
                     <span>Бустеры:</span>
                     <span style="display:flex; align-items:center; gap:8px;">
-                        <span style="color:var(--text-main); font-weight:900; display:flex; align-items:center;">+1<svg viewBox="0 0 24 24" width="14" height="14" style="margin-left:2px;"><use href="#svg-undo"></use></svg></span>
-                        <span style="color:var(--danger-color); font-weight:900; display:flex; align-items:center;">+1<svg viewBox="0 0 24 24" width="14" height="14" style="margin-left:2px;"><use href="#svg-life"></use></svg></span>
+                        <span style="color:var(--text-main); font-weight:900; display:flex; align-items:center;">+1<svg viewBox="0 0 24 24" width="16" height="16" style="margin-left:4px; color:currentColor"><use href="#svg-undo"></use></svg></span>
+                        <span style="color:var(--danger-color); font-weight:900; display:flex; align-items:center;">+1<svg viewBox="0 0 24 24" width="16" height="16" style="margin-left:4px; color:currentColor"><use href="#svg-life"></use></svg></span>
                     </span>
                 </div>
             </div>
             
             <div id="vic-unlock-content" style="display:none; margin-bottom:20px;">
-                <p style="margin-bottom:10px; color:var(--accent); font-weight:bold;">Открыт новый уровень!</p>
+                <p style="margin-bottom:10px; color:var(--accent); font-weight:bold;">Открыта новая сложность!</p>
                 <h3 id="vic-unlock-name" style="margin-bottom:15px; color:var(--text-main); font-size: 24px;"></h3>
-                <button id="vic-btn-go-next-unl" class="btn-main btn-classic" style="width:100%; margin-bottom:0;">ПЕРЕЙТИ</button>
+                <button id="vic-btn-go-next-unl" class="btn-main btn-classic" style="width:100%; margin-bottom:15px;">ПЕРЕЙТИ К НЕМУ</button>
+                <button class="btn-action btn-info" style="margin-bottom:0;" onclick="audio.click(); game.nextLevel()">ПРОДОЛЖИТЬ ЗДЕСЬ</button>
             </div>
             
             <div id="vic-buttons">
-                <button id="vic-btn-next" class="btn-main btn-classic" style="width:100%;">СЛЕДУЮЩИЙ</button>
+                <button id="vic-btn-next" class="btn-main btn-classic" style="width:100%;" onclick="audio.click(); game.nextLevel()">СЛЕДУЮЩИЙ</button>
                 <button class="btn-action btn-danger" style="margin-bottom:0;" onclick="audio.click(); game.quitToMenu()">В МЕНЮ</button>
             </div>
         </div>
@@ -519,9 +521,9 @@ const dataManager = {
     async load() {
         let rawData = null;
         if (this.vkUserId) {
-            try { const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_v6_${this.vkUserId}`] }); if (res.keys[0]?.value) rawData = res.keys[0].value; } catch(e){}
+            try { const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_v7_${this.vkUserId}`] }); if (res.keys[0]?.value) rawData = res.keys[0].value; } catch(e){}
         }
-        if(!rawData) rawData = localStorage.getItem('ct_data_v6_local');
+        if(!rawData) rawData = localStorage.getItem('ct_data_v7_local');
         if (rawData) {
             const parsed = Obfuscator.decode(rawData);
             if(parsed) this.mergeData(parsed); else { try { this.mergeData(JSON.parse(rawData)); } catch(e){} }
@@ -548,8 +550,8 @@ const dataManager = {
         this.data.settings.sound = settings.sound;
         this.data.settings.vibration = settings.vibration;
         const str = Obfuscator.encode(this.data);
-        localStorage.setItem('ct_data_v6_local', str);
-        if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_v6_${this.vkUserId}`, value: str }).catch(()=>{});
+        localStorage.setItem('ct_data_v7_local', str);
+        if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_v7_${this.vkUserId}`, value: str }).catch(()=>{});
         ui.updateEconomy();
     },
     
@@ -655,7 +657,7 @@ const settings = {
     }
 };
 
-/** CONFIG - СЛОЖНАЯ АДАПТАЦИЯ */
+/** CONFIG - СЛОЖНАЯ АДАПТАЦИЯ (ВОЗВРАЩЕНО ТРЕБОВАНИЕ 10 ПОБЕД ДЛЯ ОТКРЫТИЯ) */
 const LEVELS_CONFIG = [
     { id: 0, name: "Новичок",   colors: 3, slots: 5,  size: 4, reqWins: 10 },
     { id: 1, name: "Ученик",    colors: 5, slots: 7,  size: 4, reqWins: 10 },
@@ -706,6 +708,7 @@ class AudioManager {
             if(this.unlocked) return; this.unlocked = true;
             if(this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
             if(this.enabled) this.activeBgm.play().catch(()=>{});
+            document.body.removeEventListener('click', unlock); document.body.removeEventListener('touchstart', unlock);
         };
         
         const wakeAudio = () => {
@@ -1030,21 +1033,23 @@ const ui = {
         
         const norm = document.getElementById('vic-normal-content');
         const unl = document.getElementById('vic-unlock-content');
+        const vicBtns = document.getElementById('vic-buttons');
         const btnNext = document.getElementById('vic-btn-next');
         const dailyBoosts = document.getElementById('vic-daily-boosts');
         
         norm.style.display = 'block';
         unl.style.display = 'none';
-        btnNext.style.display = 'flex';
-        dailyBoosts.style.display = 'none';
+        vicBtns.style.display = 'block';
+        if(btnNext) btnNext.style.display = 'flex';
+        if(dailyBoosts) dailyBoosts.style.display = 'none';
         
         if (isDaily) {
-            btnNext.style.display = 'none'; 
-            dailyBoosts.style.display = 'flex';
+            if(btnNext) btnNext.style.display = 'none'; 
+            if(dailyBoosts) dailyBoosts.style.display = 'flex';
         } else if (!isHardcore && unlockedNextDiff !== false && LEVELS_CONFIG[unlockedNextDiff]) {
-            norm.style.display = 'none';
-            unl.style.display = 'block';
-            btnNext.style.display = 'none';
+            unl.style.display = 'block'; 
+            vicBtns.style.display = 'none'; 
+            
             document.getElementById('vic-unlock-name').innerText = LEVELS_CONFIG[unlockedNextDiff].name;
             document.getElementById('vic-btn-go-next-unl').onclick = () => { 
                 audio.click(); 
@@ -1217,31 +1222,29 @@ const rulesDemo = {
         ctx.fillStyle = 'rgba(0,0,0,0.1)'; 
         [s1x, s2x].forEach(x => { ctx.beginPath(); ctx.ellipse(x, by, 25, 8, 0, 0, Math.PI*2); ctx.fill(); });
         
-        const c = this.t%4; 
+        const c = this.t % 3; // 3 фазы: ждем, летим, ждем. Затем сброс!
         
         drawDetailedCoin(ctx, s1x, by, 22, 10, PALETTE[2], false, 0, 1); 
-        drawDetailedCoin(ctx, s1x, by-10, 22, 10, PALETTE[4], false, 0, 1); // Вторая монета стала желтой
+        drawDetailedCoin(ctx, s1x, by-10, 22, 10, PALETTE[4], false, 0, 1); // Желтая под синей
         
         drawDetailedCoin(ctx, s2x, by, 22, 10, PALETTE[3], false, 0, 1);
         drawDetailedCoin(ctx, s2x, by-10, 22, 10, PALETTE[5], false, 0, 1);
-        drawDetailedCoin(ctx, s2x, by-20, 22, 10, PALETTE[1], false, 0, 1); 
+        drawDetailedCoin(ctx, s2x, by-20, 22, 10, PALETTE[1], false, 0, 1); // Синяя на правой
         
         let cx = s1x, cy = by-20;
-        if(c>=1 && c<2) { 
-            const p=c-1, e=p<0.5?2*p*p:-1+(4-2*p)*p; 
-            cx=s1x+(s2x-s1x)*e; 
-            cy=(by-20)-Math.sin(p*Math.PI)*40; 
-            cy -= 10*p; 
+        if(c >= 1 && c < 2) { 
+            const p = c - 1; 
+            const e = p < 0.5 ? 2*p*p : -1+(4-2*p)*p; 
+            cx = s1x + (s2x - s1x) * e; 
+            cy = (by - 20) - Math.sin(p * Math.PI) * 40; 
+            cy -= 10 * p; 
         }
-        else if(c>=2 && c<3) { cx=s2x; cy=by-30; }
-        else if(c>=3) { 
-            const p=c-3, e=p<0.5?2*p*p:-1+(4-2*p)*p; 
-            cx=s2x+(s1x-s2x)*e; 
-            cy=(by-30)-Math.sin(p*Math.PI)*40; 
-            cy += 10*p; 
+        else if(c >= 2) { 
+            cx = s2x; 
+            cy = by - 30; 
         }
         
-        drawDetailedCoin(ctx, cx, cy, 22, 10, PALETTE[1], false, 0, 1); 
+        drawDetailedCoin(ctx, cx, cy, 22, 10, PALETTE[1], false, 0, 1); // Летящая синяя
     }
 };
 
