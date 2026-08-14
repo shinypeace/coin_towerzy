@@ -245,6 +245,7 @@
     </style>
 </head>
 <body>
+<!-- ИНТЕГРАЦИЯ SVG -->
 <svg style="display:none;">
     <defs>
         <g id="svg-coin">
@@ -275,6 +276,7 @@
 
 <div id="app-container">
     
+    <!-- TOP BAR -->
     <div class="top-bar-economy" id="economy-bar">
         <button class="btn-back" id="top-back" onclick="audio.click(); ui.showMenu()" style="display: none;">
             <svg class="icon" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
@@ -290,6 +292,7 @@
     <canvas id="gameCanvas"></canvas>
     <canvas id="confetti-canvas"></canvas>
     
+    <!-- GAME HUD -->
     <div id="hud" style="display: none;">
         <button class="btn-icon-round" onclick="audio.click(); game.pause()">
             <svg class="icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
@@ -305,6 +308,7 @@
         </button>
     </div>
     
+    <!-- MAIN MENU SCREEN -->
     <div id="screen-menu" class="screen active">
         <div class="logo-box">
             <div class="logo-main">Coin<br>Sort</div>
@@ -315,6 +319,7 @@
         <button class="btn-main btn-blind" onclick="audio.click(); ui.showShop('themes')">МАГАЗИН 🛒</button>
     </div>
     
+    <!-- MODE SELECT SCREEN -->
     <div id="screen-mode" class="screen hidden">
         <div class="logo-box" style="margin-bottom: 40px; margin-top: 40px;">
             <div class="logo-main" style="font-size: 40px;">Режим</div>
@@ -324,6 +329,7 @@
         <button class="btn-main btn-hardcore" onclick="audio.click(); ui.selectMode('hardcore')">ХАРДКОР ☠️</button>
     </div>
     
+    <!-- LEVELS SCREEN -->
     <div id="screen-levels" class="screen hidden">
         <div class="logo-box" style="margin-top: 60px; margin-bottom: 20px;">
             <div class="logo-main" id="levels-title" style="font-size: 40px;">Уровни</div>
@@ -331,6 +337,7 @@
         <div class="scroll-list" id="levels-list"></div>
     </div>
     
+    <!-- SHOP SCREEN -->
     <div id="screen-shop" class="screen hidden" style="padding-bottom: 0;">
         <div class="logo-box" style="margin-top: 60px; margin-bottom: 20px; flex-shrink: 0;">
             <div class="logo-main" style="font-size: 40px;">Магазин</div>
@@ -347,6 +354,7 @@
         </div>
     </div>
     
+    <!-- MODALS -->
     <div id="modal-daily" class="modal-overlay">
         <div class="modal">
             <h2>Ежедневная награда</h2>
@@ -493,9 +501,9 @@ const dataManager = {
     async load() {
         let rawData = null;
         if (this.vkUserId) {
-            try { const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_v10_${this.vkUserId}`] }); if (res.keys[0]?.value) rawData = res.keys[0].value; } catch(e){}
+            try { const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_v11_${this.vkUserId}`] }); if (res.keys[0]?.value) rawData = res.keys[0].value; } catch(e){}
         }
-        if(!rawData) rawData = localStorage.getItem('ct_data_v10_local');
+        if(!rawData) rawData = localStorage.getItem('ct_data_v11_local');
         if (rawData) {
             const parsed = Obfuscator.decode(rawData);
             if(parsed) this.mergeData(parsed); else { try { this.mergeData(JSON.parse(rawData)); } catch(e){} }
@@ -522,8 +530,8 @@ const dataManager = {
         this.data.settings.sound = settings.sound;
         this.data.settings.vibration = settings.vibration;
         const str = Obfuscator.encode(this.data);
-        localStorage.setItem('ct_data_v10_local', str);
-        if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_v10_${this.vkUserId}`, value: str }).catch(()=>{});
+        localStorage.setItem('ct_data_v11_local', str);
+        if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_v11_${this.vkUserId}`, value: str }).catch(()=>{});
         ui.updateEconomy();
     },
     
@@ -683,7 +691,7 @@ const THEME_BGS = [
 const SHOP_THEMES = [{id:0, name:"Светлая", price:0}, {id:1, name:"Темная", price:500}, {id:2, name:"Закат", price:1200}, {id:3, name:"Лес", price:2500}, {id:4, name:"Океан", price:5000}, {id:5, name:"Киберпанк", price:9000}, {id:6, name:"Кофе", price:15000}, {id:7, name:"Король", price:25000}, {id:8, name:"Матрица", price:40000}];
 const SHOP_SKINS = [{id:0, name:"Классика", price:0}, {id:1, name:"Модерн", price:500}, {id:2, name:"Мишень", price:1200}, {id:3, name:"Кости", price:2500}, {id:4, name:"Металлик", price:5000}, {id:5, name:"Неон", price:9000}, {id:6, name:"Шахматы", price:15000}, {id:7, name:"Пуговица", price:25000}, {id:8, name:"Стекло", price:40000}];
 
-/* --- AUDIO MANAGER (АБСОЛЮТНО БЕЗОПАСНЫЙ HTML5 AUDIO) --- */
+/* --- AUDIO MANAGER (ПЕРЕПИСАН ПОЛНОСТЬЮ НА ПУЛ <AUDIO> ДЛЯ МАКСИМАЛЬНОЙ СТАБИЛЬНОСТИ) --- */
 class AudioManager {
     constructor() { 
         this.enabled = true; 
@@ -710,6 +718,7 @@ class AudioManager {
         const files = ['pop', 'land', 'error', 'win', 'click'];
         for(let name of files) {
             this.audioPool[name] = [];
+            // Создаем по 4 копии каждого звука, чтобы они могли звучать одновременно и не "захлебывались"
             for(let i=0; i<4; i++) { 
                 const a = new Audio(name+'.mp3'); 
                 a.preload = 'auto'; 
@@ -767,6 +776,7 @@ class AudioManager {
                     return; 
                 } 
             }
+            // Если все заняты - прерываем первый попавшийся
             pool[0].currentTime = 0; 
             pool[0].play().catch(()=>{});
         }
@@ -1114,24 +1124,24 @@ function drawDetailedCoin(ctx, x, y, r, h, cHex, isHidden, skinId = dataManager.
     }
     
     switch(skinId) {
-        case 0: // Классика
+        case 0: { // Классика
             const gt = ctx.createRadialGradient(x, y-h-r*0.1, 0, x, y-h, r); gt.addColorStop(0, l); gt.addColorStop(1, cHex);
             ctx.fillStyle = gt; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
             ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.7, r*0.25, 0, 0, Math.PI*2); ctx.stroke();
             break;
-            
-        case 1: // Модерн
+        }    
+        case 1: { // Модерн
             ctx.fillStyle = cHex; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
             ctx.strokeStyle = s; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.stroke();
             break;
-            
-        case 2: // Мишень
+        }    
+        case 2: { // Мишень
             ctx.fillStyle = cHex; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
             ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.65, r*0.23, 0, 0, Math.PI*2); ctx.fill();
             ctx.fillStyle = s; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.3, r*0.1, 0, 0, Math.PI*2); ctx.fill();
             break;
-            
-        case 3: // Кости
+        }    
+        case 3: { // Кости
             ctx.fillStyle = cHex; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
             ctx.strokeStyle = s; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.8, r*0.28, 0, 0, Math.PI*2); ctx.stroke();
             ctx.fillStyle = '#fff'; 
@@ -1141,8 +1151,8 @@ function drawDetailedCoin(ctx, x, y, r, h, cHex, isHidden, skinId = dataManager.
             if(dots>=4) { ctx.beginPath(); ctx.ellipse(x-r*0.4, y-h+r*0.1, dW, dH, 0, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(x+r*0.4, y-h-r*0.1, dW, dH, 0, 0, Math.PI*2); ctx.fill(); }
             if(dots===6) { ctx.beginPath(); ctx.ellipse(x-r*0.4, y-h, dW, dH, 0, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(x+r*0.4, y-h, dW, dH, 0, 0, Math.PI*2); ctx.fill(); }
             break;
-            
-        case 4: // Металлик
+        }    
+        case 4: { // Металлик
             const mg = ctx.createLinearGradient(x-r, y, x+r, y);
             mg.addColorStop(0, shadeColor(cHex, -60));
             mg.addColorStop(0.25, l);
@@ -1158,8 +1168,8 @@ function drawDetailedCoin(ctx, x, y, r, h, cHex, isHidden, skinId = dataManager.
             ctx.fillStyle = topMg; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
             ctx.strokeStyle = 'rgba(255,255,255,0.7)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.ellipse(x, y-h, r*0.85, r*0.3, 0, 0, Math.PI*2); ctx.stroke();
             break;
-            
-        case 5: // Неон
+        }    
+        case 5: { // Неон
             ctx.fillStyle = '#2f3542'; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
             ctx.strokeStyle = cHex; ctx.lineWidth = 3; 
             ctx.shadowColor = cHex; ctx.shadowBlur = 30; 
@@ -1169,8 +1179,8 @@ function drawDetailedCoin(ctx, x, y, r, h, cHex, isHidden, skinId = dataManager.
             ctx.beginPath(); ctx.ellipse(x, y-h, r*0.8, r*0.28, 0, 0, Math.PI*2); ctx.stroke();
             ctx.shadowBlur = 0;
             break;
-            
-        case 6: // Шахматы
+        }    
+        case 6: { // Шахматы
             ctx.fillStyle = cHex; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
             ctx.save(); 
             ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.clip();
@@ -1180,8 +1190,8 @@ function drawDetailedCoin(ctx, x, y, r, h, cHex, isHidden, skinId = dataManager.
             ctx.restore();
             ctx.strokeStyle = s; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.stroke();
             break;
-            
-        case 7: // Пуговица
+        }    
+        case 7: { // Пуговица
             ctx.fillStyle = shadeColor(cHex, -50);
             ctx.beginPath(); ctx.ellipse(x, y-1, r*0.95, r*0.33, 0, 0, Math.PI); ctx.ellipse(x, y-h+1, r*0.95, r*0.33, 0, Math.PI, 0); ctx.fill();
             ctx.fillRect(x-r*0.95, y-h+1, r*1.9, h-2);
@@ -1215,8 +1225,8 @@ function drawDetailedCoin(ctx, x, y, r, h, cHex, isHidden, skinId = dataManager.
             ctx.beginPath(); ctx.moveTo(x-dBtn, y-h+1-dyBtn); ctx.lineTo(x+dBtn, y-h+1+dyBtn); ctx.stroke();
             ctx.beginPath(); ctx.moveTo(x+dBtn, y-h+1-dyBtn); ctx.lineTo(x-dBtn, y-h+1+dyBtn); ctx.stroke();
             break;
-            
-        case 8: // Стекло
+        }    
+        case 8: { // Стекло
             ctx.globalAlpha = 0.85;
             ctx.fillStyle = shadeColor(cHex, -30); 
             ctx.beginPath(); ctx.ellipse(x, y-h, r, r*0.35, 0, 0, Math.PI*2); ctx.fill();
@@ -1237,6 +1247,7 @@ function drawDetailedCoin(ctx, x, y, r, h, cHex, isHidden, skinId = dataManager.
             ctx.beginPath(); ctx.moveTo(x-r, y); ctx.lineTo(x-r, y-h); ctx.stroke();
             ctx.beginPath(); ctx.moveTo(x+r, y); ctx.lineTo(x+r, y-h); ctx.stroke();
             break;
+        }
     }
     ctx.restore();
 }
