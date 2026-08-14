@@ -415,27 +415,8 @@
     <div id="modal-out-of-moves" class="modal-overlay">
         <div class="modal">
             <h2 style="color: var(--btn-hard-bg)">Ходы кончились!</h2>
-            <p style="margin-bottom:20px; color:var(--text-sec)">Используй жизнь, чтобы получить +5 ходов.</p>
-            <button class="btn-main btn-classic" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="audio.click(); game.useLife()">
-                <svg viewBox="0 0 24 24" width="20" height="20" style="color: currentColor"><use href="#svg-life"></use></svg>
-                Использовать (<span id="oom-lives"></span>)
-            </button>
-            
-            <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 15px; gap:10px;">
-                <div style="text-align:left; flex:1;">
-                    <div style="font-weight:900; font-size:16px; color:var(--text-main)">Халява</div>
-                    <div style="font-size:14px; display:flex; align-items:center; gap:8px;">
-                        <span style="display:flex; align-items:center; gap:4px; font-weight:900; color:var(--text-main)">3<svg viewBox="0 0 24 24" width="16" height="16"><use href="#svg-undo"></use></svg></span>
-                        <span style="display:flex; align-items:center; gap:4px; font-weight:900; color:var(--danger-color)">1<svg viewBox="0 0 24 24" width="16" height="16"><use href="#svg-life"></use></svg></span>
-                    </div>
-                </div>
-                <button class="btn-action btn-info" style="width:auto; padding: 12px 20px; margin:0; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="audio.click(); game.adLife()">
-                    <svg viewBox="0 0 24 24" width="18" height="18" style="color: currentColor"><use href="#svg-play"></use></svg>
-                    СМОТРЕТЬ
-                </button>
-            </div>
-            
-            <button class="btn-action btn-danger" style="margin-bottom:0;" onclick="audio.click(); game.quitToMenu()">Сдаться</button>
+            <p style="margin-bottom:20px; color:var(--text-sec)">Уровень провален, но ты можешь продолжить!</p>
+            <div id="oom-container"></div>
         </div>
     </div>
     
@@ -490,11 +471,11 @@ const Obfuscator = {
 const dataManager = {
     vkUserId: null,
     data: { 
-        progress: { hardcore_lvl: 1 }, settings: { sound: true, vibration: true }, initialLevels: {}, levelsSinceAd: 0,
+        progress: { hardcore_lvl: 1 }, settings: { sound: true, vibration: true }, initialLevels: {}, lastAdTime: 0,
         coins: 100, inventory: { undos: 5, lives: 3 },
         unlockedThemes: [0], unlockedSkins: [0],
         currentTheme: 0, currentSkin: 0,
-        dailyLevelState: { date: "", completed: false }, dailyReward: { lastClaim: 0, streak: 0 }
+        dailyLevelState: { date: "", completed: false }, dailyReward: { lastClaim: 0, streak: 0, streakPL: 0 }
     },
     async init() {
         try {
@@ -504,12 +485,11 @@ const dataManager = {
             vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'interstitial' }).catch(()=>{});
             vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'reward' }).catch(()=>{});
             vkBridge.send('VKWebAppShowBannerAd', { banner_location: 'bottom' }).catch(()=>{});
-            vkBridge.subscribe(e => {
-                if(e.detail.type === 'VKWebAppViewHide') audio.handleVisibility(false);
-                if(e.detail.type === 'VKWebAppViewRestore') audio.handleVisibility(true);
-            });
         } catch (e) {}
         await this.load();
+        
+        if (!this.data.lastAdTime) this.data.lastAdTime = Date.now();
+        
         document.getElementById('app-container').className = `theme-${this.data.currentTheme}`;
         settings.sound = this.data.settings.sound;
         settings.vibration = this.data.settings.vibration !== undefined ? this.data.settings.vibration : true;
@@ -520,9 +500,9 @@ const dataManager = {
     async load() {
         let rawData = null;
         if (this.vkUserId) {
-            try { const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_v8_${this.vkUserId}`] }); if (res.keys[0]?.value) rawData = res.keys[0].value; } catch(e){}
+            try { const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_v9_${this.vkUserId}`] }); if (res.keys[0]?.value) rawData = res.keys[0].value; } catch(e){}
         }
-        if(!rawData) rawData = localStorage.getItem('ct_data_v8_local');
+        if(!rawData) rawData = localStorage.getItem('ct_data_v9_local');
         if (rawData) {
             const parsed = Obfuscator.decode(rawData);
             if(parsed) this.mergeData(parsed); else { try { this.mergeData(JSON.parse(rawData)); } catch(e){} }
@@ -543,14 +523,14 @@ const dataManager = {
         if(loaded.currentSkin !== undefined) this.data.currentSkin = loaded.currentSkin;
         if(loaded.dailyLevelState) this.data.dailyLevelState = loaded.dailyLevelState;
         if(loaded.dailyReward) this.data.dailyReward = loaded.dailyReward;
-        if(loaded.levelsSinceAd) this.data.levelsSinceAd = loaded.levelsSinceAd;
+        if(loaded.lastAdTime) this.data.lastAdTime = loaded.lastAdTime;
     },
     async save() {
         this.data.settings.sound = settings.sound;
         this.data.settings.vibration = settings.vibration;
         const str = Obfuscator.encode(this.data);
-        localStorage.setItem('ct_data_v8_local', str);
-        if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_v8_${this.vkUserId}`, value: str }).catch(()=>{});
+        localStorage.setItem('ct_data_v9_local', str);
+        if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_v9_${this.vkUserId}`, value: str }).catch(()=>{});
         ui.updateEconomy();
     },
     
@@ -572,7 +552,7 @@ const dataManager = {
         const winsAfter = this.data.progress[key] - 1;
         
         this.clearInitialLevel(mode, diffIdx);
-        this.data.levelsSinceAd++; this.save();
+        this.save();
         
         if (diffIdx < LEVELS_CONFIG.length - 1) {
             const nextLvlConfig = LEVELS_CONFIG[diffIdx + 1];
@@ -591,27 +571,38 @@ const dataManager = {
         if (!isSameDay) {
             const diffTime = Math.abs(now - last);
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-            if (diffDays > 1 && this.data.dailyReward.lastClaim !== 0) this.data.dailyReward.streak = 0; 
-            if(this.data.dailyReward.streak >= 7) this.data.dailyReward.streak = 0;
+            if (diffDays > 1 && this.data.dailyReward.lastClaim !== 0) {
+                this.data.dailyReward.streak = 0; 
+                this.data.dailyReward.streakPL = this.getPlayerLevel();
+            }
+            if(this.data.dailyReward.streak >= 7) {
+                this.data.dailyReward.streak = 0;
+                this.data.dailyReward.streakPL = this.getPlayerLevel();
+            }
             ui.showDailyModal();
         }
     },
     claimDaily() {
-        const pl = this.getPlayerLevel();
+        let pl = this.data.dailyReward.streakPL;
+        if (this.data.dailyReward.streak === 0 || pl === undefined) {
+            pl = this.getPlayerLevel();
+            this.data.dailyReward.streakPL = pl;
+        }
+        
         const rewards = [
-            { t: 'coin', v: Math.floor(125 + pl*10) }, 
+            { t: 'coin', v: Math.floor(150 + pl*15) }, 
             { t: 'undo', v: 3 }, 
-            { t: 'coin', v: Math.floor(200 + pl*15) }, 
+            { t: 'coin', v: Math.floor(250 + pl*20) }, 
             { t: 'life', v: 1 }, 
-            { t: 'coin', v: Math.floor(300 + pl*20) }, 
+            { t: 'coin', v: Math.floor(400 + pl*30) }, 
             { t: 'undo', v: 3 }, 
-            { t: 'mega', v: Math.floor(600 + pl*50) }
+            { t: 'mega', v: Math.floor(800 + pl*60) }
         ];
         const r = rewards[this.data.dailyReward.streak];
         if(r.t === 'coin' || r.t === 'mega') this.data.coins += r.v;
         if(r.t === 'undo') this.data.inventory.undos += r.v;
         if(r.t === 'life') this.data.inventory.lives += r.v;
-        if(r.t === 'mega') this.data.inventory.lives += 1;
+        if(r.t === 'mega') { this.data.inventory.lives += 1; this.data.inventory.undos += 3; }
         
         this.data.dailyReward.streak++; this.data.dailyReward.lastClaim = new Date().getTime();
         this.save(); ui.hideModals(); audio.play('win'); fireConfetti();
@@ -621,13 +612,20 @@ const dataManager = {
     useUndo() { if(this.data.inventory.undos > 0) { this.data.inventory.undos--; this.save(); return true; } return false; },
     useLife() { if(this.data.inventory.lives > 0) { this.data.inventory.lives--; this.save(); return true; } return false; },
     
-    checkAndShowInterstitial() { if (this.data.levelsSinceAd >= 5) { this.showInterstitialAd().then(() => { this.data.levelsSinceAd = 0; this.save(); }).catch(()=>{}); } },
+    checkAndShowInterstitial() { 
+        const now = Date.now();
+        if (now - (this.data.lastAdTime || 0) > 120000) { 
+            this.showInterstitialAd().then(() => { 
+                this.data.lastAdTime = Date.now(); 
+                this.save(); 
+            }).catch(()=>{}); 
+        } 
+    },
     async showInterstitialAd() {
         audio.toggleMusicMute(true);
         try { const r = await vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' }); return r.result; } catch(e) { return false; }
         finally { 
             audio.toggleMusicMute(false); 
-            setTimeout(() => { if(audio.ctx && audio.ctx.state !== 'running') audio.ctx.resume().catch(()=>{}); }, 100);
         }
     },
     async showRewardAd(rewardType) {
@@ -638,14 +636,14 @@ const dataManager = {
                 if(rewardType === 'combo') {
                     this.data.inventory.undos += 3;
                     this.data.inventory.lives += 1;
+                    this.save(); 
                 }
-                this.save(); return true;
+                return true;
             }
             return false;
         } catch(e) { return false; }
         finally { 
             audio.toggleMusicMute(false); 
-            setTimeout(() => { if(audio.ctx && audio.ctx.state !== 'running') audio.ctx.resume().catch(()=>{}); }, 100);
         }
     }
 };
@@ -662,7 +660,7 @@ const settings = {
     }
 };
 
-/** CONFIG - СЛОЖНАЯ АДАПТАЦИЯ (ВОЗВРАЩЕНО ТРЕБОВАНИЕ 10 ПОБЕД ДЛЯ ОТКРЫТИЯ) */
+/** CONFIG */
 const LEVELS_CONFIG = [
     { id: 0, name: "Новичок",   colors: 3, slots: 5,  size: 4, reqWins: 10 },
     { id: 1, name: "Ученик",    colors: 5, slots: 7,  size: 4, reqWins: 10 },
@@ -695,12 +693,11 @@ const THEME_BGS = [
 const SHOP_THEMES = [{id:0, name:"Светлая", price:0}, {id:1, name:"Темная", price:500}, {id:2, name:"Закат", price:1200}, {id:3, name:"Лес", price:2500}, {id:4, name:"Океан", price:5000}, {id:5, name:"Киберпанк", price:9000}, {id:6, name:"Кофе", price:15000}, {id:7, name:"Король", price:25000}, {id:8, name:"Матрица", price:40000}];
 const SHOP_SKINS = [{id:0, name:"Классика", price:0}, {id:1, name:"Модерн", price:500}, {id:2, name:"Мишень", price:1200}, {id:3, name:"Кости", price:2500}, {id:4, name:"Металлик", price:5000}, {id:5, name:"Неон", price:9000}, {id:6, name:"Шахматы", price:15000}, {id:7, name:"Пуговица", price:25000}, {id:8, name:"Стекло", price:40000}];
 
-/* --- AUDIO MANAGER --- */
+/* --- AUDIO MANAGER (ПЕРЕПИСАН ПОЛНОСТЬЮ НА ПУЛ <AUDIO> ДЛЯ МАКСИМАЛЬНОЙ СТАБИЛЬНОСТИ) --- */
 class AudioManager {
     constructor() { 
         this.enabled = true; 
-        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-        this.buffers = {}; this.audioPool = {}; 
+        this.audioPool = {}; 
         
         this.bgmMenu = new Audio('menu_music.mp3'); this.bgmMenu.loop = true; this.bgmMenu.volume = 1.0;
         this.bgmGame = new Audio('game_music.mp3'); this.bgmGame.loop = true; this.bgmGame.volume = 1.0;
@@ -710,30 +707,25 @@ class AudioManager {
         this.loadSFX();
         
         const unlock = () => {
-            if(this.unlocked) return; this.unlocked = true;
-            if(this.ctx && this.ctx.state !== 'running') this.ctx.resume().catch(()=>{});
+            if(this.unlocked) return; 
+            this.unlocked = true;
             if(this.enabled) this.activeBgm.play().catch(()=>{});
             document.body.removeEventListener('click', unlock); document.body.removeEventListener('touchstart', unlock);
         };
         
-        const wakeAudio = () => {
-            if(this.ctx && this.ctx.state !== 'running') this.ctx.resume().catch(()=>{});
-        };
-        
         document.body.addEventListener('click', unlock); document.body.addEventListener('touchstart', unlock);
-        
-        // Агрессивные слушатели для мобильных устройств (чтобы звук не пропадал после рекламы)
-        ['click', 'touchstart', 'touchend', 'pointerdown'].forEach(evt => {
-            document.body.addEventListener(evt, wakeAudio, true);
-        });
     }
     
-    async loadSFX() {
+    loadSFX() {
         const files = ['pop', 'land', 'error', 'win', 'click'];
         for(let name of files) {
             this.audioPool[name] = [];
-            for(let i=0; i<3; i++) { const a = new Audio(name+'.mp3'); a.preload = 'auto'; this.audioPool[name].push(a); }
-            try { const res = await fetch(name+'.mp3'); const arrayBuffer = await res.arrayBuffer(); this.buffers[name] = await this.ctx.decodeAudioData(arrayBuffer); } catch(e) {}
+            // Создаем по 4 копии каждого звука, чтобы они могли звучать одновременно и не "захлебывались"
+            for(let i=0; i<4; i++) { 
+                const a = new Audio(name+'.mp3'); 
+                a.preload = 'auto'; 
+                this.audioPool[name].push(a); 
+            }
         }
     }
     
@@ -746,13 +738,12 @@ class AudioManager {
     }
     
     toggleMusicMute(mute) { this.bgmMenu.muted = mute; this.bgmGame.muted = mute; }
-    toggleSound(state) { this.enabled = state; if(state) { if(this.ctx && this.ctx.state !== 'running') this.ctx.resume().catch(()=>{}); if(this.unlocked) this.activeBgm.play().catch(()=>{}); } else this.activeBgm.pause(); }
+    toggleSound(state) { this.enabled = state; if(state) { if(this.unlocked) this.activeBgm.play().catch(()=>{}); } else this.activeBgm.pause(); }
     handleVisibility(isVisible) { 
         if (!isVisible) { 
             if (!this.activeBgm.paused) { this.wasPlaying = true; this.activeBgm.pause(); } 
         } else { 
             if (this.wasPlaying && this.enabled && this.unlocked) { this.activeBgm.play().catch(()=>{}); this.wasPlaying = false; } 
-            if (this.ctx && this.ctx.state !== 'running') this.ctx.resume().catch(()=>{});
         } 
     }
     
@@ -765,13 +756,19 @@ class AudioManager {
     play(type) {
         if (!this.enabled) return;
         if(type==='pop') this.haptic('light'); if(type==='land') this.haptic('medium'); if(type==='error') this.haptic('error'); if(type==='win') this.haptic('success');
-        if (this.ctx && this.ctx.state !== 'running') this.ctx.resume().catch(()=>{});
         
-        if (this.buffers[type]) { const source = this.ctx.createBufferSource(); source.buffer = this.buffers[type]; source.connect(this.ctx.destination); source.start(0); } 
-        else if (this.audioPool[type]) {
+        if (this.audioPool[type]) {
             const pool = this.audioPool[type];
-            for(let i=0; i<pool.length; i++) { if(pool[i].paused || pool[i].currentTime === 0) { pool[i].currentTime = 0; pool[i].play().catch(()=>{}); return; } }
-            pool[0].currentTime = 0; pool[0].play().catch(()=>{});
+            for(let i=0; i<pool.length; i++) { 
+                if(pool[i].paused || pool[i].currentTime === 0 || pool[i].ended) { 
+                    pool[i].currentTime = 0; 
+                    pool[i].play().catch(()=>{}); 
+                    return; 
+                } 
+            }
+            // Если все заняты - прерываем первый попавшийся
+            pool[0].currentTime = 0; 
+            pool[0].play().catch(()=>{});
         }
     }
     click() { this.play('click'); }
@@ -845,17 +842,21 @@ const ui = {
     
     showDailyModal() {
         const grid = document.getElementById('daily-grid'); grid.innerHTML = '';
-        const streak = dataManager.data.dailyReward.streak;
-        const pl = dataManager.getPlayerLevel();
+        const streak = dataManager.data.dailyReward.streak || 0;
+        
+        let pl = dataManager.data.dailyReward.streakPL;
+        if (streak === 0 || pl === undefined) {
+            pl = dataManager.getPlayerLevel();
+        }
         
         const rewards = [
-            {d:1, t:'coin', v: Math.floor(125 + pl*10), i:'#svg-coin', c:'#FFD700'}, 
+            {d:1, t:'coin', v: Math.floor(150 + pl*15), i:'#svg-coin', c:'#FFD700'}, 
             {d:2, t:'undo', v: 3, i:'#svg-undo', c:'currentColor'}, 
-            {d:3, t:'coin', v: Math.floor(200 + pl*15), i:'#svg-coin', c:'#FFD700'}, 
+            {d:3, t:'coin', v: Math.floor(250 + pl*20), i:'#svg-coin', c:'#FFD700'}, 
             {d:4, t:'life', v: 1, i:'#svg-life', c:'var(--danger-color)'}, 
-            {d:5, t:'coin', v: Math.floor(300 + pl*20), i:'#svg-coin', c:'#FFD700'}, 
+            {d:5, t:'coin', v: Math.floor(400 + pl*30), i:'#svg-coin', c:'#FFD700'}, 
             {d:6, t:'undo', v: 3, i:'#svg-undo', c:'currentColor'}, 
-            {d:7, t:'mega', v: Math.floor(600 + pl*50), i:''}
+            {d:7, t:'mega', v: Math.floor(800 + pl*60), i:''}
         ];
         
         rewards.forEach((r, i) => {
@@ -888,7 +889,7 @@ const ui = {
                         <div style="width:30px; height:30px; color:var(--btn-classic-bg)"><svg viewBox="0 0 24 24" width="100%" height="100%"><use href="#svg-undo"></use></svg></div>
                         <div style="text-align:left"><div style="font-weight:900; font-size:18px; color:var(--text-main)">Отмена хода</div><div style="font-size:12px; color:var(--text-sec)">В инвентаре: ${dataManager.data.inventory.undos}</div></div>
                     </div>
-                    <div><button class="item-btn" style="width:auto; padding: 10px 20px; display:flex; align-items:center; gap:4px;" onclick="audio.click(); ui.buyBooster('undo', 200)">200 <svg viewBox="0 0 24 24" width="14" height="14" style="color:#FFD700"><use href="#svg-coin"></use></svg></button></div>
+                    <div><button class="item-btn" style="width:auto; padding: 10px 20px; display:flex; align-items:center; gap:4px;" onclick="audio.click(); ui.buyBooster('undo', 500)">500 <svg viewBox="0 0 24 24" width="14" height="14" style="color:#FFD700"><use href="#svg-coin"></use></svg></button></div>
                 </div>
                 <div class="booster-item">
                     <div style="display:flex; align-items:center; gap:15px">
@@ -1035,6 +1036,29 @@ const ui = {
             list.appendChild(div);
         });
         this.switchScreen('levels');
+    },
+
+    showOomModal() {
+        const lives = dataManager.data.inventory.lives;
+        const container = document.getElementById('oom-container');
+        
+        if (lives > 0) {
+            container.innerHTML = `
+                <button class="btn-main btn-classic" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="audio.click(); game.useLife()">
+                    ИСПОЛЬЗОВАТЬ <svg viewBox="0 0 24 24" width="24" height="24" style="color: currentColor"><use href="#svg-life"></use></svg>
+                </button>
+                <button class="btn-action btn-danger" style="margin-bottom:0;" onclick="audio.click(); game.quitToMenu()">В МЕНЮ</button>
+            `;
+        } else {
+            container.innerHTML = `
+                <button class="btn-main btn-classic" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="audio.click(); game.adLifeInGame()">
+                    <div style="background:var(--badge-ad); color:#2d3436; border-radius:6px; padding:2px 6px; font-weight:900; font-size:14px;">AD</div>
+                    ИСПОЛЬЗОВАТЬ <svg viewBox="0 0 24 24" width="24" height="24" style="color: currentColor"><use href="#svg-life"></use></svg>
+                </button>
+                <button class="btn-action btn-danger" style="margin-bottom:0;" onclick="audio.click(); game.quitToMenu()">В МЕНЮ</button>
+            `;
+        }
+        this.showModals('oom');
     },
 
     showVictoryModal(coinsEarned, isHardcore, unlockedNextDiff, isDaily) {
@@ -1552,14 +1576,14 @@ class Game {
                 
                 if(this.isDaily) {
                     const pl = dataManager.getPlayerLevel();
-                    coinsEarned = Math.floor(125 + pl * 10); 
+                    coinsEarned = Math.floor(300 + pl * 50); 
                     dataManager.data.inventory.undos += 1;
                     dataManager.data.inventory.lives += 1;
                     dataManager.data.dailyLevelState.date = new Date().toISOString().split('T')[0]; 
                     dataManager.data.dailyLevelState.completed = true;
                     dataManager.save();
                 } else if(this.isHardcore) {
-                    coinsEarned = Math.floor(7 + this.hardcoreLvl * 2.5);
+                    coinsEarned = Math.floor(10 + this.hardcoreLvl * 5);
                     dataManager.data.progress['hardcore_lvl'] = this.hardcoreLvl + 1;
                     dataManager.save();
                 } else {
@@ -1577,11 +1601,12 @@ class Game {
             },300);
         } else if (this.isHardcore && this.movesLeft <= 0) {
             this.state = 'GAMEOVER';
-            setTimeout(() => { ui.showModals('oom'); }, 300);
+            setTimeout(() => { ui.showOomModal(); }, 300);
         }
     }
     
     useLife() { if(dataManager.useLife()) { ui.hideModals(); this.movesLeft += 5; document.getElementById('hud-moves-val').innerText = this.movesLeft; this.state='IDLE'; ui.updateEconomy(); } else audio.play('error'); }
+    async adLifeInGame() { const ok = await dataManager.showRewardAd('continue'); if(ok) { ui.hideModals(); this.movesLeft += 5; document.getElementById('hud-moves-val').innerText = this.movesLeft; this.state='IDLE'; ui.updateEconomy(); } }
     async adLife() { const ok = await dataManager.showRewardAd('combo'); if(ok) { dataManager.useLife(); ui.hideModals(); this.movesLeft += 5; document.getElementById('hud-moves-val').innerText = this.movesLeft; this.state='IDLE'; ui.updateEconomy(); } }
     
     pause() { this.state='PAUSED'; ui.showModals('pause'); }
