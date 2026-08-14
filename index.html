@@ -456,7 +456,6 @@
                     </span>
                 </div>
                 
-                <!-- Бусты только для ежедневного режима -->
                 <div id="vic-daily-boosts" style="display:none; justify-content:space-between; font-weight:bold; color:var(--text-sec); margin-top:10px; padding-top:10px; border-top:1px solid var(--shadow-color);">
                     <span>Бустеры:</span>
                     <span style="display:flex; align-items:center; gap:8px;">
@@ -521,9 +520,9 @@ const dataManager = {
     async load() {
         let rawData = null;
         if (this.vkUserId) {
-            try { const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_v7_${this.vkUserId}`] }); if (res.keys[0]?.value) rawData = res.keys[0].value; } catch(e){}
+            try { const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_v8_${this.vkUserId}`] }); if (res.keys[0]?.value) rawData = res.keys[0].value; } catch(e){}
         }
-        if(!rawData) rawData = localStorage.getItem('ct_data_v7_local');
+        if(!rawData) rawData = localStorage.getItem('ct_data_v8_local');
         if (rawData) {
             const parsed = Obfuscator.decode(rawData);
             if(parsed) this.mergeData(parsed); else { try { this.mergeData(JSON.parse(rawData)); } catch(e){} }
@@ -550,8 +549,8 @@ const dataManager = {
         this.data.settings.sound = settings.sound;
         this.data.settings.vibration = settings.vibration;
         const str = Obfuscator.encode(this.data);
-        localStorage.setItem('ct_data_v7_local', str);
-        if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_v7_${this.vkUserId}`, value: str }).catch(()=>{});
+        localStorage.setItem('ct_data_v8_local', str);
+        if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_v8_${this.vkUserId}`, value: str }).catch(()=>{});
         ui.updateEconomy();
     },
     
@@ -626,7 +625,10 @@ const dataManager = {
     async showInterstitialAd() {
         audio.toggleMusicMute(true);
         try { const r = await vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' }); return r.result; } catch(e) { return false; }
-        finally { audio.toggleMusicMute(false); if(audio.ctx && audio.ctx.state === 'suspended') audio.ctx.resume(); }
+        finally { 
+            audio.toggleMusicMute(false); 
+            setTimeout(() => { if(audio.ctx && audio.ctx.state !== 'running') audio.ctx.resume().catch(()=>{}); }, 100);
+        }
     },
     async showRewardAd(rewardType) {
         audio.toggleMusicMute(true);
@@ -641,7 +643,10 @@ const dataManager = {
             }
             return false;
         } catch(e) { return false; }
-        finally { audio.toggleMusicMute(false); if(audio.ctx && audio.ctx.state === 'suspended') audio.ctx.resume(); }
+        finally { 
+            audio.toggleMusicMute(false); 
+            setTimeout(() => { if(audio.ctx && audio.ctx.state !== 'running') audio.ctx.resume().catch(()=>{}); }, 100);
+        }
     }
 };
 
@@ -706,17 +711,21 @@ class AudioManager {
         
         const unlock = () => {
             if(this.unlocked) return; this.unlocked = true;
-            if(this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+            if(this.ctx && this.ctx.state !== 'running') this.ctx.resume().catch(()=>{});
             if(this.enabled) this.activeBgm.play().catch(()=>{});
             document.body.removeEventListener('click', unlock); document.body.removeEventListener('touchstart', unlock);
         };
         
         const wakeAudio = () => {
-            if(this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+            if(this.ctx && this.ctx.state !== 'running') this.ctx.resume().catch(()=>{});
         };
         
         document.body.addEventListener('click', unlock); document.body.addEventListener('touchstart', unlock);
-        document.body.addEventListener('click', wakeAudio); document.body.addEventListener('touchstart', wakeAudio);
+        
+        // Агрессивные слушатели для мобильных устройств (чтобы звук не пропадал после рекламы)
+        ['click', 'touchstart', 'touchend', 'pointerdown'].forEach(evt => {
+            document.body.addEventListener(evt, wakeAudio, true);
+        });
     }
     
     async loadSFX() {
@@ -737,13 +746,13 @@ class AudioManager {
     }
     
     toggleMusicMute(mute) { this.bgmMenu.muted = mute; this.bgmGame.muted = mute; }
-    toggleSound(state) { this.enabled = state; if(state) { if(this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); if(this.unlocked) this.activeBgm.play().catch(()=>{}); } else this.activeBgm.pause(); }
+    toggleSound(state) { this.enabled = state; if(state) { if(this.ctx && this.ctx.state !== 'running') this.ctx.resume().catch(()=>{}); if(this.unlocked) this.activeBgm.play().catch(()=>{}); } else this.activeBgm.pause(); }
     handleVisibility(isVisible) { 
         if (!isVisible) { 
             if (!this.activeBgm.paused) { this.wasPlaying = true; this.activeBgm.pause(); } 
         } else { 
             if (this.wasPlaying && this.enabled && this.unlocked) { this.activeBgm.play().catch(()=>{}); this.wasPlaying = false; } 
-            if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+            if (this.ctx && this.ctx.state !== 'running') this.ctx.resume().catch(()=>{});
         } 
     }
     
@@ -756,7 +765,7 @@ class AudioManager {
     play(type) {
         if (!this.enabled) return;
         if(type==='pop') this.haptic('light'); if(type==='land') this.haptic('medium'); if(type==='error') this.haptic('error'); if(type==='win') this.haptic('success');
-        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+        if (this.ctx && this.ctx.state !== 'running') this.ctx.resume().catch(()=>{});
         
         if (this.buffers[type]) { const source = this.ctx.createBufferSource(); source.buffer = this.buffers[type]; source.connect(this.ctx.destination); source.start(0); } 
         else if (this.audioPool[type]) {
@@ -1222,10 +1231,11 @@ const rulesDemo = {
         ctx.fillStyle = 'rgba(0,0,0,0.1)'; 
         [s1x, s2x].forEach(x => { ctx.beginPath(); ctx.ellipse(x, by, 25, 8, 0, 0, Math.PI*2); ctx.fill(); });
         
-        const c = this.t % 3; // 3 фазы: ждем, летим, ждем. Затем сброс!
+        // 3 фазы: ждем, летим, ждем. Затем моментальный сброс без обратного полета
+        const c = this.t % 3; 
         
         drawDetailedCoin(ctx, s1x, by, 22, 10, PALETTE[2], false, 0, 1); 
-        drawDetailedCoin(ctx, s1x, by-10, 22, 10, PALETTE[4], false, 0, 1); // Желтая под синей
+        drawDetailedCoin(ctx, s1x, by-10, 22, 10, PALETTE[4], false, 0, 1); // Вторая монета желтая
         
         drawDetailedCoin(ctx, s2x, by, 22, 10, PALETTE[3], false, 0, 1);
         drawDetailedCoin(ctx, s2x, by-10, 22, 10, PALETTE[5], false, 0, 1);
@@ -1409,7 +1419,7 @@ class Game {
         this.state = 'IDLE'; this.selectedStack = -1; this.moves = 0; this.history = []; this.animations = [];
         ui.updateEconomy();
         
-        this.movesLeft = (cfg.colors * cfg.size * (cfg.double ? 2 : 1)) + Math.floor(cfg.colors * 2) + (isBlind ? 5 : 0);
+        this.movesLeft = (cfg.colors * cfg.size * (cfg.double ? 2 : 1)) + Math.floor(cfg.colors * 0.5) + (isBlind ? 2 : 0);
         
         const modeName = isBlind ? "ХАРДКОР (ВСЛЕПУЮ)" : "ХАРДКОР";
         document.getElementById('hud-mode').innerText = modeName;
