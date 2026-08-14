@@ -551,6 +551,14 @@ const dataManager = {
         return maxDiff;
     },
     
+    // --- УМНАЯ СИСТЕМА ОЧКОВ РЕКЛАМЫ (ПОРОГ = 60 ОЧКОВ) ---
+    getAdPoints(diffIdx) {
+        if (diffIdx === 0) return 12; // Раз в 5 уровней (60/12 = 5)
+        if (diffIdx === 1) return 15; // Раз в 4 уровня (60/15 = 4)
+        if (diffIdx === 2 || diffIdx === 3) return 20; // Раз в 3 уровня (60/20 = 3)
+        return 30; // Раз в 2 уровня (60/30 = 2)
+    },
+    
     getLevelNum(mode, diffIdx) { return this.data.progress[`${mode}_${diffIdx}`] || 1; },
     incrementLevel(mode, diffIdx) {
         const key = `${mode}_${diffIdx}`;
@@ -561,9 +569,8 @@ const dataManager = {
         
         this.clearInitialLevel(mode, diffIdx);
         
-        // Очки рекламы: 3 за гения, 2 за остальные
-        const points = (diffIdx === 7) ? 3 : 2;
-        this.data.levelsSinceAd += points; 
+        // Начисляем очки для показа рекламы
+        this.data.levelsSinceAd += this.getAdPoints(diffIdx); 
         this.save();
         
         if (diffIdx < LEVELS_CONFIG.length - 1) {
@@ -614,8 +621,8 @@ const dataManager = {
     useLife() { if(this.data.inventory.lives > 0) { this.data.inventory.lives--; this.save(); return true; } return false; },
     
     checkAndShowInterstitial() { 
-        // 6 очков = показ рекламы
-        if (this.data.levelsSinceAd >= 6) { 
+        // 60 очков = показ рекламы
+        if (this.data.levelsSinceAd >= 60) { 
             this.showInterstitialAd().then(() => { 
                 this.data.levelsSinceAd = 0; 
                 this.save(); 
@@ -1544,7 +1551,8 @@ class Game {
                     dataManager.data.inventory.lives += 1;
                     dataManager.data.dailyLevelState.date = getLocalDateStr(); 
                     dataManager.data.dailyLevelState.completed = true;
-                    dataManager.data.levelsSinceAd += 2; // Бонус к счётчику рекламы
+                    
+                    dataManager.data.levelsSinceAd += dataManager.getAdPoints(3); 
                     dataManager.save();
                 } else if(this.isHardcore) {
                     coinsEarned = Math.floor(100 + this.hardcoreLvl * 10);
@@ -1552,8 +1560,7 @@ class Game {
                     
                     let hCfgIdx = Math.floor((this.hardcoreLvl - 1) / 10);
                     if (hCfgIdx >= LEVELS_CONFIG.length) hCfgIdx = LEVELS_CONFIG.length - 1;
-                    const points = (hCfgIdx === 7) ? 3 : 2;
-                    dataManager.data.levelsSinceAd += points;
+                    dataManager.data.levelsSinceAd += dataManager.getAdPoints(hCfgIdx);
                     
                     dataManager.save();
                 } else {
