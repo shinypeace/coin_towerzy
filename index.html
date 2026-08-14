@@ -273,7 +273,6 @@
         </g>
     </defs>
 </svg>
-
 <div id="app-container">
     
     <!-- TOP BAR -->
@@ -372,7 +371,6 @@
             <button class="btn-main btn-classic" style="width:100%; margin-bottom: 0;" onclick="audio.click(); ui.hideModals()">ПОНЯТНО</button>
         </div>
     </div>
-
     <div id="modal-settings" class="modal-overlay">
         <div class="modal">
             <h2>Настройки</h2>
@@ -467,7 +465,6 @@ const Obfuscator = {
     encode(data) { const str = JSON.stringify(data); let res = ""; for(let i=0; i<str.length; i++) res += String.fromCharCode(str.charCodeAt(i) ^ this.key); return btoa(encodeURIComponent(res)); },
     decode(b64) { try { const str = decodeURIComponent(atob(b64)); let res = ""; for(let i=0; i<str.length; i++) res += String.fromCharCode(str.charCodeAt(i) ^ this.key); return JSON.parse(res); } catch(e) { return null; } }
 };
-
 /** DATA MANAGER */
 const dataManager = {
     vkUserId: null,
@@ -623,11 +620,20 @@ const dataManager = {
             }).catch(()=>{}); 
         } 
     },
+    
+    // ВАЖНО: Восстанавливаем аудио-контекст после рекламы
     async showInterstitialAd() {
         audio.toggleMusicMute(true);
-        try { const r = await vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' }); return r.result; } catch(e) { return false; }
-        finally { audio.toggleMusicMute(false); }
+        try { 
+            const r = await vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' }); 
+            return r.result; 
+        } catch(e) { return false; }
+        finally { 
+            audio.toggleMusicMute(false); 
+            audio.resumeContext(); 
+        }
     },
+    
     async showRewardAd(rewardType) {
         audio.toggleMusicMute(true);
         try { 
@@ -642,10 +648,12 @@ const dataManager = {
             }
             return false;
         } catch(e) { return false; }
-        finally { audio.toggleMusicMute(false); }
+        finally { 
+            audio.toggleMusicMute(false); 
+            audio.resumeContext(); 
+        }
     }
 };
-
 /** SETTINGS */
 const settings = {
     sound: true, vibration: true,
@@ -657,7 +665,6 @@ const settings = {
         document.getElementById('toggle-vibro').classList.toggle('active', this.vibration);
     }
 };
-
 /** CONFIG */
 const LEVELS_CONFIG = [
     { id: 0, name: "Новичок",   colors: 3, slots: 5,  size: 4, reqWins: 10 },
@@ -669,13 +676,11 @@ const LEVELS_CONFIG = [
     { id: 6, name: "Легенда",   colors: 7, slots: 16, size: 5, double: true, reqWins: 10 }, 
     { id: 7, name: "Гений",     colors: 8, slots: 18, size: 5, double: true, reqWins: 10 } 
 ];
-
 const PALETTE = [
     '#ff4757', '#1e90ff', '#2ed573', '#f39c12', '#f1c40f', '#ff9ff3', 
     '#9c88ff', '#00d2d3', '#5f27cd', '#006266', '#833471', '#d35400',
     '#b33939', '#218c74', '#227093', '#ccae62', '#ffb8b8', '#cf6a87'
 ];
-
 const THEME_BGS = [
     'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
     'linear-gradient(135deg, #1B1B2F 0%, #0F0F1A 100%)',
@@ -687,98 +692,160 @@ const THEME_BGS = [
     'linear-gradient(135deg, #2c0001 0%, #8a0306 100%)',
     'linear-gradient(135deg, #000000 0%, #001a00 100%)'
 ];
-
 const SHOP_THEMES = [{id:0, name:"Светлая", price:0}, {id:1, name:"Темная", price:500}, {id:2, name:"Закат", price:1200}, {id:3, name:"Лес", price:2500}, {id:4, name:"Океан", price:5000}, {id:5, name:"Киберпанк", price:9000}, {id:6, name:"Кофе", price:15000}, {id:7, name:"Король", price:25000}, {id:8, name:"Матрица", price:40000}];
 const SHOP_SKINS = [{id:0, name:"Классика", price:0}, {id:1, name:"Модерн", price:500}, {id:2, name:"Мишень", price:1200}, {id:3, name:"Кости", price:2500}, {id:4, name:"Металлик", price:5000}, {id:5, name:"Неон", price:9000}, {id:6, name:"Шахматы", price:15000}, {id:7, name:"Пуговица", price:25000}, {id:8, name:"Стекло", price:40000}];
 
-/* --- AUDIO MANAGER (ПЕРЕПИСАН ПОЛНОСТЬЮ НА ПУЛ <AUDIO> ДЛЯ МАКСИМАЛЬНОЙ СТАБИЛЬНОСТИ) --- */
+/* --- УЛУЧШЕННЫЙ AUDIO MANAGER (Web Audio API + Safe Fallback) --- */
 class AudioManager {
     constructor() { 
         this.enabled = true; 
-        this.audioPool = {}; 
         
         this.bgmMenu = new Audio('menu_music.mp3'); this.bgmMenu.loop = true; this.bgmMenu.volume = 1.0;
         this.bgmGame = new Audio('game_music.mp3'); this.bgmGame.loop = true; this.bgmGame.volume = 1.0;
         this.activeBgm = this.bgmMenu;
         this.wasPlaying = false; this.unlocked = false;
         
+        // Web Audio API: Идеален для SFX в играх (не блокируется рекламой навсегда)
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        try { this.ctx = new AudioCtx(); } catch(e) { this.ctx = null; }
+        this.buffers = {};
+        this.fallbackPool = {}; // На случай, если играют локально (CORS)
+        
         this.loadSFX();
         
         const unlock = () => {
             if(this.unlocked) return; 
             this.unlocked = true;
-            if(this.enabled) this.activeBgm.play().catch(()=>{});
+            try { if(this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); } catch(e){}
+            try { if(this.enabled) this.activeBgm.play().catch(()=>{}); } catch(e){}
             document.body.removeEventListener('click', unlock); document.body.removeEventListener('touchstart', unlock);
         };
         
         document.body.addEventListener('click', unlock); document.body.addEventListener('touchstart', unlock);
+        
+        document.addEventListener('visibilitychange', () => {
+            this.handleVisibility(!document.hidden);
+        });
     }
     
-    loadSFX() {
+    async loadSFX() {
         const files = ['pop', 'land', 'error', 'win', 'click'];
         for(let name of files) {
-            this.audioPool[name] = [];
-            // Создаем по 4 копии каждого звука, чтобы они могли звучать одновременно и не "захлебывались"
-            for(let i=0; i<4; i++) { 
-                const a = new Audio(name+'.mp3'); 
-                a.preload = 'auto'; 
-                this.audioPool[name].push(a); 
+            // Подготавливаем fallback (для file://)
+            this.fallbackPool[name] = [];
+            for(let i=0; i<3; i++) {
+                try {
+                    const a = new Audio(name+'.mp3');
+                    a.preload = 'auto';
+                    this.fallbackPool[name].push(a);
+                } catch(e) {}
+            }
+            
+            // Основной движок: Web Audio API (вытаскивает звуки из буфера)
+            if(this.ctx) {
+                try {
+                    const res = await fetch(name+'.mp3');
+                    const data = await res.arrayBuffer();
+                    this.ctx.decodeAudioData(data, (buffer) => {
+                        this.buffers[name] = buffer;
+                    }, () => {});
+                } catch(e) {}
             }
         }
     }
     
     switchBGM(track) {
-        const target = track === 'game' ? this.bgmGame : this.bgmMenu;
-        if (this.activeBgm === target) return; 
-        if (this.activeBgm) { this.activeBgm.pause(); this.activeBgm.currentTime = 0; }
-        this.activeBgm = target;
-        if (this.enabled && this.unlocked) this.activeBgm.play().catch(()=>{});
+        try {
+            const target = track === 'game' ? this.bgmGame : this.bgmMenu;
+            if (this.activeBgm === target) return; 
+            if (this.activeBgm) { this.activeBgm.pause(); this.activeBgm.currentTime = 0; }
+            this.activeBgm = target;
+            if (this.enabled && this.unlocked) this.activeBgm.play().catch(()=>{});
+        } catch(e) {}
     }
     
     toggleMusicMute(mute) { 
-        this.bgmMenu.muted = mute; 
-        this.bgmGame.muted = mute; 
+        try { this.bgmMenu.muted = mute; this.bgmGame.muted = mute; } catch(e) {} 
     }
     
     toggleSound(state) { 
         this.enabled = state; 
-        if(state) { 
-            if(this.unlocked) this.activeBgm.play().catch(()=>{}); 
-        } else { 
-            this.activeBgm.pause(); 
-        } 
+        try {
+            if(state) { 
+                if(this.unlocked) this.activeBgm.play().catch(()=>{}); 
+            } else { 
+                this.activeBgm.pause(); 
+            } 
+        } catch(e) {}
     }
     
     handleVisibility(isVisible) { 
-        if (!isVisible) { 
-            if (!this.activeBgm.paused) { this.wasPlaying = true; this.activeBgm.pause(); } 
-        } else { 
-            if (this.wasPlaying && this.enabled && this.unlocked) { this.activeBgm.play().catch(()=>{}); this.wasPlaying = false; } 
-        } 
+        try {
+            if (!isVisible) { 
+                if (!this.activeBgm.paused) { this.wasPlaying = true; this.activeBgm.pause(); } 
+                if(this.ctx && this.ctx.state === 'running') this.ctx.suspend();
+            } else { 
+                if(this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+                if (this.wasPlaying && this.enabled && this.unlocked) { this.activeBgm.play().catch(()=>{}); this.wasPlaying = false; } 
+            } 
+        } catch(e) {}
+    }
+    
+    resumeContext() {
+        // Явный вызов для восстановления контекста после показа рекламы
+        try {
+            if(this.ctx && this.ctx.state === 'suspended') {
+                this.ctx.resume();
+            }
+        } catch(e) {}
     }
     
     haptic(type) {
-        if (!settings.vibration) return;
-        if (window.vkBridge) { if(type==='error'||type==='success') vkBridge.send("VKWebAppTapticNotificationOccurred", {"type": type}).catch(()=>{}); else vkBridge.send("VKWebAppTapticImpactOccurred", {"style": type || "light"}).catch(()=>{}); } 
-        else if (navigator.vibrate) navigator.vibrate(type==='error'?[50,50,50]:15);
+        try {
+            if (!settings.vibration) return;
+            if (typeof vkBridge !== 'undefined') { 
+                if(type==='error'||type==='success') vkBridge.send("VKWebAppTapticNotificationOccurred", {"type": type}).catch(()=>{}); 
+                else vkBridge.send("VKWebAppTapticImpactOccurred", {"style": type || "light"}).catch(()=>{}); 
+            } 
+            else if (navigator.vibrate) navigator.vibrate(type==='error'?[50,50,50]:15);
+        } catch(e) {}
     }
     
     play(type) {
-        if (!this.enabled) return;
-        if(type==='pop') this.haptic('light'); if(type==='land') this.haptic('medium'); if(type==='error') this.haptic('error'); if(type==='win') this.haptic('success');
-        
-        if (this.audioPool[type]) {
-            const pool = this.audioPool[type];
-            for(let i=0; i<pool.length; i++) { 
-                if(pool[i].paused || pool[i].currentTime === 0 || pool[i].ended) { 
-                    pool[i].currentTime = 0; 
-                    pool[i].play().catch(()=>{}); 
-                    return; 
-                } 
+        try {
+            if (!this.enabled) return;
+            
+            if(type==='pop') this.haptic('light'); 
+            if(type==='land') this.haptic('medium'); 
+            if(type==='error') this.haptic('error'); 
+            if(type==='win') this.haptic('success');
+            
+            // Сначала пробуем Web Audio API
+            if (this.ctx && this.buffers[type]) {
+                if(this.ctx.state === 'suspended') this.ctx.resume();
+                const source = this.ctx.createBufferSource();
+                source.buffer = this.buffers[type];
+                source.connect(this.ctx.destination);
+                source.start(0);
+                return;
             }
-            // Если все заняты - прерываем первый попавшийся
-            pool[0].currentTime = 0; 
-            pool[0].play().catch(()=>{});
+            
+            // Если WebAudio не загрузился (например локально), используем надежный пул
+            if (this.fallbackPool[type]) {
+                const pool = this.fallbackPool[type];
+                for(let i=0; i<pool.length; i++) { 
+                    if(pool[i].paused || pool[i].currentTime === 0 || pool[i].ended) { 
+                        pool[i].currentTime = 0; 
+                        pool[i].play().catch(()=>{}); 
+                        return; 
+                    } 
+                }
+                pool[0].currentTime = 0; 
+                pool[0].play().catch(()=>{});
+            }
+        } catch(e) { 
+            // Мы "глотаем" любую ошибку, чтобы она не сломала UI (кнопки меню, и т.д.)
+            console.warn('Audio play blocked:', e); 
         }
     }
     click() { this.play('click'); }
@@ -1047,7 +1114,6 @@ const ui = {
         });
         this.switchScreen('levels');
     },
-
     showOomModal() {
         const lives = dataManager.data.inventory.lives;
         const container = document.getElementById('oom-container');
@@ -1070,7 +1136,6 @@ const ui = {
         }
         this.showModals('oom');
     },
-
     showVictoryModal(coinsEarned, isHardcore, unlockedNextDiff, isDaily) {
         document.getElementById('vic-coins').innerText = coinsEarned;
         
@@ -1104,7 +1169,6 @@ const ui = {
         this.showModals('victory');
     }
 };
-
 /* --- HIGH QUALITY SKINS RENDERER --- */
 function drawDetailedCoin(ctx, x, y, r, h, cHex, isHidden, skinId = dataManager.data.currentSkin, cIdx = 0) {
     if(isHidden) { cHex = '#7f8c8d'; skinId = 0; } 
@@ -1252,7 +1316,6 @@ function drawDetailedCoin(ctx, x, y, r, h, cHex, isHidden, skinId = dataManager.
     ctx.restore();
 }
 function shadeColor(c, a) { return '#' + c.replace(/^#/, '').replace(/../g, c => ('0'+Math.min(255, Math.max(0, parseInt(c, 16) + a)).toString(16)).substr(-2)); }
-
 const rulesDemo = {
     canvas: null, ctx: null, running: false, t: 0,
     start() { this.canvas = document.getElementById('rules-canvas'); this.ctx = this.canvas.getContext('2d'); const r = this.canvas.parentElement.getBoundingClientRect(); this.canvas.width = r.width; this.canvas.height = r.height; this.running = true; this.loop(); },
@@ -1292,7 +1355,6 @@ const rulesDemo = {
         drawDetailedCoin(ctx, cx, cy, 22, 10, PALETTE[1], false, 0, 1); 
     }
 };
-
 /* --- GAME LOGIC --- */
 class Game {
     constructor() {
@@ -1372,7 +1434,6 @@ class Game {
             }
             return Math.random();
         };
-
         let tempStacks = Array.from({length: cfg.slots}, () => []);
         let stackIdx = 0;
         let numStacksPerColor = cfg.double ? 2 : 1;
