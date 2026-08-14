@@ -532,7 +532,7 @@ const dataManager = {
         if(loaded.currentSkin !== undefined) this.data.currentSkin = loaded.currentSkin;
         if(loaded.dailyLevelState) this.data.dailyLevelState = loaded.dailyLevelState;
         if(loaded.dailyReward) this.data.dailyReward = loaded.dailyReward;
-        if(loaded.levelsSinceAd) this.data.levelsSinceAd = loaded.levelsSinceAd;
+        if(loaded.levelsSinceAd !== undefined) this.data.levelsSinceAd = loaded.levelsSinceAd;
     },
     async save() {
         this.data.settings.sound = settings.sound;
@@ -543,13 +543,12 @@ const dataManager = {
         ui.updateEconomy();
     },
     
-    getPlayerLevel() {
+    getMaxDiff() {
         let maxDiff = 0;
         for(let i=0; i<8; i++) {
             if ((this.data.progress[`classic_${i}`] > 1) || (this.data.progress[`blind_${i}`] > 1)) maxDiff = i;
         }
-        let hardcoreLvl = this.data.progress.hardcore_lvl || 1;
-        return (maxDiff * 2) + hardcoreLvl;
+        return maxDiff;
     },
     
     getLevelNum(mode, diffIdx) { return this.data.progress[`${mode}_${diffIdx}`] || 1; },
@@ -561,7 +560,11 @@ const dataManager = {
         const winsAfter = this.data.progress[key] - 1;
         
         this.clearInitialLevel(mode, diffIdx);
-        this.data.levelsSinceAd++; this.save();
+        
+        // Очки рекламы: 3 за гения, 2 за остальные
+        const points = (diffIdx === 7) ? 3 : 2;
+        this.data.levelsSinceAd += points; 
+        this.save();
         
         if (diffIdx < LEVELS_CONFIG.length - 1) {
             const nextLvlConfig = LEVELS_CONFIG[diffIdx + 1];
@@ -586,15 +589,15 @@ const dataManager = {
         }
     },
     claimDaily() {
-        const pl = this.getPlayerLevel();
+        const md = this.getMaxDiff();
         const rewards = [
-            { t: 'coin', v: Math.floor(500 + pl*20) }, 
+            { t: 'coin', v: Math.floor(50 + md*50) }, 
             { t: 'undo', v: 3 }, 
-            { t: 'coin', v: Math.floor(1000 + pl*30) }, 
+            { t: 'coin', v: Math.floor(100 + md*100) }, 
             { t: 'life', v: 1 }, 
-            { t: 'coin', v: Math.floor(1500 + pl*40) }, 
+            { t: 'coin', v: Math.floor(150 + md*150) }, 
             { t: 'undo', v: 3 }, 
-            { t: 'mega', v: Math.floor(3000 + pl*100) }
+            { t: 'mega', v: Math.floor(300 + md*300) }
         ];
         const r = rewards[this.data.dailyReward.streak];
         if(r.t === 'coin' || r.t === 'mega') this.data.coins += r.v;
@@ -610,7 +613,15 @@ const dataManager = {
     useUndo() { if(this.data.inventory.undos > 0) { this.data.inventory.undos--; this.save(); return true; } return false; },
     useLife() { if(this.data.inventory.lives > 0) { this.data.inventory.lives--; this.save(); return true; } return false; },
     
-    checkAndShowInterstitial() { if (this.data.levelsSinceAd >= 5) { this.showInterstitialAd().then(() => { this.data.levelsSinceAd = 0; this.save(); }).catch(()=>{}); } },
+    checkAndShowInterstitial() { 
+        // 6 очков = показ рекламы
+        if (this.data.levelsSinceAd >= 6) { 
+            this.showInterstitialAd().then(() => { 
+                this.data.levelsSinceAd = 0; 
+                this.save(); 
+            }).catch(()=>{}); 
+        } 
+    },
     async showInterstitialAd() {
         audio.toggleMusicMute(true);
         try { const r = await vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' }); return r.result; } catch(e) { return false; }
@@ -827,16 +838,16 @@ const ui = {
     showDailyModal() {
         const grid = document.getElementById('daily-grid'); grid.innerHTML = '';
         const streak = dataManager.data.dailyReward.streak;
-        const pl = dataManager.getPlayerLevel();
+        const md = dataManager.getMaxDiff();
         
         const rewards = [
-            {d:1, t:'coin', v: Math.floor(500 + pl*20), i:'#svg-coin', c:'#FFD700'}, 
+            {d:1, t:'coin', v: Math.floor(50 + md*50), i:'#svg-coin', c:'#FFD700'}, 
             {d:2, t:'undo', v: 3, i:'#svg-undo', c:'currentColor'}, 
-            {d:3, t:'coin', v: Math.floor(1000 + pl*30), i:'#svg-coin', c:'#FFD700'}, 
+            {d:3, t:'coin', v: Math.floor(100 + md*100), i:'#svg-coin', c:'#FFD700'}, 
             {d:4, t:'life', v: 1, i:'#svg-life', c:'var(--danger-color)'}, 
-            {d:5, t:'coin', v: Math.floor(1500 + pl*40), i:'#svg-coin', c:'#FFD700'}, 
+            {d:5, t:'coin', v: Math.floor(150 + md*150), i:'#svg-coin', c:'#FFD700'}, 
             {d:6, t:'undo', v: 3, i:'#svg-undo', c:'currentColor'}, 
-            {d:7, t:'mega', v: Math.floor(3000 + pl*100), i:''}
+            {d:7, t:'mega', v: Math.floor(300 + md*300), i:''}
         ];
         
         rewards.forEach((r, i) => {
@@ -1527,17 +1538,23 @@ class Game {
                 let coinsEarned = 0; let unlockedDiff = false;
                 
                 if(this.isDaily) {
-                    const pl = dataManager.getPlayerLevel();
-                    coinsEarned = Math.floor(1500 + pl * 100); 
+                    const md = dataManager.getMaxDiff();
+                    coinsEarned = Math.floor(150 + md * 150); 
                     dataManager.data.inventory.undos += 1;
                     dataManager.data.inventory.lives += 1;
                     dataManager.data.dailyLevelState.date = getLocalDateStr(); 
                     dataManager.data.dailyLevelState.completed = true;
+                    dataManager.data.levelsSinceAd += 2; // Бонус к счётчику рекламы
                     dataManager.save();
                 } else if(this.isHardcore) {
                     coinsEarned = Math.floor(100 + this.hardcoreLvl * 10);
                     dataManager.data.progress['hardcore_lvl'] = this.hardcoreLvl + 1;
-                    dataManager.data.levelsSinceAd++;
+                    
+                    let hCfgIdx = Math.floor((this.hardcoreLvl - 1) / 10);
+                    if (hCfgIdx >= LEVELS_CONFIG.length) hCfgIdx = LEVELS_CONFIG.length - 1;
+                    const points = (hCfgIdx === 7) ? 3 : 2;
+                    dataManager.data.levelsSinceAd += points;
+                    
                     dataManager.save();
                 } else {
                     const idealMoves = cfg.colors * cfg.size * (cfg.double ? 2 : 1);
