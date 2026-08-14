@@ -273,7 +273,6 @@
         </g>
     </defs>
 </svg>
-
 <div id="app-container">
     
     <!-- TOP BAR -->
@@ -372,7 +371,6 @@
             <button class="btn-main btn-classic" style="width:100%; margin-bottom: 0;" onclick="audio.click(); ui.hideModals()">ПОНЯТНО</button>
         </div>
     </div>
-
     <div id="modal-settings" class="modal-overlay">
         <div class="modal">
             <h2>Настройки</h2>
@@ -416,26 +414,11 @@
         <div class="modal">
             <h2 style="color: var(--btn-hard-bg)">Ходы кончились!</h2>
             <p style="margin-bottom:20px; color:var(--text-sec)">Используй жизнь, чтобы получить +5 ходов.</p>
-            <button class="btn-main btn-classic" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="audio.click(); game.useLife()">
+            <button id="oom-btn-main" class="btn-main btn-classic" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="audio.click(); game.useLife()">
                 <svg viewBox="0 0 24 24" width="20" height="20" style="color: currentColor"><use href="#svg-life"></use></svg>
-                Использовать (<span id="oom-lives"></span>)
+                Использовать
             </button>
-            
-            <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 15px; gap:10px;">
-                <div style="text-align:left; flex:1;">
-                    <div style="font-weight:900; font-size:16px; color:var(--text-main)">Халява</div>
-                    <div style="font-size:14px; display:flex; align-items:center; gap:8px;">
-                        <span style="display:flex; align-items:center; gap:4px; font-weight:900; color:var(--text-main)">3<svg viewBox="0 0 24 24" width="16" height="16"><use href="#svg-undo"></use></svg></span>
-                        <span style="display:flex; align-items:center; gap:4px; font-weight:900; color:var(--danger-color)">1<svg viewBox="0 0 24 24" width="16" height="16"><use href="#svg-life"></use></svg></span>
-                    </div>
-                </div>
-                <button class="btn-action btn-info" style="width:auto; padding: 12px 20px; margin:0; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="audio.click(); game.adLife()">
-                    <svg viewBox="0 0 24 24" width="18" height="18" style="color: currentColor"><use href="#svg-play"></use></svg>
-                    СМОТРЕТЬ
-                </button>
-            </div>
-            
-            <button class="btn-action btn-danger" style="margin-bottom:0;" onclick="audio.click(); game.quitToMenu()">Сдаться</button>
+            <button class="btn-action btn-danger" style="margin-bottom:0; margin-top:15px;" onclick="audio.click(); game.quitToMenu()">Сдаться</button>
         </div>
     </div>
     
@@ -480,6 +463,12 @@
     </div>
 </div>
 <script>
+/** УТИЛИТА ЛОКАЛЬНОЙ ДАТЫ */
+function getLocalDateStr() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
 /** OBFUSCATION */
 const Obfuscator = {
     key: 42,
@@ -599,13 +588,13 @@ const dataManager = {
     claimDaily() {
         const pl = this.getPlayerLevel();
         const rewards = [
-            { t: 'coin', v: Math.floor(125 + pl*10) }, 
+            { t: 'coin', v: Math.floor(500 + pl*20) }, 
             { t: 'undo', v: 3 }, 
-            { t: 'coin', v: Math.floor(200 + pl*15) }, 
+            { t: 'coin', v: Math.floor(1000 + pl*30) }, 
             { t: 'life', v: 1 }, 
-            { t: 'coin', v: Math.floor(300 + pl*20) }, 
+            { t: 'coin', v: Math.floor(1500 + pl*40) }, 
             { t: 'undo', v: 3 }, 
-            { t: 'mega', v: Math.floor(600 + pl*50) }
+            { t: 'mega', v: Math.floor(3000 + pl*100) }
         ];
         const r = rewards[this.data.dailyReward.streak];
         if(r.t === 'coin' || r.t === 'mega') this.data.coins += r.v;
@@ -649,7 +638,6 @@ const dataManager = {
         }
     }
 };
-
 /** SETTINGS */
 const settings = {
     sound: true, vibration: true,
@@ -661,8 +649,7 @@ const settings = {
         document.getElementById('toggle-vibro').classList.toggle('active', this.vibration);
     }
 };
-
-/** CONFIG - СЛОЖНАЯ АДАПТАЦИЯ (ВОЗВРАЩЕНО ТРЕБОВАНИЕ 10 ПОБЕД ДЛЯ ОТКРЫТИЯ) */
+/** CONFIG */
 const LEVELS_CONFIG = [
     { id: 0, name: "Новичок",   colors: 3, slots: 5,  size: 4, reqWins: 10 },
     { id: 1, name: "Ученик",    colors: 5, slots: 7,  size: 4, reqWins: 10 },
@@ -673,13 +660,11 @@ const LEVELS_CONFIG = [
     { id: 6, name: "Легенда",   colors: 7, slots: 16, size: 5, double: true, reqWins: 10 }, 
     { id: 7, name: "Гений",     colors: 8, slots: 18, size: 5, double: true, reqWins: 10 } 
 ];
-
 const PALETTE = [
     '#ff4757', '#1e90ff', '#2ed573', '#f39c12', '#f1c40f', '#ff9ff3', 
     '#9c88ff', '#00d2d3', '#5f27cd', '#006266', '#833471', '#d35400',
     '#b33939', '#218c74', '#227093', '#ccae62', '#ffb8b8', '#cf6a87'
 ];
-
 const THEME_BGS = [
     'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
     'linear-gradient(135deg, #1B1B2F 0%, #0F0F1A 100%)',
@@ -691,10 +676,8 @@ const THEME_BGS = [
     'linear-gradient(135deg, #2c0001 0%, #8a0306 100%)',
     'linear-gradient(135deg, #000000 0%, #001a00 100%)'
 ];
-
 const SHOP_THEMES = [{id:0, name:"Светлая", price:0}, {id:1, name:"Темная", price:500}, {id:2, name:"Закат", price:1200}, {id:3, name:"Лес", price:2500}, {id:4, name:"Океан", price:5000}, {id:5, name:"Киберпанк", price:9000}, {id:6, name:"Кофе", price:15000}, {id:7, name:"Король", price:25000}, {id:8, name:"Матрица", price:40000}];
 const SHOP_SKINS = [{id:0, name:"Классика", price:0}, {id:1, name:"Модерн", price:500}, {id:2, name:"Мишень", price:1200}, {id:3, name:"Кости", price:2500}, {id:4, name:"Металлик", price:5000}, {id:5, name:"Неон", price:9000}, {id:6, name:"Шахматы", price:15000}, {id:7, name:"Пуговица", price:25000}, {id:8, name:"Стекло", price:40000}];
-
 /* --- AUDIO MANAGER --- */
 class AudioManager {
     constructor() { 
@@ -722,7 +705,7 @@ class AudioManager {
         
         document.body.addEventListener('click', unlock); document.body.addEventListener('touchstart', unlock);
         
-        // Агрессивные слушатели для мобильных устройств (чтобы звук не пропадал после рекламы)
+        // Агрессивные слушатели для мобильных устройств
         ['click', 'touchstart', 'touchend', 'pointerdown'].forEach(evt => {
             document.body.addEventListener(evt, wakeAudio, true);
         });
@@ -777,7 +760,6 @@ class AudioManager {
     click() { this.play('click'); }
 }
 const audio = new AudioManager();
-
 /* --- UI --- */
 const ui = {
     screens: { menu: document.getElementById('screen-menu'), mode: document.getElementById('screen-mode'), levels: document.getElementById('screen-levels'), hud: document.getElementById('hud'), shop: document.getElementById('screen-shop') },
@@ -840,7 +822,6 @@ const ui = {
         const u = dataManager.data.inventory.undos;
         const b = document.getElementById('undo-badge');
         if(u > 0) { b.innerText = u; b.classList.remove('ad'); } else { b.innerText = "AD"; b.classList.add('ad'); }
-        document.getElementById('oom-lives').innerText = dataManager.data.inventory.lives;
     },
     
     showDailyModal() {
@@ -849,13 +830,13 @@ const ui = {
         const pl = dataManager.getPlayerLevel();
         
         const rewards = [
-            {d:1, t:'coin', v: Math.floor(125 + pl*10), i:'#svg-coin', c:'#FFD700'}, 
+            {d:1, t:'coin', v: Math.floor(500 + pl*20), i:'#svg-coin', c:'#FFD700'}, 
             {d:2, t:'undo', v: 3, i:'#svg-undo', c:'currentColor'}, 
-            {d:3, t:'coin', v: Math.floor(200 + pl*15), i:'#svg-coin', c:'#FFD700'}, 
+            {d:3, t:'coin', v: Math.floor(1000 + pl*30), i:'#svg-coin', c:'#FFD700'}, 
             {d:4, t:'life', v: 1, i:'#svg-life', c:'var(--danger-color)'}, 
-            {d:5, t:'coin', v: Math.floor(300 + pl*20), i:'#svg-coin', c:'#FFD700'}, 
+            {d:5, t:'coin', v: Math.floor(1500 + pl*40), i:'#svg-coin', c:'#FFD700'}, 
             {d:6, t:'undo', v: 3, i:'#svg-undo', c:'currentColor'}, 
-            {d:7, t:'mega', v: Math.floor(600 + pl*50), i:''}
+            {d:7, t:'mega', v: Math.floor(3000 + pl*100), i:''}
         ];
         
         rewards.forEach((r, i) => {
@@ -888,7 +869,7 @@ const ui = {
                         <div style="width:30px; height:30px; color:var(--btn-classic-bg)"><svg viewBox="0 0 24 24" width="100%" height="100%"><use href="#svg-undo"></use></svg></div>
                         <div style="text-align:left"><div style="font-weight:900; font-size:18px; color:var(--text-main)">Отмена хода</div><div style="font-size:12px; color:var(--text-sec)">В инвентаре: ${dataManager.data.inventory.undos}</div></div>
                     </div>
-                    <div><button class="item-btn" style="width:auto; padding: 10px 20px; display:flex; align-items:center; gap:4px;" onclick="audio.click(); ui.buyBooster('undo', 200)">200 <svg viewBox="0 0 24 24" width="14" height="14" style="color:#FFD700"><use href="#svg-coin"></use></svg></button></div>
+                    <div><button class="item-btn" style="width:auto; padding: 10px 20px; display:flex; align-items:center; gap:4px;" onclick="audio.click(); ui.buyBooster('undo', 500)">500 <svg viewBox="0 0 24 24" width="14" height="14" style="color:#FFD700"><use href="#svg-coin"></use></svg></button></div>
                 </div>
                 <div class="booster-item">
                     <div style="display:flex; align-items:center; gap:15px">
@@ -1036,7 +1017,6 @@ const ui = {
         });
         this.switchScreen('levels');
     },
-
     showVictoryModal(coinsEarned, isHardcore, unlockedNextDiff, isDaily) {
         document.getElementById('vic-coins').innerText = coinsEarned;
         
@@ -1070,7 +1050,6 @@ const ui = {
         this.showModals('victory');
     }
 };
-
 /* --- HIGH QUALITY SKINS RENDERER --- */
 function drawDetailedCoin(ctx, x, y, r, h, cHex, isHidden, skinId = dataManager.data.currentSkin, cIdx = 0) {
     if(isHidden) { cHex = '#7f8c8d'; skinId = 0; } 
@@ -1217,7 +1196,6 @@ function drawDetailedCoin(ctx, x, y, r, h, cHex, isHidden, skinId = dataManager.
     ctx.restore();
 }
 function shadeColor(c, a) { return '#' + c.replace(/^#/, '').replace(/../g, c => ('0'+Math.min(255, Math.max(0, parseInt(c, 16) + a)).toString(16)).substr(-2)); }
-
 const rulesDemo = {
     canvas: null, ctx: null, running: false, t: 0,
     start() { this.canvas = document.getElementById('rules-canvas'); this.ctx = this.canvas.getContext('2d'); const r = this.canvas.parentElement.getBoundingClientRect(); this.canvas.width = r.width; this.canvas.height = r.height; this.running = true; this.loop(); },
@@ -1257,7 +1235,6 @@ const rulesDemo = {
         drawDetailedCoin(ctx, cx, cy, 22, 10, PALETTE[1], false, 0, 1); // Летящая синяя
     }
 };
-
 /* --- GAME LOGIC --- */
 class Game {
     constructor() {
@@ -1337,7 +1314,6 @@ class Game {
             }
             return Math.random();
         };
-
         let tempStacks = Array.from({length: cfg.slots}, () => []);
         let stackIdx = 0;
         let numStacksPerColor = cfg.double ? 2 : 1;
@@ -1431,7 +1407,7 @@ class Game {
     }
     
     startDaily() {
-        const today = new Date().toISOString().split('T')[0];
+        const today = getLocalDateStr();
         if(dataManager.data.dailyLevelState.date === today && dataManager.data.dailyLevelState.completed) { 
             audio.play('error');
             ui.showModals('dailyDone');
@@ -1552,15 +1528,16 @@ class Game {
                 
                 if(this.isDaily) {
                     const pl = dataManager.getPlayerLevel();
-                    coinsEarned = Math.floor(125 + pl * 10); 
+                    coinsEarned = Math.floor(1500 + pl * 100); 
                     dataManager.data.inventory.undos += 1;
                     dataManager.data.inventory.lives += 1;
-                    dataManager.data.dailyLevelState.date = new Date().toISOString().split('T')[0]; 
+                    dataManager.data.dailyLevelState.date = getLocalDateStr(); 
                     dataManager.data.dailyLevelState.completed = true;
                     dataManager.save();
                 } else if(this.isHardcore) {
-                    coinsEarned = Math.floor(7 + this.hardcoreLvl * 2.5);
+                    coinsEarned = Math.floor(100 + this.hardcoreLvl * 10);
                     dataManager.data.progress['hardcore_lvl'] = this.hardcoreLvl + 1;
+                    dataManager.data.levelsSinceAd++;
                     dataManager.save();
                 } else {
                     const idealMoves = cfg.colors * cfg.size * (cfg.double ? 2 : 1);
@@ -1577,7 +1554,20 @@ class Game {
             },300);
         } else if (this.isHardcore && this.movesLeft <= 0) {
             this.state = 'GAMEOVER';
-            setTimeout(() => { ui.showModals('oom'); }, 300);
+            setTimeout(() => { 
+                const lives = dataManager.data.inventory.lives;
+                const oomBtn = document.getElementById('oom-btn-main');
+                if (lives > 0) {
+                    oomBtn.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" style="color: currentColor"><use href="#svg-life"></use></svg> Использовать`;
+                    oomBtn.onclick = () => { audio.click(); game.useLife(); };
+                    oomBtn.style.background = 'var(--btn-classic-bg)';
+                    oomBtn.style.color = 'var(--btn-classic-text)';
+                } else {
+                    oomBtn.innerHTML = `<div style="width:28px; height:28px; background:var(--badge-ad); color:#2d3436; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:12px; margin-right:4px;">AD</div> Получить`;
+                    oomBtn.onclick = () => { audio.click(); game.adLife(); };
+                }
+                ui.showModals('oom'); 
+            }, 300);
         }
     }
     
