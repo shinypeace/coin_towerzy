@@ -245,7 +245,6 @@
     </style>
 </head>
 <body>
-<!-- ИНТЕГРАЦИЯ SVG -->
 <svg style="display:none;">
     <defs>
         <g id="svg-coin">
@@ -276,7 +275,6 @@
 
 <div id="app-container">
     
-    <!-- TOP BAR -->
     <div class="top-bar-economy" id="economy-bar">
         <button class="btn-back" id="top-back" onclick="audio.click(); ui.showMenu()" style="display: none;">
             <svg class="icon" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
@@ -292,7 +290,6 @@
     <canvas id="gameCanvas"></canvas>
     <canvas id="confetti-canvas"></canvas>
     
-    <!-- GAME HUD -->
     <div id="hud" style="display: none;">
         <button class="btn-icon-round" onclick="audio.click(); game.pause()">
             <svg class="icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
@@ -308,7 +305,6 @@
         </button>
     </div>
     
-    <!-- MAIN MENU SCREEN -->
     <div id="screen-menu" class="screen active">
         <div class="logo-box">
             <div class="logo-main">Coin<br>Sort</div>
@@ -319,7 +315,6 @@
         <button class="btn-main btn-blind" onclick="audio.click(); ui.showShop('themes')">МАГАЗИН 🛒</button>
     </div>
     
-    <!-- MODE SELECT SCREEN -->
     <div id="screen-mode" class="screen hidden">
         <div class="logo-box" style="margin-bottom: 40px; margin-top: 40px;">
             <div class="logo-main" style="font-size: 40px;">Режим</div>
@@ -329,7 +324,6 @@
         <button class="btn-main btn-hardcore" onclick="audio.click(); ui.selectMode('hardcore')">ХАРДКОР ☠️</button>
     </div>
     
-    <!-- LEVELS SCREEN -->
     <div id="screen-levels" class="screen hidden">
         <div class="logo-box" style="margin-top: 60px; margin-bottom: 20px;">
             <div class="logo-main" id="levels-title" style="font-size: 40px;">Уровни</div>
@@ -337,7 +331,6 @@
         <div class="scroll-list" id="levels-list"></div>
     </div>
     
-    <!-- SHOP SCREEN -->
     <div id="screen-shop" class="screen hidden" style="padding-bottom: 0;">
         <div class="logo-box" style="margin-top: 60px; margin-bottom: 20px; flex-shrink: 0;">
             <div class="logo-main" style="font-size: 40px;">Магазин</div>
@@ -354,7 +347,6 @@
         </div>
     </div>
     
-    <!-- MODALS -->
     <div id="modal-daily" class="modal-overlay">
         <div class="modal">
             <h2>Ежедневная награда</h2>
@@ -467,6 +459,7 @@ const Obfuscator = {
     encode(data) { const str = JSON.stringify(data); let res = ""; for(let i=0; i<str.length; i++) res += String.fromCharCode(str.charCodeAt(i) ^ this.key); return btoa(encodeURIComponent(res)); },
     decode(b64) { try { const str = decodeURIComponent(atob(b64)); let res = ""; for(let i=0; i<str.length; i++) res += String.fromCharCode(str.charCodeAt(i) ^ this.key); return JSON.parse(res); } catch(e) { return null; } }
 };
+
 /** DATA MANAGER */
 const dataManager = {
     vkUserId: null,
@@ -500,9 +493,9 @@ const dataManager = {
     async load() {
         let rawData = null;
         if (this.vkUserId) {
-            try { const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_v9_${this.vkUserId}`] }); if (res.keys[0]?.value) rawData = res.keys[0].value; } catch(e){}
+            try { const res = await vkBridge.send('VKWebAppStorageGet', { keys: [`ct_data_v10_${this.vkUserId}`] }); if (res.keys[0]?.value) rawData = res.keys[0].value; } catch(e){}
         }
-        if(!rawData) rawData = localStorage.getItem('ct_data_v9_local');
+        if(!rawData) rawData = localStorage.getItem('ct_data_v10_local');
         if (rawData) {
             const parsed = Obfuscator.decode(rawData);
             if(parsed) this.mergeData(parsed); else { try { this.mergeData(JSON.parse(rawData)); } catch(e){} }
@@ -529,8 +522,8 @@ const dataManager = {
         this.data.settings.sound = settings.sound;
         this.data.settings.vibration = settings.vibration;
         const str = Obfuscator.encode(this.data);
-        localStorage.setItem('ct_data_v9_local', str);
-        if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_v9_${this.vkUserId}`, value: str }).catch(()=>{});
+        localStorage.setItem('ct_data_v10_local', str);
+        if (this.vkUserId) vkBridge.send('VKWebAppStorageSet', { key: `ct_data_v10_${this.vkUserId}`, value: str }).catch(()=>{});
         ui.updateEconomy();
     },
     
@@ -614,7 +607,8 @@ const dataManager = {
     
     checkAndShowInterstitial() { 
         const now = Date.now();
-        if (now - (this.data.lastAdTime || 0) > 120000) { 
+        // 180000 = 3 минуты
+        if (now - (this.data.lastAdTime || 0) > 180000) { 
             this.showInterstitialAd().then(() => { 
                 this.data.lastAdTime = Date.now(); 
                 this.save(); 
@@ -624,9 +618,7 @@ const dataManager = {
     async showInterstitialAd() {
         audio.toggleMusicMute(true);
         try { const r = await vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' }); return r.result; } catch(e) { return false; }
-        finally { 
-            audio.toggleMusicMute(false); 
-        }
+        finally { audio.toggleMusicMute(false); }
     },
     async showRewardAd(rewardType) {
         audio.toggleMusicMute(true);
@@ -642,9 +634,7 @@ const dataManager = {
             }
             return false;
         } catch(e) { return false; }
-        finally { 
-            audio.toggleMusicMute(false); 
-        }
+        finally { audio.toggleMusicMute(false); }
     }
 };
 
@@ -693,7 +683,7 @@ const THEME_BGS = [
 const SHOP_THEMES = [{id:0, name:"Светлая", price:0}, {id:1, name:"Темная", price:500}, {id:2, name:"Закат", price:1200}, {id:3, name:"Лес", price:2500}, {id:4, name:"Океан", price:5000}, {id:5, name:"Киберпанк", price:9000}, {id:6, name:"Кофе", price:15000}, {id:7, name:"Король", price:25000}, {id:8, name:"Матрица", price:40000}];
 const SHOP_SKINS = [{id:0, name:"Классика", price:0}, {id:1, name:"Модерн", price:500}, {id:2, name:"Мишень", price:1200}, {id:3, name:"Кости", price:2500}, {id:4, name:"Металлик", price:5000}, {id:5, name:"Неон", price:9000}, {id:6, name:"Шахматы", price:15000}, {id:7, name:"Пуговица", price:25000}, {id:8, name:"Стекло", price:40000}];
 
-/* --- AUDIO MANAGER (ПЕРЕПИСАН ПОЛНОСТЬЮ НА ПУЛ <AUDIO> ДЛЯ МАКСИМАЛЬНОЙ СТАБИЛЬНОСТИ) --- */
+/* --- AUDIO MANAGER (АБСОЛЮТНО БЕЗОПАСНЫЙ HTML5 AUDIO) --- */
 class AudioManager {
     constructor() { 
         this.enabled = true; 
@@ -720,7 +710,6 @@ class AudioManager {
         const files = ['pop', 'land', 'error', 'win', 'click'];
         for(let name of files) {
             this.audioPool[name] = [];
-            // Создаем по 4 копии каждого звука, чтобы они могли звучать одновременно и не "захлебывались"
             for(let i=0; i<4; i++) { 
                 const a = new Audio(name+'.mp3'); 
                 a.preload = 'auto'; 
@@ -737,8 +726,20 @@ class AudioManager {
         if (this.enabled && this.unlocked) this.activeBgm.play().catch(()=>{});
     }
     
-    toggleMusicMute(mute) { this.bgmMenu.muted = mute; this.bgmGame.muted = mute; }
-    toggleSound(state) { this.enabled = state; if(state) { if(this.unlocked) this.activeBgm.play().catch(()=>{}); } else this.activeBgm.pause(); }
+    toggleMusicMute(mute) { 
+        this.bgmMenu.muted = mute; 
+        this.bgmGame.muted = mute; 
+    }
+    
+    toggleSound(state) { 
+        this.enabled = state; 
+        if(state) { 
+            if(this.unlocked) this.activeBgm.play().catch(()=>{}); 
+        } else { 
+            this.activeBgm.pause(); 
+        } 
+    }
+    
     handleVisibility(isVisible) { 
         if (!isVisible) { 
             if (!this.activeBgm.paused) { this.wasPlaying = true; this.activeBgm.pause(); } 
@@ -766,7 +767,6 @@ class AudioManager {
                     return; 
                 } 
             }
-            // Если все заняты - прерываем первый попавшийся
             pool[0].currentTime = 0; 
             pool[0].play().catch(()=>{});
         }
@@ -1259,11 +1259,11 @@ const rulesDemo = {
         const c = this.t % 3; 
         
         drawDetailedCoin(ctx, s1x, by, 22, 10, PALETTE[2], false, 0, 1); 
-        drawDetailedCoin(ctx, s1x, by-10, 22, 10, PALETTE[4], false, 0, 1); // Вторая монета желтая
+        drawDetailedCoin(ctx, s1x, by-10, 22, 10, PALETTE[4], false, 0, 1); 
         
         drawDetailedCoin(ctx, s2x, by, 22, 10, PALETTE[3], false, 0, 1);
         drawDetailedCoin(ctx, s2x, by-10, 22, 10, PALETTE[5], false, 0, 1);
-        drawDetailedCoin(ctx, s2x, by-20, 22, 10, PALETTE[1], false, 0, 1); // Синяя на правой
+        drawDetailedCoin(ctx, s2x, by-20, 22, 10, PALETTE[1], false, 0, 1); 
         
         let cx = s1x, cy = by-20;
         if(c >= 1 && c < 2) { 
@@ -1278,7 +1278,7 @@ const rulesDemo = {
             cy = by - 30; 
         }
         
-        drawDetailedCoin(ctx, cx, cy, 22, 10, PALETTE[1], false, 0, 1); // Летящая синяя
+        drawDetailedCoin(ctx, cx, cy, 22, 10, PALETTE[1], false, 0, 1); 
     }
 };
 
