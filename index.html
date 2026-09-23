@@ -124,7 +124,7 @@
         
         * { box-sizing: border-box; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Nunito', sans-serif; }
         
-        body { margin: 0; padding: 0; background: #1e272e; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        body { margin: 0; padding: 0; background: linear-gradient(135deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%); width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: background 0.5s; }
         #app-container { position: relative; width: 100%; height: 100%; max-width: 450px; max-height: 900px; background: linear-gradient(135deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%); overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.5); display: flex; flex-direction: column; transition: background 0.5s; }
         
         canvas { display: block; width: 100%; height: 100%; touch-action: none; z-index: 1; cursor: pointer; transition: opacity 0.2s ease; }
@@ -468,7 +468,6 @@ function getLocalDateStr() {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-
 /** OBFUSCATION */
 const Obfuscator = {
     key: 42,
@@ -499,7 +498,7 @@ const dataManager = {
             });
         } catch (e) {}
         await this.load();
-        document.getElementById('app-container').className = `theme-${this.data.currentTheme}`;
+        document.body.className = `theme-${this.data.currentTheme}`;
         settings.sound = this.data.settings.sound;
         settings.vibration = this.data.settings.vibration !== undefined ? this.data.settings.vibration : true;
         settings.updateUI();
@@ -726,6 +725,11 @@ class AudioManager {
         // Агрессивные слушатели для мобильных устройств
         ['click', 'touchstart', 'touchend', 'pointerdown'].forEach(evt => {
             document.body.addEventListener(evt, wakeAudio, true);
+        });
+
+        // Слушатель для скрытия/показа вкладки браузера
+        document.addEventListener('visibilitychange', () => {
+            this.handleVisibility(!document.hidden);
         });
     }
     
@@ -963,7 +967,7 @@ const ui = {
     
     buyOrEquip(type, id, price, isUnlocked) {
         if (isUnlocked) {
-            if (type === 'themes') { dataManager.data.currentTheme = id; document.getElementById('app-container').className = `theme-${id}`; }
+            if (type === 'themes') { dataManager.data.currentTheme = id; document.body.className = `theme-${id}`; }
             else { dataManager.data.currentSkin = id; }
             dataManager.save(); this.showShop(type); if(typeof game !== 'undefined') game.triggerDraw();
         } else {
